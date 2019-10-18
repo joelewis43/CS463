@@ -21,26 +21,25 @@ private:
 protected:
 public:
     // Constructor/Destructor
-    Player();               // Constructor
-    //Player();             // Overload Constructor
-    ~Player();              // Destructor
+    Player();                   // Constructor
+    ~Player();                  // Destructor
 
     // Player Functions
-    void MoveUp();
-    void MoveDown();
-    void MoveLeft();
-    void MoveRight();
+    void MoveUp();              // Player Moves Up
+    void MoveDown();            // Player Moves Down
+    void MoveLeft();            // Player Moves Left
+    void MoveRight();           // Player Moves Right
 
     // Getters
-    int GetLocX();
-    int GetLocY();
-    std::string GetName();
+    int GetLocX();              // Gets Player's X Location
+    int GetLocY();              // Gets Player's Y Location
+    std::string GetName();      // Gets Player's Name
     //getsocket?
 
     // Setters
-    void SetLocX(int);
-    void SetLocY(int);
-    void SetName(std::string);
+    void SetLocX(int);          // Sets Player's X Location
+    void SetLocY(int);          // Sets Player's Y Location
+    void SetName(std::string);  // Sets Player's Name
     //set socket?
 };
 

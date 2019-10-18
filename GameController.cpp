@@ -5,12 +5,16 @@
 #include "GameController.h"
 #include "Player.h"
 
-// Constructor/Destructor
+////////////////////////////////
+///                          ///
+/// Constructors/Destructors ///
+///                          ///
+////////////////////////////////
 
 // Constructor
 GameController::GameController()
 {
-
+    // Set Timer Settings Here
 }
 
 //GameController::GameController();             // Overload Constructor
@@ -19,7 +23,11 @@ GameController::~GameController()
 
 }// Destructor
 
-// GameController Functions
+////////////////////////////////
+///                          ///
+/// GameController Functions ///
+///                          ///
+////////////////////////////////
 
 // Main Game Loop
 void GameController::MainGameLoop()
@@ -123,32 +131,59 @@ void GameController::NameMenu()
 {
     std::string name = "";
 
-    // check if name exists
-    if(player.GetName() == "")
+    while(1)
     {
-        // Display Menu to Enter Name
-        std::cout << "Enter Your Name" << std::endl;
-        std::cout << std::endl;
-        std::cout << "3-20 Alphanumeric Characters Required" << std::endl;
-        std::cout << "Press Enter to Continue" << std::endl;
-        std::cout << std::endl;
-        std::cout << "Name: ";
-        std::cin >> name;
+        // Clear Screen
+        std::cout << "\033[2J\033[1;1H";
 
-        // Set Name in Player Object
-        player.SetName(name);
-    }
-    else
-    {
-        // A Player Name Exists - overwrite or quit?
-        std::cout << "Please note - Your current name: " << player.GetName() << " will be overwritten." << std::endl;
-        std::cout << "Enter Your Name" << std::endl;
-        std::cout << std::endl;
-        std::cout << "3-20 Alphanumeric Characters Required" << std::endl;
-        std::cout << "Press Enter to Continue" << std::endl;
-        std::cout << std::endl;
-        std::cout << "Name: ";
-        std::cin >> name;
+        // check if name exists
+        if(player.GetName() == "")
+        {
+            // Display Menu to Enter Name
+            std::cout << "Enter Your Name" << std::endl;
+            std::cout << std::endl;
+            std::cout << "3-20 Alphanumeric Characters Required" << std::endl;
+            std::cout << "Press Enter to Continue" << std::endl;
+            std::cout << std::endl;
+            std::cout << "Name: ";
+            std::cin >> name;
+
+            if(name.size() >= 3 && name.size() <= 20)
+            {
+                // Set Name in Player Object
+                player.SetName(name);
+                break;
+            }
+            else
+            {
+                std::cout << "Please Enter Correct Name Length" << std::endl;
+                sleep(1);
+            }
+        }
+        else
+        {
+            // A Player Name Exists - overwrite or quit?
+            std::cout << "Please note - Your current name: " << player.GetName() << " will be overwritten." << std::endl;
+            std::cout << "Enter Your Name" << std::endl;
+            std::cout << std::endl;
+            std::cout << "3-20 Alphanumeric Characters Required" << std::endl;
+            std::cout << "Press Enter to Continue" << std::endl;
+            std::cout << std::endl;
+            std::cout << "Name: ";
+            std::cin >> name;
+
+            if(name.size() >= 3 && name.size() <= 20)
+            {
+                // Set Name in Player Object
+                player.SetName(name);
+                break;
+            }
+            else
+            {
+                std::cout << "Please Enter Correct Name Length." << std::endl;
+                sleep(1);
+            }
+        }
     }
 }
 
@@ -176,7 +211,7 @@ void GameController::ControlSelection()
 {
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Player Controls" << std::endl;
-    std::cout << "Up/Down: " << /*Rand.layer*/ std::endl;
+    std::cout << "Up/Down: " << /*Rand.Player*/ std::endl;
     std::cout << "Left/Right: " << /*Rand.Player*/ std::endl;
     sleep(5);
 }
@@ -187,11 +222,11 @@ void GameController::CountDownScreen()
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Game Starting in..." << std::endl;
 
-    std::cout << "3" << std::endl;
+    std::cout << "\33[2K\r3" << std::flush;
     sleep(1);
-    std::cout << "\r2" << std::endl;
+    std::cout << "\33[2K\r2" << std::flush;
     sleep(1);
-    std::cout << "\r1" << std::endl;
+    std::cout << "\33[2K\r1" << std::flush;
     sleep(1);
     std::cout << "\033[2J\033[1;1H";
 }
@@ -214,7 +249,10 @@ bool GameController::ServerConnection()
 // Checks for Player/Object Collisions
 bool GameController::CheckCollisions()
 {
+    // Logic For Collision
 
+    // Set Collision to True if True
+    //SetCollisionOccur(true);
 }
 
 // Create Special Game Events
@@ -226,7 +264,64 @@ void GameController::CreateSpecialEvent()
 // Update Player Location
 void GameController::MovePlayer()
 {
+    // Async Keyboard catch
+    /*if(up)
+    {
+        CheckCollisions();
+        if(GetCollisionOccur() == false)
+        {
+            player.MoveUp();
+            // Update Image on Board
+        }
+        else
+        {
+            // Game Over
+                SetGameOver(true);
+        }
+    }
+    if(down)
+    {
+        CheckCollisions();
+        if(GetCollisionOccur() == false)
+        {
+            player.MoveDown();
+            // Update Image on Board
+        }
+        else
+        {
+            // Game Over
+            SetGameOver(true);
+        }
+    }
+    if(left)
+    {
+        CheckCollisions();
+        if(GetCollisionOccur() == false)
+        {
+            player.MoveLeft();
+            // Update Image on Board
+        }
+        else
+        {
+            // Game Over
+            SetGameOver(true);
+        }
+    }
+    if(right)
+    {
+        CheckCollisions();
 
+        if(GetCollisionOccur() == false)
+        {
+            player.MoveRight();
+            // Update Image on Board
+        }
+        else
+        {
+            // Game Over
+            SetGameOver(true);
+        }
+    }*/
 }
 
 // Update Object Locations
@@ -259,7 +354,11 @@ void GameController::SendMap()
 
 }
 
-// Getters
+////////////////////////////////
+///                          ///
+///         Getters          ///
+///                          ///
+////////////////////////////////
 
 // Get Score
 int GameController::GetScore()
@@ -285,13 +384,24 @@ bool GameController::GetQuitGame()
     return QuitGame;
 }
 
+// Get Collision Bool
+bool GameController::GetCollisionOccur()
+{
+    return Collision;
+}
+
 Player GameController::GetPlayerObject()
 {
     return player;
 }
+
 //GameBoard GameController::GetGameBoard();
 
-// Setters
+////////////////////////////////
+///                          ///
+///         Setters          ///
+///                          ///
+////////////////////////////////
 
 // Set Score
 void GameController::SetScore(int updateScore)
@@ -315,6 +425,12 @@ void GameController::SetIsRunning(bool IsRunningState)
 void GameController::SetQuitGame(bool QuitGameSet)
 {
     QuitGame = QuitGameSet;
+}
+
+// Get Collision Bool
+void GameController::SetCollisionOccur(bool occurrence)
+{
+    Collision = occurrence;
 }
 
 //GameBoard GameController::SetGameBoard();

@@ -4,13 +4,17 @@
 
 #include "Player.h"
 
+////////////////////////////////
+///                          ///
+/// Constructors/Destructors ///
+///                          ///
+////////////////////////////////
+
 // Constructor
 Player::Player()
 {
 
 }
-
-//Player();             // Overload Constructor
 
 // Destructor
 Player::~Player()
@@ -18,7 +22,11 @@ Player::~Player()
     SetName("");
 }
 
-// Player Functions
+////////////////////////////////
+///                          ///
+///     Player Functions     ///
+///                          ///
+////////////////////////////////
 
 // Move Up
 void Player::MoveUp()
@@ -48,7 +56,11 @@ void Player::MoveRight()
     SetLocX(move);
 }
 
-// Getters
+////////////////////////////////
+///                          ///
+///         Getters          ///
+///                          ///
+////////////////////////////////
 
 // Get X Location of Player
 int Player::GetLocX()
@@ -66,9 +78,14 @@ std::string Player::GetName()
 {
     return Name;
 }
+
 //getsocket?
 
-// Setters
+////////////////////////////////
+///                          ///
+///         Setters          ///
+///                          ///
+////////////////////////////////
 
 // Set X Location
 void Player::SetLocX(int x)

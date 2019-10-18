@@ -15,20 +15,19 @@
 class GameController {
     private:
         // GameBoard GameBoard;         // Game Board Object
+        // Environment Object?
         Player  player;                 // Player Object
         int     Score = 0;              // Score
         bool    IsRunning = false;      // isRunning Boolean (Server)
         bool    GameOver = false;       // GameOver?
         bool    QuitGame = false;       // player Quit?
-        // Timer Settings
+        bool    Collision = false;      // Collision Occurred
+        // Timer Settings?
     protected:
     public:
         // Constructor/Destructor
         GameController();               // Constructor
-        //GameController();             // Overload Constructor
         ~GameController();              // Destructor
-
-        //Player  player;                 // Player Object
 
         // GameController Functions
         void MainGameLoop();            // Main Game Loop
@@ -54,7 +53,8 @@ class GameController {
         bool GetGameOver();             // Get GameOver?
         bool GetIsRunning();            // Get IsRunning?
         bool GetQuitGame();             // Get QuitGame?
-        Player GetPlayerObject();
+        bool GetCollisionOccur();       // Get Collision
+        Player GetPlayerObject();       // Get Player Object
         //GameBoard GetGameBoard();
 
         // Setters
@@ -62,9 +62,8 @@ class GameController {
         void SetGameOver(bool);         // Set GameOver
         void SetIsRunning(bool);        // Set IsRunning
         void SetQuitGame(bool);         // Set QuitGame
-        Player SetPlayerObject();
+        void SetCollisionOccur(bool);   // Set Collision
         //GameBoard SetGameBoard();
-
 };
 
 
