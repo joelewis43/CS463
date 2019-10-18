@@ -3,12 +3,16 @@
 //
 
 #include "GameController.h"
+#include "Player.h"
 
 // Constructor/Destructor
+
+// Constructor
 GameController::GameController()
 {
 
-}// Constructor
+}
+
 //GameController::GameController();             // Overload Constructor
 GameController::~GameController()
 {
@@ -20,7 +24,9 @@ GameController::~GameController()
 // Main Game Loop
 void GameController::MainGameLoop()
 {
+    // Clear Screen
     std::cout << "\033[2J\033[1;1H";
+
     // Menus
     MainMenu();
 
@@ -38,6 +44,7 @@ void GameController::MainGameLoop()
     else
     {
         // Quit
+        // Clear Screen
         std::cout << "\033[2J\033[1;1H";
         std::cout << "Thanks for playing!" << std::endl;
         sleep(1);
@@ -75,7 +82,6 @@ void GameController::MainMenu()
                 case 2:
                     // Leader Boards
                     LeaderBoard();
-                    //MainMenu();
                     break;
                 case 3:
                     // Quit Game
@@ -100,14 +106,13 @@ void GameController::MainMenu()
             selection = -1;
         }
     }
-
-
 }
 
 // LeaderBoard Menu
 void GameController::LeaderBoard()
 {
     // Open File and View Leader Boards
+    // Clear Screen
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Leader Board Function" << std::endl;
     sleep(2);
@@ -117,10 +122,9 @@ void GameController::LeaderBoard()
 void GameController::NameMenu()
 {
     std::string name = "";
-    std::cout << "Player Name Function" << std::endl;
-    sleep(1);
+
     // check if name exists
-    /*if(PlayerName == "")
+    if(player.GetName() == "")
     {
         // Display Menu to Enter Name
         std::cout << "Enter Your Name" << std::endl;
@@ -132,11 +136,20 @@ void GameController::NameMenu()
         std::cin >> name;
 
         // Set Name in Player Object
+        player.SetName(name);
     }
     else
     {
         // A Player Name Exists - overwrite or quit?
-    }*/
+        std::cout << "Please note - Your current name: " << player.GetName() << " will be overwritten." << std::endl;
+        std::cout << "Enter Your Name" << std::endl;
+        std::cout << std::endl;
+        std::cout << "3-20 Alphanumeric Characters Required" << std::endl;
+        std::cout << "Press Enter to Continue" << std::endl;
+        std::cout << std::endl;
+        std::cout << "Name: ";
+        std::cin >> name;
+    }
 }
 
 // Await Player Server Connection
@@ -272,7 +285,10 @@ bool GameController::GetQuitGame()
     return QuitGame;
 }
 
-//Player GameController::GetPlayerObject();
+Player GameController::GetPlayerObject()
+{
+    return player;
+}
 //GameBoard GameController::GetGameBoard();
 
 // Setters
@@ -301,6 +317,4 @@ void GameController::SetQuitGame(bool QuitGameSet)
     QuitGame = QuitGameSet;
 }
 
-
-//Player GameController::SetPlayerObject();
 //GameBoard GameController::SetGameBoard();

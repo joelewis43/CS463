@@ -10,11 +10,12 @@
 #include <string>
 #include <unistd.h>
 #include <stdlib.h>
+#include "Player.h"
 
 class GameController {
     private:
         // GameBoard GameBoard;         // Game Board Object
-        // Player Player;               // Player Object
+        Player  player;                 // Player Object
         int     Score = 0;              // Score
         bool    IsRunning = false;      // isRunning Boolean (Server)
         bool    GameOver = false;       // GameOver?
@@ -26,6 +27,8 @@ class GameController {
         GameController();               // Constructor
         //GameController();             // Overload Constructor
         ~GameController();              // Destructor
+
+        //Player  player;                 // Player Object
 
         // GameController Functions
         void MainGameLoop();            // Main Game Loop
@@ -51,7 +54,7 @@ class GameController {
         bool GetGameOver();             // Get GameOver?
         bool GetIsRunning();            // Get IsRunning?
         bool GetQuitGame();             // Get QuitGame?
-        //Player GetPlayerObject();
+        Player GetPlayerObject();
         //GameBoard GetGameBoard();
 
         // Setters
@@ -59,7 +62,7 @@ class GameController {
         void SetGameOver(bool);         // Set GameOver
         void SetIsRunning(bool);        // Set IsRunning
         void SetQuitGame(bool);         // Set QuitGame
-        //Player SetPlayerObject();
+        Player SetPlayerObject();
         //GameBoard SetGameBoard();
 
 };
