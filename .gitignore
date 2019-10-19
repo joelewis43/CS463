@@ -6,6 +6,7 @@
 .idea/modules.xml
 .idea/workspace.xml
 *.txt
+.vscode/
 
 # Compiled source #
 ###################
@@ -30,3 +31,4 @@
 *.rar
 *.tar
 *.zip
+
