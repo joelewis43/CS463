@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "Player.h"
+#include "ClientConnection.h"
 
 class GameController {
     private:
@@ -22,6 +23,7 @@ class GameController {
         bool    GameOver = false;       // GameOver?
         bool    QuitGame = false;       // player Quit?
         bool    Collision = false;      // Collision Occurred
+        ClientConnection clientConnection;  // Client to Server Connection
         // Timer Settings?
     protected:
     public:

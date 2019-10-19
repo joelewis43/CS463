@@ -4,6 +4,7 @@
 
 #include "GameController.h"
 #include "Player.h"
+#include "ClientConnection.h"
 
 ////////////////////////////////
 ///                          ///
@@ -34,6 +35,9 @@ void GameController::MainGameLoop()
 {
     // Clear Screen
     std::cout << "\033[2J\033[1;1H";
+
+    // Connection to Server
+    //clientConnection.setupConnectionSocket();
 
     // Menus
     MainMenu();
