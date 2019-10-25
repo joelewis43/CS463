@@ -1,5 +1,10 @@
 #include "matrix.h"
 
+GameMatrix::GameMatrix()
+{
+    buffer = vector<vector<Object *>>();
+}
+
 GameMatrix::GameMatrix(int rows, int cols)
 {
     buffer = vector<vector<Object *>>(rows, vector<Object *>(cols));
@@ -51,6 +56,11 @@ void GameMatrix::advance()
     }
 }
 
+void GameMatrix::updateTop(vector<Object *> &row)
+{
+    buffer.at(0).assign(row.begin(), row.end());
+}
+
 string GameMatrix::serialize()
 {
     return stringMap([](Object *object) { return object ? object->toID() : ' '; });
@@ -91,50 +101,6 @@ void GameMatrix::loadFromStr(string str)
     }
 }
 
-void GameMatrix::printToScreen()
-{
-    int col = buffer.at(0).size();
-    string temp, strBoard = toString();
-    std::stringstream streamA, streamB(strBoard);
-
-    // Top border for the game board
-    for (int i = 0; i < col; i++)
-    {
-        if (i == 0 || i == col - 1)
-        {
-            streamA << "__";
-        }
-        else
-        {
-            streamA << "_";
-        }
-    }
-
-    streamA << endl;
-
-    // Surround row of the board with the pipe to represent the endges
-    // of the game board
-    while (std::getline(streamB, temp, '\n'))
-    {
-        streamA << "|" << temp << "|" << endl;
-    }
-
-    // Bottom boarder for the game board
-    for (int i = 0; i < col; i++)
-    {
-        if (i == 0 || i == col - 1)
-        {
-            streamA << "--";
-        }
-        else
-        {
-            streamA << "-";
-        }
-    }
-
-    cout << streamA.str() << endl;
-}
-
 void GameMatrix::clear()
 {
     for (vector<Object *> &row : buffer)
@@ -149,6 +115,12 @@ void GameMatrix::clear()
             row[i] = nullptr;
         }
     }
+}
+
+void GameMatrix::clearScreen()
+{
+    // CSI[2J clears screen, CSI[H moves the cursor to top-left corner
+    cout << "\x1B[2J\x1B[H";
 }
 
 vector<Object *> &GameMatrix::operator[](int index)

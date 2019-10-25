@@ -48,6 +48,14 @@ private:
 
 public:
     /**
+     * Default Constructor for the GameMatrix class
+     * 
+     * @param row - Number of rows in the matrix
+     * @param col - Number of columns in the matrix
+     **/
+    GameMatrix();
+
+    /**
      * Constructor for the GameMatrix class
      * 
      * @param row - Number of rows in the matrix
@@ -64,6 +72,10 @@ public:
      **/
     void clear();
 
+    /**
+     * Clears the terminal window
+     **/
+    void clearScreen();
 
     /**
      * Gets an object from a cell in the matrix
@@ -90,6 +102,15 @@ public:
     void advance();
 
     /**
+     * Updates the top row of the matrix with the contents of the
+     * passed vector
+     * 
+     * @param row - Row of Object pointers
+     * 
+     **/
+    void updateTop(vector<Object *> &row);
+
+    /**
      * Initializes or updates the matrix with objects based on
      * the IDs indicated in the input string.
      * 
@@ -97,12 +118,6 @@ public:
      *                \n characters
      **/
     void loadFromStr(string input);
-
-    /**
-     * Prints the string representation of the matrix to the terminal
-     * in a game board.
-     **/
-    void printToScreen();
 
     /**
      * Returns a string representation of the matrix.
