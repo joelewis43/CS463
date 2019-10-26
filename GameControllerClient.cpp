@@ -1,8 +1,8 @@
 //
-// Created by Devin Gendron on 2019-10-18.
+// Created by Devin Gendron on 2019-10-24.
 //
 
-#include "GameController.h"
+#include "GameControllerClient.h"
 #include "Player.h"
 #include "ClientConnection.h"
 
@@ -13,14 +13,15 @@
 ////////////////////////////////
 
 // Constructor
-GameController::GameController()
+GameControllerClient::GameControllerServer()
 {
     // Set Timer Settings Here
 }
 
 //GameController::GameController();             // Overload Constructor
-GameController::~GameController()
+GameControllerClient::~GameControllerServer()
 {
+
 
 }// Destructor
 
@@ -31,13 +32,19 @@ GameController::~GameController()
 ////////////////////////////////
 
 // Main Game Loop
-void GameController::MainGameLoop()
+void GameControllerClient::MainGameLoop()
 {
     // Clear Screen
     std::cout << "\033[2J\033[1;1H";
 
+    // Time Seed for Score Keeping
+    srand(time(NULL));
+
     // Connection to Server
     //clientConnection.setupConnectionSocket();
+
+    // if connection good
+    //SetServerConnection(true);
 
     // Menus
     MainMenu();
@@ -48,9 +55,9 @@ void GameController::MainGameLoop()
         CountDownScreen();
 
         // Begin Game
-        /*while(GetGameOver() != true)
+        /*while(GetGameOver() != true && GetServerConnection == true)
         {
-
+            UpdateGame();
         }*/
     }
     else
@@ -64,7 +71,7 @@ void GameController::MainGameLoop()
 }
 
 // Main Menu
-void GameController::MainMenu()
+void GameControllerClient::MainMenu()
 {
     int selection = -1;
 
@@ -88,7 +95,7 @@ void GameController::MainMenu()
                 case 1:
                     // Play Game - Set Name
                     NameMenu();
-                    AwaitingPlayer();
+                    AwaitingPlayer();   // Listening to Server / Tell Server Client is Ready
                     ControlSelection();
                     break;
                 case 2:
@@ -121,17 +128,25 @@ void GameController::MainMenu()
 }
 
 // LeaderBoard Menu
-void GameController::LeaderBoard()
+void GameControllerClient::LeaderBoard()
 {
     // Open File and View Leader Boards
     // Clear Screen
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Leader Board Function" << std::endl;
     sleep(2);
+
+    // Ask Server for LeaderBoard
+
+    // Wait for server to send leaderboard
+
+    // Display Leader Board
+
+    // User Input to Return to Menu
 }
 
 // Select Player Name
-void GameController::NameMenu()
+void GameControllerClient::NameMenu()
 {
     std::string name = "";
 
@@ -146,16 +161,19 @@ void GameController::NameMenu()
             // Display Menu to Enter Name
             std::cout << "Enter Your Name" << std::endl;
             std::cout << std::endl;
-            std::cout << "3-20 Alphanumeric Characters Required" << std::endl;
+            std::cout << "3-5 Alphanumeric Characters Required" << std::endl;
             std::cout << "Press Enter to Continue" << std::endl;
             std::cout << std::endl;
             std::cout << "Name: ";
             std::cin >> name;
 
-            if(name.size() >= 3 && name.size() <= 20)
+            if(name.size() >= 3 && name.size() <= 5)
             {
                 // Set Name in Player Object
                 player.SetName(name);
+
+                // Tell it to Server
+                /////////
                 break;
             }
             else
@@ -170,16 +188,19 @@ void GameController::NameMenu()
             std::cout << "Please note - Your current name: " << player.GetName() << " will be overwritten." << std::endl;
             std::cout << "Enter Your Name" << std::endl;
             std::cout << std::endl;
-            std::cout << "3-20 Alphanumeric Characters Required" << std::endl;
+            std::cout << "3-5 Alphanumeric Characters Required" << std::endl;
             std::cout << "Press Enter to Continue" << std::endl;
             std::cout << std::endl;
             std::cout << "Name: ";
             std::cin >> name;
 
-            if(name.size() >= 3 && name.size() <= 20)
+            if(name.size() >= 3 && name.size() <= 5)
             {
                 // Set Name in Player Object
                 player.SetName(name);
+
+                // Tell it to Server
+                /////////
                 break;
             }
             else
@@ -191,28 +212,41 @@ void GameController::NameMenu()
     }
 }
 
-// Await Player Server Connection
-void GameController::AwaitingPlayer()
+// Checks for Server Connection
+void GameControllerClient::ServerConnection()
 {
-    bool PlayerJoined = false;
+    // check if connection is okay
+    //if(socket !connected)
+    //{
+    //    SetServerConnection(false);
+    //}
+}
+
+// Await Player Server Connection
+void GameControllerClient::AwaitingPlayer()
+{
+    bool PlayerJoined1 = false;
+    bool PlayerJoined2 = false;
 
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Waiting for your partner..." << std::endl;
     std::cout << "Thank you for your patience" << std::endl;
-    /*while(PlayerJoined == false)
-    {
-        // Check if Player on Server
-        if(true)
-        {
-            PlayerJoined = true;
-        }
-    }*/
-    sleep(2);
+    /*
+     //listen for player 1
+     // listen for player 2
+     // if player 1 and player 2 present
+     // then continue
+     * */
+    sleep(1);
 }
 
 // Player Selects Controls
-void GameController::ControlSelection()
+void GameControllerClient::ControlSelection()
 {
+    // Ping Server
+    // Ask What controls for each player are
+
+    // Display controls
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Player Controls" << std::endl;
     std::cout << "Up/Down: " << /*Rand.Player*/ std::endl;
@@ -221,8 +255,9 @@ void GameController::ControlSelection()
 }
 
 // Displayed Before Game Starts
-void GameController::CountDownScreen()
+void GameControllerClient::CountDownScreen()
 {
+    // Send to clients
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Game Starting in..." << std::endl;
 
@@ -236,7 +271,7 @@ void GameController::CountDownScreen()
 }
 
 // Displayed After Player Loses
-void GameController::GameOverMenu()
+void GameControllerClient::GameOverMenu()
 {
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Game Over!" << std::endl;
@@ -244,119 +279,24 @@ void GameController::GameOverMenu()
     std::cout << "Play Game? (y/n)" << std::endl;
 }
 
-// Checks for Server Connection
-bool GameController::ServerConnection()
+//
+void GameControllerClient::UpdateGame()
 {
-
-}
-
-// Checks for Player/Object Collisions
-bool GameController::CheckCollisions()
-{
-    // Logic For Collision
-
-    // Set Collision to True if True
-    //SetCollisionOccur(true);
-}
-
-// Create Special Game Events
-void GameController::CreateSpecialEvent()
-{
-
-}
-
-// Update Player Location
-void GameController::MovePlayer()
-{
-    // Async Keyboard catch
-    /*if(up)
+    // Server say there was a collision
+    if(Collision == true)
     {
-        CheckCollisions();
-        if(GetCollisionOccur() == false)
-        {
-            player.MoveUp();
-            // Update Image on Board
-        }
-        else
-        {
-            // Game Over
-                SetGameOver(true);
-        }
+        SetGameOver(true);
+        break;
     }
-    if(down)
-    {
-        CheckCollisions();
-        if(GetCollisionOccur() == false)
-        {
-            player.MoveDown();
-            // Update Image on Board
-        }
-        else
-        {
-            // Game Over
-            SetGameOver(true);
-        }
-    }
-    if(left)
-    {
-        CheckCollisions();
-        if(GetCollisionOccur() == false)
-        {
-            player.MoveLeft();
-            // Update Image on Board
-        }
-        else
-        {
-            // Game Over
-            SetGameOver(true);
-        }
-    }
-    if(right)
-    {
-        CheckCollisions();
 
-        if(GetCollisionOccur() == false)
-        {
-            player.MoveRight();
-            // Update Image on Board
-        }
-        else
-        {
-            // Game Over
-            SetGameOver(true);
-        }
-    }*/
+    // Print Screen
+    // Movement Selection
+    // Send to Server
+
+    // Check Server Connection
+    ServerConnection();
 }
 
-// Update Object Locations
-void GameController::MoveObjects()
-{
-
-}
-
-// Move Environment
-void GameController::MoveEnvironment()
-{
-
-}
-
-// Sets New Environment
-void GameController::UpdateEnvironment()
-{
-
-}
-
-// Update Game State
-void GameController::UpdateGame()
-{
-
-}
-
-// Send Map to Client/Server
-void GameController::SendMap()
-{
-
-}
 
 ////////////////////////////////
 ///                          ///
@@ -364,42 +304,29 @@ void GameController::SendMap()
 ///                          ///
 ////////////////////////////////
 
-// Get Score
-int GameController::GetScore()
-{
-    return Score;
-}
-
-// Get GameOver Bool
-bool GameController::GetGameOver()
-{
-    return GameOver;
-}
-
-// Get IsRunning Bool
-bool GameController::GetIsRunning()
-{
-    return IsRunning;
-}
-
-// Get GameQuit bool
-bool GameController::GetQuitGame()
+// Get GameQuit Bool
+bool GameControllerClient::GetQuitGame()
 {
     return QuitGame;
 }
 
-// Get Collision Bool
-bool GameController::GetCollisionOccur()
-{
-    return Collision;
-}
-
-Player GameController::GetPlayerObject()
+// Get Player Object
+Player GameControllerClient::GetPlayerObject()
 {
     return player;
 }
 
-//GameBoard GameController::GetGameBoard();
+// Get ServerConnected Bool
+bool GameControllerClient::GetServerConnection()
+{
+    return ServerConnected;
+}
+
+// Get Game Over
+bool GameControllerClient::GetGameOver()
+{
+    return GameOver;
+}
 
 ////////////////////////////////
 ///                          ///
@@ -407,34 +334,21 @@ Player GameController::GetPlayerObject()
 ///                          ///
 ////////////////////////////////
 
-// Set Score
-void GameController::SetScore(int updateScore)
-{
-    Score = updateScore;
-}
-
-// Set GameOver Bool
-void GameController::SetGameOver(bool GameOverState)
-{
-    GameOver = GameOverState;
-}
-
-// Set IsRunning Bool()
-void GameController::SetIsRunning(bool IsRunningState)
-{
-    IsRunning = IsRunningState;
-}
 
 // Set GameQuit bool
-void GameController::SetQuitGame(bool QuitGameSet)
+void GameControllerClient::SetQuitGame(bool QuitGameSet)
 {
     QuitGame = QuitGameSet;
 }
 
-// Get Collision Bool
-void GameController::SetCollisionOccur(bool occurrence)
+// Set ServerConnected Bool
+void GameControllerClient::SetServerConnection(bool SetServerConnected)
 {
-    Collision = occurrence;
+    ServerConnected = SetServerConnected;
 }
 
-//GameBoard GameController::SetGameBoard();
+// Set Game Over
+void GameControllerClient::SetGameOver(bool GameOverSet)
+{
+    GameOver = GameOverSet;
+}

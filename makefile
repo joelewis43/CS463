@@ -1,11 +1,14 @@
-output: main.o GameController.o Player.o ClientConnection.o
-	g++ -g -std=c++0x main.o GameController.o Player.o ClientConnection.o -o main
+output: main.o GameControllerServer.o GameControllerClient.o Player.o ClientConnection.o
+	g++ -g -std=c++0x main.o GameControllerServer.o GameControllerClient.o Player.o ClientConnection.o -o main
 
 main.o: main.cpp
 	g++ -c -g -std=c++0x main.cpp
 
-GameController.o: GameController.cpp GameController.h
-	g++ -c -g -std=c++0x GameController.cpp
+GameControllerServer.o: GameControllerServer.cpp GameControllerServer.h
+	g++ -c -g -std=c++0x GameControllerServer.cpp
+
+GameControllerClient.o: GameControllerClient.cpp GameControllerClient.h
+	g++ -c -g -std=c++0x GameControllerClient.cpp
 
 Player.o: Player.cpp Player.h
 	g++ -c -g -std=c++0x Player.cpp
