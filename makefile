@@ -1,5 +1,5 @@
-output: main.o GameControllerServer.o GameControllerClient.o Player.o ClientConnection.o
-	g++ -g -std=c++0x main.o GameControllerServer.o GameControllerClient.o Player.o ClientConnection.o -o main
+output: main.o GameControllerServer.o GameControllerClient.o Player.o serverSocket.o clientSocket.o
+	g++ -g -std=c++0x main.o GameControllerServer.o GameControllerClient.o Player.o serverSocket.o clientSocket.o -o main
 
 main.o: main.cpp
 	g++ -c -g -std=c++0x main.cpp
@@ -13,8 +13,11 @@ GameControllerClient.o: GameControllerClient.cpp GameControllerClient.h
 Player.o: Player.cpp Player.h
 	g++ -c -g -std=c++0x Player.cpp
 
-ClientConnection.o: ClientConnection.cpp ClientConnection.h
-	g++ -c -g -std=c++0x ClientConnection.cpp
+serverSocket.o: serverSocket.cpp serverSocket.h
+	g++ -c -g -std=c++0x serverSocket.cpp
+
+clientSocket.o: clientSocket.cpp clientSocket.h
+	g++ -c -g -std=c++0x clientSocket.cpp
 
 val:
 	valgrind --tool=memcheck --leak_check=yes --show-reachable=yes --track-fds=yes ./main

@@ -4,7 +4,7 @@
 
 #include "GameControllerServer.h"
 #include "Player.h"
-#include "ClientConnection.h"
+#include "serverSocket.h"
 
 ////////////////////////////////
 ///                          ///

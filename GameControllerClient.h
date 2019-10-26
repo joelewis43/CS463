@@ -21,12 +21,12 @@
 #include <sstream>
 #include <math.h>
 #include "Player.h"
-#include "ClientConnection.h"
+#include "clientSocket.h"
 
 
 class GameControllerClient {
     private:
-        //ClientConnection clientConnection;        // Client to Server Connection
+        clientSocket ClientSocket;                  // Client to Server Connection
         Player  player;                             // Player Object
         bool    QuitGame = false;                   // Quit Game
         bool    ServerConnected = false;            // Server Connection

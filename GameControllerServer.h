@@ -21,7 +21,7 @@
 #include <sstream>
 #include <math.h>
 #include "Player.h"
-#include "ClientConnection.h"
+#include "serverSocket.h"
 
 struct ScoreOrganizer
 {
@@ -40,6 +40,7 @@ class GameControllerServer {
         bool    GameOver = false;                               // GameOver?
         bool    QuitGame = false;                               // player Quit?
         bool    Collision = false;                              // Collision Occurred
+        serverSocket ServerSocket;                              // Server Socket
     protected:
     public:
         // Constructor/Destructor
