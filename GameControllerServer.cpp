@@ -40,13 +40,11 @@ void GameControllerServer::MainGameLoop()
     // Time Seed for Score Keeping
     srand(time(NULL));
 
-    // Menus
-    //MainMenu();
     while(1)
     {
-        // Connect to Player 1
-        // Tell Client 1 that you are waiting for player 2
-        // Connect to Player 2
+        // Connect to Clients
+        ServerSocket().waitForClients();
+
         // Tell Clients connections have been made
         // Tell Clients to Start Countdowns
         CountDownScreen();
@@ -60,63 +58,6 @@ void GameControllerServer::MainGameLoop()
             // Update Game
             UpdateGame();
         }*/
-    }
-}
-
-// Main Menu
-void GameControllerServer::MainMenu()
-{
-    int selection = -1;
-
-    while(selection == -1)
-    {
-        std::cout << "SpaceRunner" << std::endl;
-        std::cout << std::endl;
-        std::cout << "1. Play" << std::endl;
-        std::cout << "2. LeaderBoard" << std::endl;
-        std::cout << "3. Exit Game" << std::endl;
-        std::cout << std::endl;
-        std::cout << "*Enter your menu selection and press Enter" << std::endl;
-        std::cout << std::endl;
-        std::cout << "Selection: ";
-        std::cin >> selection;
-
-        if(selection > 0 && selection < 4)
-        {
-            switch(selection)
-            {
-                case 1:
-                    // Play Game - Set Name
-                    NameMenu();
-                    AwaitingPlayer();
-                    ControlSelection();
-                    break;
-                case 2:
-                    // Leader Boards
-                    LeaderBoard();
-                    break;
-                case 3:
-                    // Quit Game
-                    SetQuitGame(true);
-                    break;
-                default:
-                    std::cout << "Something Went Wrong..." << std::endl;
-                    break;
-            }
-        }
-        else
-        {
-            std::cout << std::endl;
-            std::cout << "Please Select 1, 2, or 3." << std::endl;
-            selection = -1;
-        }
-
-        if (selection == 2)
-        {
-            // Clear Screen and Let Menu Appear Again
-            std::cout << "\033[2J\033[1;1H";
-            selection = -1;
-        }
     }
 }
 

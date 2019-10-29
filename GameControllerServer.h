@@ -40,7 +40,7 @@ class GameControllerServer {
         bool    GameOver = false;                               // GameOver?
         bool    QuitGame = false;                               // player Quit?
         bool    Collision = false;                              // Collision Occurred
-        serverSocket ServerSocket;                              // Server Socket
+        serverSocket ServerSocket(88432);                       // Server Socket
     protected:
     public:
         // Constructor/Destructor
@@ -54,7 +54,6 @@ class GameControllerServer {
 
         // GameController Functions
         void MainGameLoop();                                    // Main Game Loop
-        void MainMenu();                                        // Main Menu
         void LeaderBoard();                                     // LeaderBoard Menu
         void SortLeaderBoard(std::vector<ScoreOrganizer>&);     // Sorts LeaderBoard
         void UpdateLeaderBoards();                              // Updates LeaderBoards
