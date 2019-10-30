@@ -46,7 +46,9 @@ void GameControllerServer::MainGameLoop()
         ServerSocket().waitForClients();
 
         // Tell Clients connections have been made
+
         // Tell Clients to Start Countdowns
+
         CountDownScreen();
 
         // Begin Timer
@@ -70,7 +72,7 @@ void GameControllerServer::LeaderBoard()
     std::cout << "Leader Board Function" << std::endl;
     sleep(2);
 
-    /*std::string filePath = "S:\\Public\\WNJ\\DevinGendron\\highscores.txt";
+    std::string filePath = "LeaderBoards.txt";
     std::ifstream file;
 
     file.open(filePath);
@@ -100,7 +102,7 @@ void GameControllerServer::LeaderBoard()
         {
             break;
         }
-    }*/
+    }
 }
 
 // Sort Leader Board
@@ -128,7 +130,7 @@ void GameControllerServer::SortLeaderBoard(std::vector<ScoreOrganizer> &updateSc
 // Update Leader Board
 void GameControllerServer::UpdateLeaderBoards()
 {
-    std::string filePath = ".\\LeaderBoards.txt";
+    std::string filePath = "LeaderBoards.txt";
     std::ifstream file;
 
     std::vector<ScoreOrganizer> updateScores;
@@ -180,7 +182,7 @@ void GameControllerServer::UpdateLeaderBoards()
         file.close();
     }
 
-    std::string filePathRewrite = ".\\\\LeaderBoards.txt";
+    std::string filePathRewrite = "LeaderBoards.txt";
     std::ofstream fileRewrite;
 
     fileRewrite.open(filePath);
@@ -210,7 +212,7 @@ void GameControllerServer::UpdateLeaderBoards()
 // Save Score
 void GameControllerServer::SaveScore(std::string playerName, int score)
 {
-    std::string filePath = ".\\LeaderBoards.txt";
+    std::string filePath = "LeaderBoards.txt";
     std::ofstream file;
 
     file.open(filePath, std::fstream::app);
@@ -305,64 +307,11 @@ void GameControllerServer::CreateSpecialEvent()
 // Update Player Location
 void GameControllerServer::MovePlayer()
 {
-    // Async Keyboard catch
-    /*if(up)
-    {
-        CheckCollisions();
-        if(GetCollisionOccur() == false)
-        {
-            player.MoveUp();
-            // Update Image on Board
-        }
-        else
-        {
-            // Game Over
-                SetGameOver(true);
-        }
-    }
-    if(down)
-    {
-        CheckCollisions();
-        if(GetCollisionOccur() == false)
-        {
-            player.MoveDown();
-            // Update Image on Board
-        }
-        else
-        {
-            // Game Over
-            SetGameOver(true);
-        }
-    }
-    if(left)
-    {
-        CheckCollisions();
-        if(GetCollisionOccur() == false)
-        {
-            player.MoveLeft();
-            // Update Image on Board
-        }
-        else
-        {
-            // Game Over
-            SetGameOver(true);
-        }
-    }
-    if(right)
-    {
-        CheckCollisions();
+    // Receive Data From Client
 
-        if(GetCollisionOccur() == false)
-        {
-            player.MoveRight();
-            // Update Image on Board
-        }
-        else
-        {
-            // Game Over
-            SetGameOver(true);
-        }
-    }*/
+    // Update Player Location (X|Y)
+
+    // Update Map
 }
 
 // Update Object Locations

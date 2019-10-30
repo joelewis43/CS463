@@ -22,11 +22,14 @@
 #include <math.h>
 #include "Player.h"
 #include "clientSocket.h"
+#include <ncurses.h>
 
+const int PORT = 88432;
+const char* IP = "";
 
 class GameControllerClient {
     private:
-        clientSocket ClientSocket;                  // Client to Server Connection
+        clientSocket ClientSocket(IP, PORT);                  // Client to Server Connection
         Player  player;                             // Player Object
         bool    QuitGame = false;                   // Quit Game
         bool    ServerConnected = false;            // Server Connection

@@ -22,6 +22,7 @@
 #include <math.h>
 #include "Player.h"
 #include "serverSocket.h"
+#include <ncurses.h>
 
 struct ScoreOrganizer
 {

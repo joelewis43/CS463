@@ -13,13 +13,13 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerClient::GameControllerServer()
+GameControllerClient::GameControllerClient()
 {
-    // Set Timer Settings Here
+
 }
 
 //GameController::GameController();             // Overload Constructor
-GameControllerClient::~GameControllerServer()
+GameControllerClient::~GameControllerClient()
 {
 
 
@@ -40,9 +40,6 @@ void GameControllerClient::MainGameLoop()
     // Time Seed for Score Keeping
     srand(time(NULL));
 
-    // Connection to Server
-    //clientConnection.setupConnectionSocket();
-
     // if connection good
     //SetServerConnection(true);
 
@@ -51,14 +48,20 @@ void GameControllerClient::MainGameLoop()
 
     if(GetQuitGame() == false)
     {
+        // Initialize ncurses
+        initscr();
+
+        // Set Arrow Keys to Non-Blocking
+        keypad(stdscr, TRUE);
+
         // Display Game Count Down
         CountDownScreen();
 
         // Begin Game
-        /*while(GetGameOver() != true && GetServerConnection == true)
+        while(GetGameOver() != true && GetServerConnection == true)
         {
             UpdateGame();
-        }*/
+        }
     }
     else
     {
@@ -66,6 +69,7 @@ void GameControllerClient::MainGameLoop()
         // Clear Screen
         std::cout << "\033[2J\033[1;1H";
         std::cout << "Thanks for playing!" << std::endl;
+        endwin();
         sleep(1);
     }
 }
@@ -279,9 +283,91 @@ void GameControllerClient::GameOverMenu()
     std::cout << "Play Game? (y/n)" << std::endl;
 }
 
+// Update Player Location
+void GameControllerClient::MovePlayer()
+{
+    // Async Keyboard catch
+    int keyboard_input = getch();
+
+    switch(keyboard_input)
+    {
+        case KEY_UP:
+        {
+            CheckCollisions();
+            if(GetCollisionOccur() == false)
+            {
+                player.MoveUp();
+                // Update Image on Board
+                break;
+            }
+            else
+            {
+                // Game Over
+                SetGameOver(true);
+                break;
+            }
+        }
+        case KEY_DOWN:
+        {
+            CheckCollisions();
+            if(GetCollisionOccur() == false)
+            {
+                player.MoveDown();
+                // Update Image on Board
+                break;
+            }
+            else
+            {
+                // Game Over
+                SetGameOver(true);
+                break;
+            }
+        }
+        case KEY_LEFT:
+        {
+            CheckCollisions();
+            if(GetCollisionOccur() == false)
+            {
+                player.MoveLeft();
+                // Update Image on Board
+                break;
+            }
+            else
+            {
+                // Game Over
+                SetGameOver(true);
+                break;
+            }
+        }
+        case KEY_RIGHT:
+        {
+            CheckCollisions();
+
+            if(GetCollisionOccur() == false)
+            {
+                player.MoveRight();
+                // Update Image on Board
+                break;
+            }
+            else
+            {
+                // Game Over
+                SetGameOver(true);
+                break;
+            }
+        }
+    }
+}
+
 //
 void GameControllerClient::UpdateGame()
 {
+    // Check Server Connection
+    ServerConnection();
+
+    // Receive Data From Server
+    //ClientSocket().receive();
+
     // Server say there was a collision
     if(Collision == true)
     {
@@ -290,8 +376,11 @@ void GameControllerClient::UpdateGame()
     }
 
     // Print Screen
+
     // Movement Selection
+
     // Send to Server
+    //ClientSocket().deliver();
 
     // Check Server Connection
     ServerConnection();
