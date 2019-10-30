@@ -55,11 +55,11 @@ void GameControllerServer::MainGameLoop()
         start = std::clock();
 
         // Begin Game
-        /*while(GetGameOver() != true)
+        while(GetGameOver() != true)
         {
             // Update Game
             UpdateGame();
-        }*/
+        }
     }
 }
 
