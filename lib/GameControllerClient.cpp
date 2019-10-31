@@ -159,8 +159,10 @@ void GameControllerClient::LeaderBoard(clientSocket ClientSocket)
     // Ask Server for LeaderBoard
     //ClientSocket.deliver();
 
+    // Handshake From Server to Recognize
+
     // Wait for server to send leaderboard
-    ClientSocket.receive();
+    //ClientSocket.receive();
 
     // Display Leader Board
 
@@ -287,8 +289,12 @@ void GameControllerClient::ControlSelection(clientSocket ClientSocket)
 }
 
 // Displayed Before Game Starts
-void GameControllerClient::CountDownScreen()
+void GameControllerClient::CountDownScreen(clientSocket ClientSocket)
 {
+    // If can start countdown - start
+    //ClientSocket.receive();
+
+
     // Send to clients
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Game Starting in..." << std::endl;
@@ -305,6 +311,9 @@ void GameControllerClient::CountDownScreen()
 // Displayed After Player Loses
 void GameControllerClient::GameOverMenu(clientSocket ClientSocket)
 {
+    // Get Score Data
+    //ClientSocket.receive();
+
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Game Over!" << std::endl;
     std::cout << "Score: " << GetScore() << std::endl;

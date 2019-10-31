@@ -48,6 +48,7 @@ void GameControllerServer::MainGameLoop()
         // Connect to Clients ( 1 and 2 )
         ServerSocket.waitForClients();
 
+        //// Logic needed for when Clients are in Menu and not ready for game procedure
         ////// Clients in Menu - Not Ready for Gameplay
         //////(Call For Leaderboards here)
 
@@ -61,7 +62,7 @@ void GameControllerServer::MainGameLoop()
         start = std::clock();
 
         // Begin Game
-        while(GetGameOver() != true)                        ////////Server connection
+        while(GetGameOver() != true || !ServerSocket)
         {
             // Update Game
             UpdateGame(serverSocket ServerSocket);
@@ -94,8 +95,9 @@ void GameControllerServer::LeaderBoard(serverSocket ServerSocket)
         {
             getline(file, line);
             std::cout << line << std::endl;
+            /// Send whole file at once or line by line??
             ////////////
-            /////ServerSocket.deliver(line);
+            /////ServerSocket.deliver(line.c_str());
             ////////
         }
         file.close();
@@ -239,31 +241,31 @@ void GameControllerServer::UpdateScore()
 }
 
 // Select Player Name
-void GameControllerServer::NameMenu()
+void GameControllerServer::NameMenu(serverSocket ServerSocket)
 {
-    // Await Client
+    // Await Client name signal1
 
     // Receive Player 1 Name
 
+    // Await Client name signal2
+
     // Receive Player 2 Name
 
-    // Concatenate
+    // Concatenate Names
 
     // Continue
 }
 
 // Await Player Server Connection
-void GameControllerServer::AwaitingPlayer()
+void GameControllerServer::AwaitingPlayer(serverSocket ServerSocket)
 {
-    //std::cout << "\033[2J\033[1;1H";
-    //std::cout << "Waiting for your partner..." << std::endl;
-    //std::cout << "Thank you for your patience" << std::endl;
+    ////// Deliver message that both clients have connected
     //ServerSocket.deliver();
     sleep(1);
 }
 
 // Player Selects Controls
-void GameControllerServer::ControlSelection()
+void GameControllerServer::ControlSelection(serverSocket ServerSocket)
 {
     int player1Controls = 0;
     int player2Controls = 0;
@@ -282,25 +284,29 @@ void GameControllerServer::ControlSelection()
         player2Controls = 1;
     }
 
-    // Send Command to Clients
+    // Send Command to Clients to indicate control types
     //ServerSocket.deliver();
     sleep(1);
 }
 
 // Displayed Before Game Starts
-void GameControllerServer::CountDownScreen()
+void GameControllerServer::CountDownScreen(serverSocket ServerSocket)
 {
     // Tell Clients to start countdowns
     //ServerSocket.deliver();
+    //// OR
+    ///// Have countdown screen in Tevin's game env
 }
 
 // Checks for Player/Object Collisions
-bool GameControllerServer::CheckCollisions()
+bool GameControllerServer::CheckCollisions(serverSocket ServerSocket)
 {
     // Logic For Collision
 
     // Set Collision to True if True
     //SetCollisionOccur(true);
+
+    // tell clients
 }
 
 // Create Special Game Events
@@ -310,13 +316,15 @@ void GameControllerServer::CreateSpecialEvent()
 }
 
 // Update Player Location
-void GameControllerServer::MovePlayer()
+void GameControllerServer::MovePlayer(serverSocket ServerSocket)
 {
     // Receive Data From Client
 
     // Update Player Location (X|Y)
 
     // Update Map
+
+    // continue
 }
 
 // Update Object Locations
@@ -344,10 +352,10 @@ void GameControllerServer::SendMap()
 }
 
 // Update Game State
-void GameControllerServer::UpdateGame()
+void GameControllerServer::UpdateGame(serverSocket ServerSocket)
 {
     // Check Server Connection
-    if(ServerConnection() == true)
+    if(ServerSocket)
     {
         // Print Screen
 
