@@ -82,6 +82,15 @@ void serverSocket::init() {
 
 }
 
+bool serverSocket::getConnection() {
+
+    if (clients[0] == 0 || clients[1] == 0)
+        return 0;
+
+    return 1;
+
+}
+
 void serverSocket::error(char const *msg, int exitCode) {
     std::cout << msg << std::endl;
     exit(exitCode);

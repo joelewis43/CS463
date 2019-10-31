@@ -15,10 +15,13 @@ clientSocket::clientSocket(char const *ip, int port) {
 }
 
 clientSocket::~clientSocket() {
+    connected = 0;      // should also be set in a standalone close function
+                        // to support the case where a user disconnects from
+                        // from the server but still has the client open
     close(sock);
 }
 
-void clientSocket::deliver(char *msg) {
+void clientSocket::deliver(const char *msg) {
     std::cout << "Msg size: " << strlen(msg) << std::endl;
     send(sock, msg, strlen(msg), 0);
 }
@@ -81,9 +84,15 @@ void clientSocket::init() {
         }
     }
 
+    connected = 1;
+
 }
 
 void clientSocket::error(char const *msg, int exitCode) {
     std::cout << msg << std::endl;
     exit(exitCode);
+}
+
+bool clientSocket::getConnection() {
+    return connected;
 }

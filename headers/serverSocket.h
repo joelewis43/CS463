@@ -66,6 +66,13 @@ class serverSocket {
          **/
         void waitForClients();
 
+        /**
+         * Returns true if both client connections exist
+         * 
+         * @returns - a bool representing if both clients are connected
+        **/
+        bool getConnection();
+
     private:
 
         char *ip;
@@ -86,11 +93,7 @@ class serverSocket {
          * @param buffer - the buffer to store the response
          * @param id - the client id to read (0 or 1)
         **/
-<<<<<<< HEAD
         size_t receive(char buffer[MAX_BYTES], int clientID);
-=======
-        size_t receive(char buffer[MAX_BYTES], int id);
->>>>>>> 485e41f377c4561d91a2f5267153dc34418e406e
 
         /**
          * Prints the given message upon error and exits with exitCode
