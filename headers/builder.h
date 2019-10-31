@@ -15,7 +15,7 @@ protected:
     // level should have per row of the level
     int cols;
     // Matrix containing the objects of the level
-    vector<vector<Object *>> level;
+    vector<vector<Object *> > level;
 public:
     /**
      * Constructor for a LevelBuilder object

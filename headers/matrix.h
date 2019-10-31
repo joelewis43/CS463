@@ -33,7 +33,7 @@ private:
      * row and column member to the class and  computing the end of a row for each
      * matrix iteration
      **/
-    vector<vector<Object *>> buffer;
+    vector<vector<Object *> > buffer;
 
     /**
      * Applies a function for each cell in the matrix to

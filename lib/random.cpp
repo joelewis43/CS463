@@ -1,4 +1,4 @@
-#include "random.h"
+#include "../headers/random.h"
 
 int randomInt(int low, int high)
 {

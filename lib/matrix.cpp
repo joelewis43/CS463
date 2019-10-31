@@ -1,4 +1,4 @@
-#include "matrix.h"
+#include "../headers/matrix.h"
 
 GameMatrix::GameMatrix()
 {

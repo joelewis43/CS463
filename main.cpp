@@ -6,7 +6,7 @@ int main()
 {
     initscr();
 
-    GameController game;
+    GameControllerServer game;
 
     game.MainGameLoop();
 

@@ -1,4 +1,4 @@
-#include "environment.h"
+#include "../headers/environment.h"
 
 Environment::Environment(WINDOW *window, int levelRows)
 {

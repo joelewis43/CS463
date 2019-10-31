@@ -1,4 +1,4 @@
-#include "output.h"
+#include "../headers/window.h"
 
 WINDOW *createBorderWindow()
 {
