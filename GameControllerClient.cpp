@@ -157,9 +157,10 @@ void GameControllerClient::LeaderBoard(clientSocket ClientSocket)
     sleep(2);
 
     // Ask Server for LeaderBoard
-
+    //ClientSocket.deliver();
 
     // Wait for server to send leaderboard
+    ClientSocket.receive();
 
     // Display Leader Board
 
