@@ -19,6 +19,10 @@ clientSocket::~clientSocket() {
 }
 
 void clientSocket::deliver(char *msg) {
+<<<<<<< HEAD
+=======
+    std::cout << "Msg size: " << strlen(msg) << std::endl;
+>>>>>>> 485e41f377c4561d91a2f5267153dc34418e406e
     send(sock, msg, strlen(msg), 0);
 }
 
