@@ -2,7 +2,7 @@
 // Created by Devin Gendron on 2019-10-18.
 //
 
-#include "Player.h"
+#include "../headers/Player.h"
 
 ////////////////////////////////
 ///                          ///

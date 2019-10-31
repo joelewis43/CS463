@@ -1,4 +1,4 @@
-#include "GameControllerServer.h"
+#include "headers/GameControllerServer.h"
 
 #include <ncurses.h>
 

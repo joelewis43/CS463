@@ -4,13 +4,13 @@ output: main.o GameControllerServer.o GameControllerClient.o Player.o serverSock
 main.o: main.cpp
 	g++ -c -g -std=c++0x main.cpp
 
-GameControllerServer.o: GameControllerServer.cpp GameControllerServer.h
+GameControllerServer.o: lib/GameControllerServer.cpp headers/GameControllerServer.h
 	g++ -c -g -std=c++0x GameControllerServer.cpp
 
-GameControllerClient.o: GameControllerClient.cpp GameControllerClient.h
+GameControllerClient.o: lib/GameControllerClient.cpp headers/GameControllerClient.h
 	g++ -c -g -std=c++0x GameControllerClient.cpp
 
-Player.o: Player.cpp Player.h
+Player.o: lib/Player.cpp headers/Player.h
 	g++ -c -g -std=c++0x Player.cpp
 
 serverSocket.o: serverSocket.cpp serverSocket.h

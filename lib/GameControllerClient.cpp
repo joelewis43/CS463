@@ -2,9 +2,9 @@
 // Created by Devin Gendron on 2019-10-24.
 //
 
-#include "GameControllerClient.h"
-#include "Player.h"
-#include "clientSocket.h"
+#include "../headers/GameControllerClient.h"
+#include "../headers/Player.h"
+#include "../headers/clientSocket.h"
 
 ////////////////////////////////
 ///                          ///
