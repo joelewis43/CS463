@@ -13,7 +13,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerClient::GameControllerClient()
+GameControllerClient::GameControllerClient() : ClientSocket("", 88432)
 {
 
 }
@@ -40,14 +40,11 @@ void GameControllerClient::MainGameLoop()
     // Time Seed for Score Keeping
     srand(time(NULL));
 
-    // Client to Server Connection
-    clientSocket ClientSocket(IP, PORT);
-
     // If Connection Is Made
     ServerConnection();
 
     // Menus
-    MainMenu(ClientSocket);
+    MainMenu();
 
     if(GetQuitGame() == false)
     {
@@ -56,7 +53,7 @@ void GameControllerClient::MainGameLoop()
 
         // Settings
         noecho();
-        cbreak(void);
+        // cbreak(void);
 
         // Set Arrow Keys to Non-Blocking
         keypad(stdscr, TRUE);
@@ -64,12 +61,12 @@ void GameControllerClient::MainGameLoop()
         nodelay(stdscr, TRUE);
 
         // Display Game Count Down
-        CountDownScreen(ClientSocket);
+        CountDownScreen();
 
         // Begin Game
-        while(GetGameOver() != true && GetServerConnection == true)
+        while(GetGameOver() != true && GetServerConnection() == true)
         {
-            UpdateGame(clientSocket ClientSocket);
+            UpdateGame();
         }
     }
     else
@@ -91,7 +88,7 @@ void GameControllerClient::MainGameLoop()
 }
 
 // Main Menu
-void GameControllerClient::MainMenu(clientSocket ClientSocket)
+void GameControllerClient::MainMenu()
 {
     int selection = -1;
 
@@ -114,13 +111,13 @@ void GameControllerClient::MainMenu(clientSocket ClientSocket)
             {
                 case 1:
                     // Play Game - Set Name
-                    NameMenu(ClientSocket);
-                    AwaitingPlayer(ClientSocket);   // Listening to Server / Tell Server Client is Ready
-                    ControlSelection(ClientSocket);
+                    NameMenu();
+                    AwaitingPlayer();   // Listening to Server / Tell Server Client is Ready
+                    ControlSelection();
                     break;
                 case 2:
                     // Leader Boards
-                    LeaderBoard(ClientSocket);
+                    LeaderBoard();
                     break;
                 case 3:
                     // Quit Game
@@ -148,7 +145,7 @@ void GameControllerClient::MainMenu(clientSocket ClientSocket)
 }
 
 // LeaderBoard Menu
-void GameControllerClient::LeaderBoard(clientSocket ClientSocket)
+void GameControllerClient::LeaderBoard()
 {
     // Open File and View Leader Boards
     // Clear Screen
@@ -170,7 +167,7 @@ void GameControllerClient::LeaderBoard(clientSocket ClientSocket)
 }
 
 // Select Player Name
-void GameControllerClient::NameMenu(clientSocket ClientSocket)
+void GameControllerClient::NameMenu()
 {
     std::string name = "";
 
@@ -197,7 +194,7 @@ void GameControllerClient::NameMenu(clientSocket ClientSocket)
                 player.SetName(name);
 
                 // Tell it to Server
-                ClientSocket.deliver(name);
+                ClientSocket.deliver(name.c_str());
                 break;
             }
             else
@@ -224,7 +221,7 @@ void GameControllerClient::NameMenu(clientSocket ClientSocket)
                 player.SetName(name);
 
                 // Tell it to Server
-                ClientSocket.deliver(name);
+                ClientSocket.deliver(name.c_str());
                 break;
             }
             else
@@ -237,17 +234,17 @@ void GameControllerClient::NameMenu(clientSocket ClientSocket)
 }
 
 // Checks for Server Connection
-void GameControllerClient::ServerConnection(clientSocket ClientSocket)
+void GameControllerClient::ServerConnection()
 {
     // Check Server Connection Is Not Interrupted
-    if(!ClientSocket)
+    if(!ClientSocket.getConnection())
     {
         SetServerConnection(false);
     }
 }
 
 // Await Player Server Connection
-void GameControllerClient::AwaitingPlayer(clientSocket ClientSocket)
+void GameControllerClient::AwaitingPlayer()
 {
     bool PlayerJoined1 = false;
     bool PlayerJoined2 = false;
@@ -257,11 +254,11 @@ void GameControllerClient::AwaitingPlayer(clientSocket ClientSocket)
     std::cout << "Thank you for your patience" << std::endl;
 
     PlayerJoined1 = true;
-    size_t buffer[255];
+    std::string buffer;
 
     while(PlayerJoined1 != true && PlayerJoined2 != true)
     {
-        ClientSocket.receive(buffer);
+        // ClientSocket.receive(buffer.c_str());
 
         // Logic For Player Connection
             // Set True
@@ -271,12 +268,15 @@ void GameControllerClient::AwaitingPlayer(clientSocket ClientSocket)
 }
 
 // Player Selects Controls
-void GameControllerClient::ControlSelection(clientSocket ClientSocket)
+void GameControllerClient::ControlSelection()
 {
-    size_t buffer[255];
+    std::string buffer;
 
     // Ask What controls for each player are
-    ClientSocket.receive(buffer);
+    // IO
+
+    // send to server
+    // ClientSocket.deliver(buffer.c_str());
 
     // Logic to Determine Player Controls
 
@@ -289,7 +289,7 @@ void GameControllerClient::ControlSelection(clientSocket ClientSocket)
 }
 
 // Displayed Before Game Starts
-void GameControllerClient::CountDownScreen(clientSocket ClientSocket)
+void GameControllerClient::CountDownScreen()
 {
     // If can start countdown - start
     //ClientSocket.receive();
@@ -309,7 +309,7 @@ void GameControllerClient::CountDownScreen(clientSocket ClientSocket)
 }
 
 // Displayed After Player Loses
-void GameControllerClient::GameOverMenu(clientSocket ClientSocket)
+void GameControllerClient::GameOverMenu()
 {
     // Get Score Data
     //ClientSocket.receive();
@@ -321,7 +321,7 @@ void GameControllerClient::GameOverMenu(clientSocket ClientSocket)
 }
 
 // Update Player Location
-void GameControllerClient::MovePlayer(clientSocket ClientSocket)
+void GameControllerClient::MovePlayer()
 {
     // Async Keyboard catch
     int keyboard_input = getch();
@@ -401,27 +401,27 @@ void GameControllerClient::MovePlayer(clientSocket ClientSocket)
 }
 
 //
-void GameControllerClient::UpdateGame(clientSocket ClientSocket)
+void GameControllerClient::UpdateGame()
 {
     size_t buffer[255];
 
     // Check Server Connection
-    ServerConnection(clientSocket ClientSocket);
+    ServerConnection();
 
     // Receive Data From Server
     //ClientSocket().receive(buffer);
 
     // Server say there was a collision
-    if(Collision == true)
+    if(GetCollisionOccur())
     {
         SetGameOver(true);
-        break;
+        return;
     }
 
     // Print Screen
 
     // Movement Selection
-    MovePlayer(ClientSocket);
+    MovePlayer();
 
     // Send to Server
     //ClientSocket().deliver();
@@ -485,3 +485,10 @@ void GameControllerClient::SetGameOver(bool GameOverSet)
 {
     GameOver = GameOverSet;
 }
+
+
+void GameControllerClient::CheckCollisions() {}
+
+bool GameControllerClient::GetCollisionOccur() {}
+
+size_t GameControllerClient::GetScore() {}

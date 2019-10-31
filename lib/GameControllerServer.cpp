@@ -13,7 +13,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerServer::GameControllerServer()
+GameControllerServer::GameControllerServer() : ServerSocket(88432), player1(), player2()
 {
     // Set Timer Settings Here?
 }
@@ -43,7 +43,7 @@ void GameControllerServer::MainGameLoop()
     while(1)
     {
         // Setup Server
-        serverSocket ServerSocket(PORT);
+        // (SERVER_PORT);
 
         // Connect to Clients ( 1 and 2 )
         ServerSocket.waitForClients();
@@ -53,25 +53,25 @@ void GameControllerServer::MainGameLoop()
         //////(Call For Leaderboards here)
 
         // Tell Clients connections have been made
-        AwaitingPlayer(serverSocket ServerSocket);
+        AwaitingPlayer();
 
         // Tell Clients to Start Countdowns
-        CountDownScreen(serverSocket ServerSocket);
+        CountDownScreen();
 
         // Begin Timer
         start = std::clock();
 
         // Begin Game
-        while(GetGameOver() != true || !ServerSocket)
+        while(!GetGameOver())
         {
             // Update Game
-            UpdateGame(serverSocket ServerSocket);
+            UpdateGame();
         }
     }
 }
 
 // LeaderBoard Menu
-void GameControllerServer::LeaderBoard(serverSocket ServerSocket)
+void GameControllerServer::LeaderBoard()
 {
     // Open File and View Leader Boards
     // Clear Screen
@@ -241,7 +241,7 @@ void GameControllerServer::UpdateScore()
 }
 
 // Select Player Name
-void GameControllerServer::NameMenu(serverSocket ServerSocket)
+void GameControllerServer::NameMenu()
 {
     // Await Client name signal1
 
@@ -257,7 +257,7 @@ void GameControllerServer::NameMenu(serverSocket ServerSocket)
 }
 
 // Await Player Server Connection
-void GameControllerServer::AwaitingPlayer(serverSocket ServerSocket)
+void GameControllerServer::AwaitingPlayer()
 {
     ////// Deliver message that both clients have connected
     //ServerSocket.deliver();
@@ -265,7 +265,7 @@ void GameControllerServer::AwaitingPlayer(serverSocket ServerSocket)
 }
 
 // Player Selects Controls
-void GameControllerServer::ControlSelection(serverSocket ServerSocket)
+void GameControllerServer::ControlSelection()
 {
     int player1Controls = 0;
     int player2Controls = 0;
@@ -290,7 +290,7 @@ void GameControllerServer::ControlSelection(serverSocket ServerSocket)
 }
 
 // Displayed Before Game Starts
-void GameControllerServer::CountDownScreen(serverSocket ServerSocket)
+void GameControllerServer::CountDownScreen()
 {
     // Tell Clients to start countdowns
     //ServerSocket.deliver();
@@ -299,7 +299,7 @@ void GameControllerServer::CountDownScreen(serverSocket ServerSocket)
 }
 
 // Checks for Player/Object Collisions
-bool GameControllerServer::CheckCollisions(serverSocket ServerSocket)
+bool GameControllerServer::CheckCollisions()
 {
     // Logic For Collision
 
@@ -316,7 +316,7 @@ void GameControllerServer::CreateSpecialEvent()
 }
 
 // Update Player Location
-void GameControllerServer::MovePlayer(serverSocket ServerSocket)
+void GameControllerServer::MovePlayer()
 {
     // Receive Data From Client
 
@@ -352,10 +352,10 @@ void GameControllerServer::SendMap()
 }
 
 // Update Game State
-void GameControllerServer::UpdateGame(serverSocket ServerSocket)
+void GameControllerServer::UpdateGame()
 {
     // Check Server Connection
-    if(ServerSocket)
+    if(ServerSocket.getConnection())
     {
         // Print Screen
 
@@ -425,9 +425,14 @@ bool GameControllerServer::GetCollisionOccur()
     return Collision;
 }
 
-Player GameControllerServer::GetPlayerObject()
+Player GameControllerServer::GetPlayer1()
 {
-    return player;
+    return player1;
+}
+
+Player GameControllerServer::GetPlayer2()
+{
+    return player2;
 }
 
 //GameBoard GameControllerServer::GetGameBoard();

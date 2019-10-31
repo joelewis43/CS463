@@ -41,7 +41,7 @@ class clientSocket {
          * 
          * @param msg - The string to be sent to the server
          **/
-        void deliver(char *msg);
+        void deliver(const char *msg);
 
         /**
          * Reads data from the server.
@@ -52,6 +52,8 @@ class clientSocket {
          **/
         size_t receive(char buffer[MAX_BYTES]);
 
+        bool getConnection();
+
 
 
     private:
@@ -60,6 +62,7 @@ class clientSocket {
         int sock;
         int addrlen;
         char const *ip;
+        bool connected;
         struct sockaddr_in server_address;
 
         /**

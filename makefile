@@ -1,5 +1,5 @@
-output: main.o GameControllerServer.o GameControllerClient.o Player.o serverSocket.o clientSocket.o
-	g++ -g -std=c++0x main.o GameControllerServer.o GameControllerClient.o Player.o serverSocket.o clientSocket.o -o main
+output: main.o GameControllerServer.o GameControllerClient.o Player.o serverSocket.o clientSocket.o gameboard.o city.o environment.o matrix.o random.o window.o
+	g++ -g -std=c++0x main.o GameControllerServer.o GameControllerClient.o Player.o serverSocket.o clientSocket.o gameboard.o city.o environment.o matrix.o random.o window.o -o main
 
 main.o: main.cpp
 	g++ -c -g -std=c++0x main.cpp

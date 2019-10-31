@@ -66,6 +66,13 @@ class serverSocket {
          **/
         void waitForClients();
 
+        /**
+         * Returns true if both client connections exist
+         * 
+         * @returns - a bool representing if both clients are connected
+        **/
+        bool getConnection();
+
     private:
 
         char *ip;

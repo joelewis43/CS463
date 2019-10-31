@@ -1,14 +1,24 @@
-#include "headers/GameControllerServer.h"
+#define SERVER_PORT 88432
 
+#include <iostream>
+#include <stdio.h>
 #include <ncurses.h>
 
-int main()
-{
-    initscr();
+#include "headers/GameControllerClient.h"
+#include "headers/GameControllerServer.h"
+#include "headers/Player.h"
+#include "headers/clientSocket.h"
+#include "headers/serverSocket.h"
 
-    GameControllerServer game;
+int main() {
+  
+  initscr();
 
-    game.MainGameLoop();
+  GameControllerServer game;
 
-    return 0;
+  game.MainGameLoop();
+
+	std::cout << "APP" << std::endl;
+
+	return 0;
 }

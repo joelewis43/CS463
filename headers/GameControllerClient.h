@@ -11,7 +11,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <iostream>
 #include <vector>
 #include <time.h>
 #include <ctime>
@@ -24,12 +23,9 @@
 #include "clientSocket.h"
 #include <ncurses.h>
 
-const int PORT = 88432;
-const char* IP = "";
-
 class GameControllerClient {
     private:
-        //clientSocket ClientSocket(IP, PORT);        // Client to Server Connection
+        clientSocket ClientSocket;                  // Client to Server Connection
         Player  player;                             // Player Object
         bool    QuitGame = false;                   // Quit Game
         bool    ServerConnected = false;            // Server Connection
@@ -49,9 +45,18 @@ class GameControllerClient {
         void ControlSelection();                    // Player Selects Controls
         void CountDownScreen();                     // Displayed Before Game Starts
         void GameOverMenu();                        // Displayed After Player Loses
-        bool ServerConnection();                    // Checks for Server Connection
+        void ServerConnection();                    // Checks for Server Connection
         void MovePlayer();                          // Update Player Location
         void UpdateGame();                          // Update Game
+
+
+        // undefined
+        void CheckCollisions();
+        bool GetCollisionOccur();
+        size_t GetScore();
+
+
+
 
         // Getters
         //std::string getPlayerName();
