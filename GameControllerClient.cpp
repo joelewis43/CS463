@@ -54,8 +54,14 @@ void GameControllerClient::MainGameLoop()
         // Initialize ncurses
         initscr();
 
+        // Settings
+        noecho();
+        cbreak(void);
+
         // Set Arrow Keys to Non-Blocking
         keypad(stdscr, TRUE);
+        timeout(1);
+        nodelay(stdscr, TRUE);
 
         // Display Game Count Down
         CountDownScreen(ClientSocket);

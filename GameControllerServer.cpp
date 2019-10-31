@@ -42,29 +42,35 @@ void GameControllerServer::MainGameLoop()
 
     while(1)
     {
-        // Connect to Clients
-        ServerSocket().waitForClients();
+        // Setup Server
+        serverSocket ServerSocket(PORT);
+
+        // Connect to Clients ( 1 and 2 )
+        ServerSocket.waitForClients();
+
+        ////// Clients in Menu - Not Ready for Gameplay
+        //////(Call For Leaderboards here)
 
         // Tell Clients connections have been made
+        AwaitingPlayer(serverSocket ServerSocket);
 
         // Tell Clients to Start Countdowns
-
-        CountDownScreen();
+        CountDownScreen(serverSocket ServerSocket);
 
         // Begin Timer
         start = std::clock();
 
         // Begin Game
-        while(GetGameOver() != true)
+        while(GetGameOver() != true)                        ////////Server connection
         {
             // Update Game
-            UpdateGame();
+            UpdateGame(serverSocket ServerSocket);
         }
     }
 }
 
 // LeaderBoard Menu
-void GameControllerServer::LeaderBoard()
+void GameControllerServer::LeaderBoard(serverSocket ServerSocket)
 {
     // Open File and View Leader Boards
     // Clear Screen
@@ -88,20 +94,11 @@ void GameControllerServer::LeaderBoard()
         {
             getline(file, line);
             std::cout << line << std::endl;
+            ////////////
+            /////ServerSocket.deliver(line);
+            ////////
         }
         file.close();
-    }
-
-    int zero = 1;
-    while (1)
-    {
-        std::cout << "Press '0' to quit viewer" << std::endl;
-        std::cin >> zero;
-
-        if (zero == 0)
-        {
-            break;
-        }
     }
 }
 
@@ -258,35 +255,43 @@ void GameControllerServer::NameMenu()
 // Await Player Server Connection
 void GameControllerServer::AwaitingPlayer()
 {
-    bool PlayerJoined1 = false;
-    bool PlayerJoined2 = false;
-
-    std::cout << "\033[2J\033[1;1H";
-    std::cout << "Waiting for your partner..." << std::endl;
-    std::cout << "Thank you for your patience" << std::endl;
-    /*
-     //listen for player 1
-     // listen for player 2
-     // if player 1 and player 2 present
-     // then continue
-     * */
-    sleep(2);
+    //std::cout << "\033[2J\033[1;1H";
+    //std::cout << "Waiting for your partner..." << std::endl;
+    //std::cout << "Thank you for your patience" << std::endl;
+    //ServerSocket.deliver();
+    sleep(1);
 }
 
 // Player Selects Controls
 void GameControllerServer::ControlSelection()
 {
-    std::cout << "\033[2J\033[1;1H";
-    std::cout << "Player Controls" << std::endl;
-    std::cout << "Up/Down: " << /*Rand.Player*/ std::endl;
-    std::cout << "Left/Right: " << /*Rand.Player*/ std::endl;
-    sleep(5);
+    int player1Controls = 0;
+    int player2Controls = 0;
+
+    player1Controls = rand() % 2 + 1;
+
+    // 1 = Up/Down
+    // 2 = Left/Right
+
+    if(player1Controls == 1)
+    {
+        player2Controls = 2;
+    }
+    else if(player1Controls == 2)
+    {
+        player2Controls = 1;
+    }
+
+    // Send Command to Clients
+    //ServerSocket.deliver();
+    sleep(1);
 }
 
 // Displayed Before Game Starts
 void GameControllerServer::CountDownScreen()
 {
-    //Tell Clients to start countdowns
+    // Tell Clients to start countdowns
+    //ServerSocket.deliver();
 }
 
 // Checks for Player/Object Collisions

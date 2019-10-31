@@ -24,6 +24,8 @@
 #include "serverSocket.h"
 #include <ncurses.h>
 
+const int PORT = 88432;
+
 struct ScoreOrganizer
 {
     std::string name = "";
@@ -41,7 +43,7 @@ class GameControllerServer {
         bool    GameOver = false;                               // GameOver?
         bool    QuitGame = false;                               // player Quit?
         bool    Collision = false;                              // Collision Occurred
-        serverSocket ServerSocket(88432);                       // Server Socket
+        //serverSocket ServerSocket(88432);                       // Server Socket
     protected:
     public:
         // Constructor/Destructor
