@@ -96,11 +96,16 @@ void serverSocket::error(char const *msg, int exitCode) {
     exit(exitCode);
 }
 
-void serverSocket::deliver(char *msg) {
+void serverSocket::deliver(const char *msg) {
 
     send(clients[0], msg, strlen(msg), 0);
     send(clients[1], msg, strlen(msg), 0);
 
+}
+
+void serverSocket::deliver(const char *msg1, const char *msg2) {
+    send(clients[0], msg1, strlen(msg1), 0);
+    send(clients[1], msg2, strlen(msg2), 0);
 }
 
 size_t serverSocket::receive1(char b[MAX_BYTES]) {

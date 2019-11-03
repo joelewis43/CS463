@@ -41,7 +41,15 @@ class serverSocket {
          * 
          * @param msg - The string to be sent to both clients
          **/
-        void deliver(char *msg);
+        void deliver(const char *msg);
+
+        /**
+         * Sends different messages to each client
+         * 
+         * @param msg1 - The string to be sent to player 1
+         * @param msg2 - The string to be sent to player 2
+         **/
+        void deliver(const char *msg1, const char *msg2);
 
         /**
          * Reads data from client socket.
@@ -50,8 +58,8 @@ class serverSocket {
          * @param buffer - buffer of size MAX_BYTES to read data into
          * @returns - the number of bytes read from the socket
          **/
-        size_t receive1(char *buffer);
-        size_t receive2(char *buffer);
+        size_t receive1(char buffer[MAX_BYTES]);
+        size_t receive2(char buffer[MAX_BYTES]);
 
         /**
          * Closes the respective client's socket

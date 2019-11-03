@@ -154,12 +154,12 @@ void GameControllerClient::LeaderBoard()
     sleep(2);
 
     // Ask Server for LeaderBoard
-    //ClientSocket.deliver();
-
-    // Handshake From Server to Recognize
+    const char *msg = "? leaderboard";
+    ClientSocket.deliver(msg);
 
     // Wait for server to send leaderboard
-    //ClientSocket.receive();
+    char res[MAX_BYTES];
+    ClientSocket.receiveBlock(res);
 
     // Display Leader Board
 
@@ -254,15 +254,21 @@ void GameControllerClient::AwaitingPlayer()
     std::cout << "Thank you for your patience" << std::endl;
 
     PlayerJoined1 = true;
-    std::string buffer;
+    char buffer[MAX_BYTES];
 
     while(PlayerJoined1 != true && PlayerJoined2 != true)
     {
-        // ClientSocket.receive(buffer.c_str());
+        // send a command querrying server for other players connection status
+        const char *msg = "? otherPlayer";
+        ClientSocket.deliver(msg);
 
-        // Logic For Player Connection
-            // Set True
+        // get the servers response
+        ClientSocket.receiveBlock(buffer);
+
+        // if the other player has joined
+            // PlayerJoined2 = true
     }
+
     std::cout << "The Other Player Has Joined!" << std::endl;
     sleep(1);
 }
@@ -270,29 +276,30 @@ void GameControllerClient::AwaitingPlayer()
 // Player Selects Controls
 void GameControllerClient::ControlSelection()
 {
-    std::string buffer;
+    // Ask the server what controls you are assigned
+    const char *msg = "? controls";
+    ClientSocket.deliver(msg);
 
-    // Ask What controls for each player are
-    // IO
-
-    // send to server
-    // ClientSocket.deliver(buffer.c_str());
+    char buffer[MAX_BYTES];
+    ClientSocket.receiveBlock(buffer);
 
     // Logic to Determine Player Controls
 
     // Display controls
     std::cout << "\033[2J\033[1;1H";
-    std::cout << "Player Controls" << std::endl;
-    std::cout << "Up/Down: " << /*Rand.Player*/ std::endl;
-    std::cout << "Left/Right: " << /*Rand.Player*/ std::endl;
+    std::cout << "Your controls are:" << std::endl;
+    // one or the other
+        // std::cout << "Up/Down: " << /*Rand.Player*/ std::endl;
+        // std::cout << "Left/Right: " << /*Rand.Player*/ std::endl;
     sleep(5);
 }
 
 // Displayed Before Game Starts
 void GameControllerClient::CountDownScreen()
 {
-    // If can start countdown - start
-    //ClientSocket.receive();
+    // there should be a main loop constantly listening to the server
+    // when that listener observes the countdownscreen command
+    // it should call this function
 
 
     // Send to clients
@@ -311,8 +318,9 @@ void GameControllerClient::CountDownScreen()
 // Displayed After Player Loses
 void GameControllerClient::GameOverMenu()
 {
-    // Get Score Data
-    //ClientSocket.receive();
+    // there should be a main loop constantly listening to the server
+    // when that listener observes the countdownscreen command
+    // it should call this function
 
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Game Over!" << std::endl;
@@ -325,6 +333,11 @@ void GameControllerClient::MovePlayer()
 {
     // Async Keyboard catch
     int keyboard_input = getch();
+    
+    // add input to move command
+    std::string input = "move ";
+    std::string move = std::to_string(keyboard_input);
+    input.append(move);
 
     switch(keyboard_input)
     {
@@ -335,7 +348,7 @@ void GameControllerClient::MovePlayer()
             {
                 player.MoveUp();
                 // Send to Server
-                //ClientSocket.deliver();
+                ClientSocket.deliver(input.c_str());
                 break;
             }
             else
@@ -352,7 +365,7 @@ void GameControllerClient::MovePlayer()
             {
                 player.MoveDown();
                 // Send to Server
-                //ClientSocket.deliver();
+                ClientSocket.deliver(input.c_str());
                 break;
             }
             else
@@ -369,7 +382,7 @@ void GameControllerClient::MovePlayer()
             {
                 player.MoveLeft();
                 // Send to Server
-                //ClientSocket.deliver();
+                ClientSocket.deliver(input.c_str());
                 break;
             }
             else
@@ -387,7 +400,7 @@ void GameControllerClient::MovePlayer()
             {
                 player.MoveRight();
                 // Send to Server
-                //ClientSocket.deliver();
+                ClientSocket.deliver(input.c_str());
                 break;
             }
             else
@@ -403,13 +416,18 @@ void GameControllerClient::MovePlayer()
 //
 void GameControllerClient::UpdateGame()
 {
-    size_t buffer[255];
+    char buffer[MAX_BYTES];
+    size_t bytes = 0;
 
     // Check Server Connection
     ServerConnection();
 
-    // Receive Data From Server
-    //ClientSocket().receive(buffer);
+    // Receive Data From Server (non-blocking)
+    bytes = ClientSocket.receive(buffer);
+
+    /* 
+        USE bytes TO DETERMINE IF UPDATE IS NEEDED
+    */
 
     // Server say there was a collision
     if(GetCollisionOccur())
@@ -420,11 +438,8 @@ void GameControllerClient::UpdateGame()
 
     // Print Screen
 
-    // Movement Selection
+    // Movement Selection (handles sending move to server)
     MovePlayer();
-
-    // Send to Server
-    //ClientSocket().deliver();
 
     // Check Server Connection
     ServerConnection();

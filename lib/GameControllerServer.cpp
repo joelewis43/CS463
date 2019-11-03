@@ -42,10 +42,8 @@ void GameControllerServer::MainGameLoop()
 
     while(1)
     {
-        // Setup Server
-        // (SERVER_PORT);
-
-        // Connect to Clients ( 1 and 2 )
+        // Wait for two clients to connect
+        std::cout << "Waiting for clients ..." << std::endl;
         ServerSocket.waitForClients();
 
         //// Logic needed for when Clients are in Menu and not ready for game procedure
@@ -80,27 +78,27 @@ void GameControllerServer::LeaderBoard()
     sleep(2);
 
     std::string filePath = "LeaderBoards.txt";
-    std::ifstream file;
+    std::ifstream fp;
 
-    file.open(filePath);
+    fp.open(filePath);
 
-    if (!file)
+    if (!fp)
     {
         std::cout << "Error Saving Score" << std::endl;
     }
     else
     {
+        std::string file;
         std::string line = "";
-        while (!file.eof())
+        while (!fp.eof())
         {
-            getline(file, line);
+            getline(fp, line);
             std::cout << line << std::endl;
-            /// Send whole file at once or line by line??
-            ////////////
-            /////ServerSocket.deliver(line.c_str());
-            ////////
+            file.append(line);
         }
-        file.close();
+        fp.close();
+
+        ServerSocket.deliver(file.c_str());
     }
 }
 
@@ -259,8 +257,9 @@ void GameControllerServer::NameMenu()
 // Await Player Server Connection
 void GameControllerServer::AwaitingPlayer()
 {
-    ////// Deliver message that both clients have connected
-    //ServerSocket.deliver();
+    // Deliver message that both clients have connected
+    const char* msg = "Matchmaking Completed!";
+    ServerSocket.deliver(msg);
     sleep(1);
 }
 
@@ -285,7 +284,14 @@ void GameControllerServer::ControlSelection()
     }
 
     // Send Command to Clients to indicate control types
-    //ServerSocket.deliver();
+    char msg1[64];
+    sprintf(msg1, "controls %d", player1Controls);
+
+    char msg2[64];
+    sprintf(msg2, "controls %d", player2Controls);
+
+    ServerSocket.deliver(msg1, msg2);
+
     sleep(1);
 }
 
@@ -293,7 +299,8 @@ void GameControllerServer::ControlSelection()
 void GameControllerServer::CountDownScreen()
 {
     // Tell Clients to start countdowns
-    //ServerSocket.deliver();
+    const char* msg = "countdown";
+    ServerSocket.deliver(msg);
     //// OR
     ///// Have countdown screen in Tevin's game env
 }
