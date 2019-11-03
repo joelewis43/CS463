@@ -1,6 +1,11 @@
+Pushing a branch
 git add -A
 git commit -m "comment here"
-git push -u origin Development-Devin
+git push -u origin BRANCH_NAME
 
 
+Merging
+git checkout dev
 git pull origin dev
+git merge BRANCH_NAME
+git push origin dev
