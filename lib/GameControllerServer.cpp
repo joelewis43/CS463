@@ -118,7 +118,7 @@ void GameControllerServer::LeaderBoard(int player)
     std::cout << "Leader Board Function" << std::endl;
     sleep(2);
 
-    std::string filePath = "LeaderBoards.txt";
+    std::string filePath = "./data/LeaderBoards.txt";
     std::ifstream fp;
 
     fp.open(filePath);
@@ -135,7 +135,7 @@ void GameControllerServer::LeaderBoard(int player)
         while (!fp.eof())
         {
             getline(fp, line);
-            //std::cout << line << std::endl;
+            std::cout << line << std::endl;
             file.append(line);
         }
         fp.close();
