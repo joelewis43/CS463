@@ -52,9 +52,6 @@ window.o: headers/window.h lib/window.cpp
 	g++ -c -g -std=c++0x lib/window.cpp
 
 
-
-
-
 val:
 	valgrind --tool=memcheck --leak_check=yes --show-reachable=yes --track-fds=yes ./main
 
