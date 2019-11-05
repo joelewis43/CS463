@@ -176,7 +176,7 @@ void GameControllerServer::SortLeaderBoard(std::vector<ScoreOrganizer> &updateSc
 // Update Leader Board
 void GameControllerServer::UpdateLeaderBoards()
 {
-    std::string filePath = "LeaderBoards.txt";
+    std::string filePath = "./data/LeaderBoards.txt";
     std::ifstream file;
 
     std::vector<ScoreOrganizer> updateScores;
@@ -228,7 +228,7 @@ void GameControllerServer::UpdateLeaderBoards()
         file.close();
     }
 
-    std::string filePathRewrite = "LeaderBoards.txt";
+    std::string filePathRewrite = "./data/LeaderBoards.txt";
     std::ofstream fileRewrite;
 
     fileRewrite.open(filePath);
@@ -258,7 +258,7 @@ void GameControllerServer::UpdateLeaderBoards()
 // Save Score
 void GameControllerServer::SaveScore(std::string playerName, int score)
 {
-    std::string filePath = "LeaderBoards.txt";
+    std::string filePath = "./data/LeaderBoards.txt";
     std::ofstream file;
 
     file.open(filePath, std::fstream::app);
