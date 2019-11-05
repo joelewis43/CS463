@@ -13,7 +13,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 88432)
+GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 99556)
 {
 
 }
@@ -154,7 +154,7 @@ void GameControllerClient::LeaderBoard()
     // Clear Screen
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Leader Board Function" << std::endl;
-    sleep(2);
+    sleep(0.5);
 
     // Ask Server for LeaderBoard
     const char *msg = "? leaderboard";
@@ -165,6 +165,11 @@ void GameControllerClient::LeaderBoard()
     ClientSocket.receiveBlock(res);
 
     // Display Leader Board
+    std::cout << "\033[2J\033[1;1H";
+    std::cout << "\tLeaderboard" << std::endl;
+    std::cout << res << std::endl;
+
+    sleep(5);
 
     // User Input to Return to Menu
 }

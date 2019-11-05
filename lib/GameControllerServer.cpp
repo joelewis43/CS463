@@ -13,7 +13,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerServer::GameControllerServer() : ServerSocket(88432), player1(), player2()
+GameControllerServer::GameControllerServer() : ServerSocket(99556), player1(), player2()
 {
     // Set Timer Settings Here?
 }
@@ -137,6 +137,7 @@ void GameControllerServer::LeaderBoard(int player)
             getline(fp, line);
             std::cout << line << std::endl;
             file.append(line);
+            file.append("\n");
         }
         fp.close();
 

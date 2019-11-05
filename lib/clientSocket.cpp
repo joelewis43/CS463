@@ -22,7 +22,6 @@ clientSocket::~clientSocket() {
 }
 
 void clientSocket::deliver(const char *msg) {
-    std::cout << "Msg size: " << strlen(msg) << std::endl;
     send(sock, msg, strlen(msg), 0);
 }
 
@@ -48,7 +47,7 @@ size_t clientSocket::receive(char buffer[MAX_BYTES]) {
                 // SHOULD REALLY CHECK IF i IS APPROACHING MAX_BYTES
             }
         }
-    } while(current > 0);
+    } while(current > 0);   
 
     if (total < 0)
         return 0;
