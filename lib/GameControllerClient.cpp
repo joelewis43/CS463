@@ -13,7 +13,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerClient::GameControllerClient() : ClientSocket("", 88432)
+GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 88432)
 {
 
 }
@@ -91,6 +91,7 @@ void GameControllerClient::MainGameLoop()
 void GameControllerClient::MainMenu()
 {
     int selection = -1;
+    char *msg = "! pReady";
 
     while(selection == -1)
     {
@@ -111,6 +112,8 @@ void GameControllerClient::MainMenu()
             {
                 case 1:
                     // Play Game - Set Name
+                    // Tell Server Player is Ready to Play
+                    ClientSocket.deliver(msg);
                     NameMenu();
                     AwaitingPlayer();   // Listening to Server / Tell Server Client is Ready
                     ControlSelection();
@@ -193,6 +196,10 @@ void GameControllerClient::NameMenu()
                 // Set Name in Player Object
                 player.SetName(name);
 
+                // Tell Server the Name is Coming
+                const char *msg = "! name";
+                ClientSocket.deliver(msg);
+
                 // Tell it to Server
                 ClientSocket.deliver(name.c_str());
                 break;
@@ -219,6 +226,10 @@ void GameControllerClient::NameMenu()
             {
                 // Set Name in Player Object
                 player.SetName(name);
+
+                // Tell Server the Name is Coming
+                const char *msg = "! name";
+                ClientSocket.deliver(msg);
 
                 // Tell it to Server
                 ClientSocket.deliver(name.c_str());
@@ -258,7 +269,7 @@ void GameControllerClient::AwaitingPlayer()
 
     while(PlayerJoined1 != true && PlayerJoined2 != true)
     {
-        // send a command querrying server for other players connection status
+        // send a command querying server for other players connection status
         const char *msg = "? otherPlayer";
         ClientSocket.deliver(msg);
 

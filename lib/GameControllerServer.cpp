@@ -40,15 +40,56 @@ void GameControllerServer::MainGameLoop()
     // Time Seed for Score Keeping
     srand(time(NULL));
 
+    // Wait for two clients to connect
+    std::cout << "Waiting for clients ..." << std::endl;
+    ServerSocket.waitForClients();
+
     while(1)
     {
-        // Wait for two clients to connect
-        std::cout << "Waiting for clients ..." << std::endl;
-        ServerSocket.waitForClients();
+        // Clients in Menu
+        int ReadyCounter = 0;
 
-        //// Logic needed for when Clients are in Menu and not ready for game procedure
-        ////// Clients in Menu - Not Ready for Gameplay
-        //////(Call For Leaderboards here)
+        char buffer1[MAX_BYTES];
+        char buffer2[MAX_BYTES];
+        memset(buffer1, '\0', MAX_BYTES);
+        memset(buffer2, '\0', MAX_BYTES);
+
+        // Loop Until Both Players Indicate They Are Ready to Play
+        while(ReadyCounter != 2)
+        {
+            // Receive Client 1 Signal
+            ServerSocket.receive1(buffer1);
+
+            if(strcmp( buffer1, "? leaderboard") == 0)
+            {
+                LeaderBoard(1);
+                memset(buffer1, '\0', MAX_BYTES);
+            }
+            else if(strcmp( buffer1, "! pReady") == 0)
+            {
+                ReadyCounter++;
+            }
+
+            // Receive Client 2 Signal
+            ServerSocket.receive2(buffer2);
+
+            if(strcmp( buffer2, "? leaderboard") == 0)
+            {
+                LeaderBoard(2);
+                memset(buffer2, '\0', MAX_BYTES);
+            }
+            else if(strcmp( buffer1, "! pReady") == 0)
+            {
+                ReadyCounter++;
+            }
+        }
+
+        // Wait for two clients to connect
+        //std::cout << "Waiting for clients ..." << std::endl;
+        //ServerSocket.waitForClients();
+
+        // Get Players Names
+        NameMenu();
 
         // Tell Clients connections have been made
         AwaitingPlayer();
@@ -69,7 +110,7 @@ void GameControllerServer::MainGameLoop()
 }
 
 // LeaderBoard Menu
-void GameControllerServer::LeaderBoard()
+void GameControllerServer::LeaderBoard(int player)
 {
     // Open File and View Leader Boards
     // Clear Screen
@@ -84,21 +125,29 @@ void GameControllerServer::LeaderBoard()
 
     if (!fp)
     {
-        std::cout << "Error Saving Score" << std::endl;
+        std::cout << "Failed to Retrieve LeaderBoards" << std::endl;
     }
     else
     {
+        std::cout << "About to send LB" << std::endl;
         std::string file;
         std::string line = "";
         while (!fp.eof())
         {
             getline(fp, line);
-            std::cout << line << std::endl;
+            //std::cout << line << std::endl;
             file.append(line);
         }
         fp.close();
 
-        ServerSocket.deliver(file.c_str());
+        if(player == 1)
+        {
+            ServerSocket.deliver1(file.c_str());
+        }
+        else
+        {
+            ServerSocket.deliver2(file.c_str());
+        }
     }
 }
 
@@ -241,17 +290,62 @@ void GameControllerServer::UpdateScore()
 // Select Player Name
 void GameControllerServer::NameMenu()
 {
-    // Await Client name signal1
+    char name1[6];
+    char name2[6];
+    std::string player_a = "";
+    std::string player_b = "";
+    int NameSetCounter = 0;
 
-    // Receive Player 1 Name
+    char buffer1[MAX_BYTES];
+    char buffer2[MAX_BYTES];
+    memset(buffer1, '\0', MAX_BYTES);
+    memset(buffer2, '\0', MAX_BYTES);
 
-    // Await Client name signal2
+    // Loop Until Both Players Indicate Their Names Are Set
+    while(NameSetCounter != 2)
+    {
+        // Receive Client 1 Signal
+        ServerSocket.receive1(buffer1);
 
-    // Receive Player 2 Name
+        if(strcmp( buffer1, "! name"))
+        {
+            memset(buffer1, '\0', MAX_BYTES);
+
+            // Get Name
+            ServerSocket.receive1(name1);
+
+            // Set Name
+            player_a = name1;
+        }
+        else if(strcmp( buffer1, "! pReady"))
+        {
+            NameSetCounter++;
+        }
+
+        // Receive Client 2 Signal
+        ServerSocket.receive2(buffer2);
+
+        if(strcmp( buffer2, "! name"))
+        {
+            memset(buffer2, '\0', MAX_BYTES);
+
+            // Get Name
+            ServerSocket.receive1(name2);
+
+            // Set Name
+            player_b = name2;
+        }
+        else if(strcmp( buffer1, "! pReady"))
+        {
+            NameSetCounter++;
+        }
+    }
 
     // Concatenate Names
-
-    // Continue
+    std::string name = player_a + player_b;
+    player1.SetName(player_a);
+    player2.SetName(player_b);
+    player1and2.SetName(name);
 }
 
 // Await Player Server Connection
@@ -440,6 +534,11 @@ Player GameControllerServer::GetPlayer1()
 Player GameControllerServer::GetPlayer2()
 {
     return player2;
+}
+
+Player GameControllerServer::GetPlayer1and2()
+{
+    return player1and2;
 }
 
 //GameBoard GameControllerServer::GetGameBoard();

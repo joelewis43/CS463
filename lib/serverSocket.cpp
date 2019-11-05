@@ -103,6 +103,18 @@ void serverSocket::deliver(const char *msg) {
 
 }
 
+void serverSocket::deliver1(const char *msg) {
+
+    send(clients[0], msg, strlen(msg), 0);
+
+}
+
+void serverSocket::deliver2(const char *msg) {
+
+    send(clients[1], msg, strlen(msg), 0);
+
+}
+
 void serverSocket::deliver(const char *msg1, const char *msg2) {
     send(clients[0], msg1, strlen(msg1), 0);
     send(clients[1], msg2, strlen(msg2), 0);

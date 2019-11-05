@@ -44,6 +44,20 @@ class serverSocket {
         void deliver(const char *msg);
 
         /**
+        * Sends the message to first client
+        *
+        * @param msg - The string to be sent to first client
+        **/
+        void deliver1(const char *msg);
+
+        /**
+         * Sends the message to second client
+         *
+         * @param msg - The string to be sent to second client
+         **/
+        void deliver2(const char *msg);
+
+        /**
          * Sends different messages to each client
          * 
          * @param msg1 - The string to be sent to player 1

@@ -23,6 +23,7 @@
 #include "Player.h"
 #include "serverSocket.h"
 #include <ncurses.h>
+#include <string.h>
 
 struct ScoreOrganizer
 {
@@ -38,6 +39,7 @@ class GameControllerServer {
         // Timer Settings?
         Player player1;
         Player player2;
+        Player player1and2;
         int     Score = 0;                                      // Score
         bool    IsRunning = false;                              // isRunning Boolean (Server)
         bool    GameOver = false;                               // GameOver?
@@ -57,7 +59,7 @@ class GameControllerServer {
 
         // GameController Functions
         void MainGameLoop();                                    // Main Game Loop
-        void LeaderBoard();                                     // LeaderBoard Menu
+        void LeaderBoard(int);                                  // LeaderBoard Menu
         void SortLeaderBoard(std::vector<ScoreOrganizer>&);     // Sorts LeaderBoard
         void UpdateLeaderBoards();                              // Updates LeaderBoards
         void SaveScore(std::string, int);                       // Saves Current Game's Score
@@ -83,8 +85,9 @@ class GameControllerServer {
         bool GetIsRunning();                                    // Get IsRunning?
         bool GetQuitGame();                                     // Get QuitGame?
         bool GetCollisionOccur();                               // Get Collision
-        Player GetPlayer1();                                    // Get Player Object
+        Player GetPlayer1();                                     // Get Player Object
         Player GetPlayer2();                                    // Get Player Object
+        Player GetPlayer1and2();
         //GameBoard GetGameBoard();
 
         // Setters

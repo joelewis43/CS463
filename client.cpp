@@ -8,7 +8,7 @@
 
 int main() {
 
-    initscr();
+    //initscr();
 
     GameControllerClient gc;
 
