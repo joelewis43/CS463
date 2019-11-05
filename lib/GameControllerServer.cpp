@@ -21,8 +21,6 @@ GameControllerServer::GameControllerServer() : ServerSocket(88432), player1(), p
 // Destructor
 GameControllerServer::~GameControllerServer()
 {
-
-
 }
 
 ////////////////////////////////
@@ -40,7 +38,7 @@ void GameControllerServer::MainGameLoop()
     // Time Seed for Score Keeping
     srand(time(NULL));
 
-    while(1)
+    while (1)
     {
         // Setup Server
         // (SERVER_PORT);
@@ -62,7 +60,7 @@ void GameControllerServer::MainGameLoop()
         start = std::clock();
 
         // Begin Game
-        while(!GetGameOver())
+        while (!GetGameOver())
         {
             // Update Game
             UpdateGame();
@@ -79,7 +77,7 @@ void GameControllerServer::LeaderBoard()
     std::cout << "Leader Board Function" << std::endl;
     sleep(2);
 
-    std::string filePath = "LeaderBoards.txt";
+    std::string filePath = "./data/LeaderBoards.txt";
     std::ifstream file;
 
     file.open(filePath);
@@ -275,11 +273,11 @@ void GameControllerServer::ControlSelection()
     // 1 = Up/Down
     // 2 = Left/Right
 
-    if(player1Controls == 1)
+    if (player1Controls == 1)
     {
         player2Controls = 2;
     }
-    else if(player1Controls == 2)
+    else if (player1Controls == 2)
     {
         player2Controls = 1;
     }
@@ -312,7 +310,6 @@ bool GameControllerServer::CheckCollisions()
 // Create Special Game Events
 void GameControllerServer::CreateSpecialEvent()
 {
-
 }
 
 // Update Player Location
@@ -330,32 +327,28 @@ void GameControllerServer::MovePlayer()
 // Update Object Locations
 void GameControllerServer::MoveObjects()
 {
-
 }
 
 // Move Environment
 void GameControllerServer::MoveEnvironment()
 {
-
 }
 
 // Sets New Environment
 void GameControllerServer::UpdateEnvironment()
 {
-
 }
 
 // Send Map to Client/Server
 void GameControllerServer::SendMap()
 {
-
 }
 
 // Update Game State
 void GameControllerServer::UpdateGame()
 {
     // Check Server Connection
-    if(ServerSocket.getConnection())
+    if (ServerSocket.getConnection())
     {
         // Print Screen
 

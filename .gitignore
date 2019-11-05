@@ -1,3 +1,5 @@
+
+
 # General
 .DS_Store
 .idea/CS463.iml
@@ -7,6 +9,11 @@
 .idea/workspace.xml
 *.txt
 .vscode/
+data/*
+
+# Exceptions #
+##############
+!data/.gitkeep
 
 # Compiled source #
 ###################
