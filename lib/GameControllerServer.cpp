@@ -298,9 +298,14 @@ void GameControllerServer::NameMenu()
 {
     char name1[6];
     char name2[6];
+    memset(name1, '\0', 6);
+    memset(name2, '\0', 6);
+
     std::string player_a = "";
     std::string player_b = "";
     int NameSetCounter = 0;
+    int player1Ready = 0;
+    int player2Ready = 0;
 
     char buffer1[MAX_BYTES];
     char buffer2[MAX_BYTES];
@@ -310,40 +315,48 @@ void GameControllerServer::NameMenu()
     // Loop Until Both Players Indicate Their Names Are Set
     while(NameSetCounter != 2)
     {
-        // Receive Client 1 Signal
-        ServerSocket.receive1(buffer1);
-
-        if(strcmp( buffer1, "! name") == 0)
+        if(player1Ready == 0)
         {
-            memset(buffer1, '\0', MAX_BYTES);
+            // Receive Client 1 Signal
+            ServerSocket.receive1(buffer1);
 
-            // Get Name
-            ServerSocket.receive1(name1);
+            if(strcmp( buffer1, "! name") == 0)
+            {
+                std::cout << "Retrieving P1 Name..." << std::endl;
+                memset(buffer1, '\0', MAX_BYTES);
 
-            // Set Name
-            player_a = name1;
+                // Get Name
+                ServerSocket.receive1(name1);
+
+                // Set Name
+                player_a = name1;
+                NameSetCounter++;
+                player1Ready++;
+                std::cout << "Player 1 Name Received." << std::endl;
+            }
+            //memset(buffer1, '\0', MAX_BYTES);
         }
-        else if(strcmp( buffer1, "! pReady") == 0)
+
+        if(player2Ready == 0)
         {
-            NameSetCounter++;
-        }
+            // Receive Client 2 Signal
+            ServerSocket.receive2(buffer2);
 
-        // Receive Client 2 Signal
-        ServerSocket.receive2(buffer2);
+            if(strcmp( buffer2, "! name") == 0)
+            {
+                std::cout << "Retrieving P2 Name..." << std::endl;
+                memset(buffer2, '\0', MAX_BYTES);
 
-        if(strcmp( buffer2, "! name") == 0)
-        {
-            memset(buffer2, '\0', MAX_BYTES);
+                // Get Name
+                ServerSocket.receive2(name2);
 
-            // Get Name
-            ServerSocket.receive1(name2);
-
-            // Set Name
-            player_b = name2;
-        }
-        else if(strcmp( buffer1, "! pReady") == 0)
-        {
-            NameSetCounter++;
+                // Set Name
+                player_b = name2;
+                NameSetCounter++;
+                player2Ready++;
+                std::cout << "Player 2 Name Received." << std::endl;
+            }
+            //memset(buffer2, '\0', MAX_BYTES);
         }
     }
 
@@ -352,6 +365,8 @@ void GameControllerServer::NameMenu()
     player1.SetName(player_a);
     player2.SetName(player_b);
     player1and2.SetName(name);
+
+    std::cout << "Player Names Set." << std::endl;
 }
 
 // Await Player Server Connection
