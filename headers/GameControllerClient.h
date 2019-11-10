@@ -30,6 +30,7 @@ class GameControllerClient {
         bool    QuitGame = false;                   // Quit Game
         bool    ServerConnected = false;            // Server Connection
         bool    GameOver = false;                   // Game Over
+        int     ControlType = 0;                    // 1 = Up/Down, 2 = Left/Right
     protected:
     public:
         // Constructor/Destructor

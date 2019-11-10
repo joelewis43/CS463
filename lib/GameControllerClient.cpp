@@ -162,6 +162,7 @@ void GameControllerClient::LeaderBoard()
 
     // Wait for server to send leaderboard
     char res[MAX_BYTES];
+    memset(res, '\0', MAX_BYTES);
     ClientSocket.receiveBlock(res);
 
     // Display Leader Board
@@ -262,27 +263,24 @@ void GameControllerClient::ServerConnection()
 // Await Player Server Connection
 void GameControllerClient::AwaitingPlayer()
 {
-    bool PlayerJoined1 = false;
     bool PlayerJoined2 = false;
 
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Waiting for your partner..." << std::endl;
     std::cout << "Thank you for your patience" << std::endl;
 
-    PlayerJoined1 = true;
     char buffer[MAX_BYTES];
+    memset(buffer, '\0', MAX_BYTES);
 
-    while(PlayerJoined1 != true && PlayerJoined2 != true)
+    while(PlayerJoined2 != true)
     {
-        // send a command querying server for other players connection status
-        const char *msg = "? otherPlayer";
-        ClientSocket.deliver(msg);
 
-        // get the servers response
-        ClientSocket.receiveBlock(buffer);
+        ClientSocket.receive(buffer);
 
-        // if the other player has joined
-            // PlayerJoined2 = true
+        if(strcmp(buffer, "Matchmaking Completed!") == 1)
+        {
+            PlayerJoined2 = true;
+        }
     }
 
     std::cout << "The Other Player Has Joined!" << std::endl;
@@ -293,20 +291,36 @@ void GameControllerClient::AwaitingPlayer()
 void GameControllerClient::ControlSelection()
 {
     // Ask the server what controls you are assigned
-    const char *msg = "? controls";
-    ClientSocket.deliver(msg);
+    //const char *msg = "? controls";
+    //ClientSocket.deliver(msg);
 
     char buffer[MAX_BYTES];
+    memset(buffer, '\0', MAX_BYTES);
     ClientSocket.receiveBlock(buffer);
 
     // Logic to Determine Player Controls
+    if(strcmp(buffer, "1") == 1)
+    {
+        ControlType = 1;
+    } else if(strcmp(buffer, "2") == 1)
+    {
+        ControlType = 2;
+    }
+    else
+    {
+        std::cout << "Failure to Set Controls" << std::endl;
+    }
 
     // Display controls
     std::cout << "\033[2J\033[1;1H";
-    std::cout << "Your controls are:" << std::endl;
-    // one or the other
-        // std::cout << "Up/Down: " << /*Rand.Player*/ std::endl;
-        // std::cout << "Left/Right: " << /*Rand.Player*/ std::endl;
+    if(ControlType == 1)
+    {
+        std::cout << player.GetName() <<"'s controls are:" << " Up/Down" << std::endl;
+    }
+    else if (ControlType == 2)
+    {
+        std::cout << player.GetName() <<"'s controls are:" << " Left/Right" << std::endl;
+    }
     sleep(5);
 }
 
@@ -316,19 +330,23 @@ void GameControllerClient::CountDownScreen()
     // there should be a main loop constantly listening to the server
     // when that listener observes the countdownscreen command
     // it should call this function
+    char buffer[MAX_BYTES];
+    memset(buffer, '\0', MAX_BYTES);
+    ClientSocket.receive(buffer);
 
+    if(strcmp(buffer, "countdown") == 1)
+    {
+        std::cout << "\033[2J\033[1;1H";
+        std::cout << "Game Starting in..." << std::endl;
 
-    // Send to clients
-    std::cout << "\033[2J\033[1;1H";
-    std::cout << "Game Starting in..." << std::endl;
-
-    std::cout << "\33[2K\r3" << std::flush;
-    sleep(1);
-    std::cout << "\33[2K\r2" << std::flush;
-    sleep(1);
-    std::cout << "\33[2K\r1" << std::flush;
-    sleep(1);
-    std::cout << "\033[2J\033[1;1H";
+        std::cout << "\33[2K\r3" << std::flush;
+        sleep(1);
+        std::cout << "\33[2K\r2" << std::flush;
+        sleep(1);
+        std::cout << "\33[2K\r1" << std::flush;
+        sleep(1);
+        std::cout << "\033[2J\033[1;1H";
+    }
 }
 
 // Displayed After Player Loses
@@ -349,80 +367,112 @@ void GameControllerClient::MovePlayer()
 {
     // Async Keyboard catch
     int keyboard_input = getch();
-    
-    // add input to move command
-    std::string input = "move ";
-    std::string move = std::to_string(keyboard_input);
-    input.append(move);
 
-    switch(keyboard_input)
+    std::string direction = "";
+    std::string moved = "";
+    std::string movement = "";
+
+    if(ControlType == 1)
     {
-        case KEY_UP:
+        switch(keyboard_input)
         {
-            CheckCollisions();
-            if(GetCollisionOccur() == false)
+            case KEY_UP:
             {
-                player.MoveUp();
-                // Send to Server
-                ClientSocket.deliver(input.c_str());
-                break;
-            }
-            else
-            {
-                // Game Over
-                SetGameOver(true);
-                break;
-            }
-        }
-        case KEY_DOWN:
-        {
-            CheckCollisions();
-            if(GetCollisionOccur() == false)
-            {
-                player.MoveDown();
-                // Send to Server
-                ClientSocket.deliver(input.c_str());
-                break;
-            }
-            else
-            {
-                // Game Over
-                SetGameOver(true);
-                break;
-            }
-        }
-        case KEY_LEFT:
-        {
-            CheckCollisions();
-            if(GetCollisionOccur() == false)
-            {
-                player.MoveLeft();
-                // Send to Server
-                ClientSocket.deliver(input.c_str());
-                break;
-            }
-            else
-            {
-                // Game Over
-                SetGameOver(true);
-                break;
-            }
-        }
-        case KEY_RIGHT:
-        {
-            CheckCollisions();
+                CheckCollisions();
+                if(GetCollisionOccur() == false)
+                {
+                    player.MoveUp();
+                    direction = "y";
+                    moved = std::to_string(player.GetLocY());
+                    movement = direction + moved;
 
-            if(GetCollisionOccur() == false)
+                    // Send to Server
+                    ClientSocket.deliver(movement.c_str());
+                    break;
+                }
+                else
+                {
+                    // Game Over
+                    SetGameOver(true);
+                    break;
+                }
+            }
+            case KEY_DOWN:
             {
-                player.MoveRight();
-                // Send to Server
-                ClientSocket.deliver(input.c_str());
+                CheckCollisions();
+                if(GetCollisionOccur() == false)
+                {
+                    player.MoveDown();
+                    direction = "y";
+                    moved = std::to_string(player.GetLocY());
+                    movement = direction + moved;
+
+                    // Send to Server
+                    ClientSocket.deliver(movement.c_str());
+                    break;
+                }
+                else
+                {
+                    // Game Over
+                    SetGameOver(true);
+                    break;
+                }
+            }
+            default:
+            {
                 break;
             }
-            else
+        }
+    }
+    else if (ControlType == 2)
+    {
+        switch(keyboard_input)
+        {
+            case KEY_LEFT:
             {
-                // Game Over
-                SetGameOver(true);
+                CheckCollisions();
+                if(GetCollisionOccur() == false)
+                {
+                    player.MoveLeft();
+                    direction = "x";
+                    moved = std::to_string(player.GetLocX());
+                    movement = direction + moved;
+
+                    // Send to Server
+                    ClientSocket.deliver(movement.c_str());
+                    break;
+                }
+                else
+                {
+                    // Game Over
+                    SetGameOver(true);
+                    break;
+                }
+            }
+            case KEY_RIGHT:
+            {
+                CheckCollisions();
+
+                if(GetCollisionOccur() == false)
+                {
+                    player.MoveRight();
+                    direction = "x";
+                    moved = std::to_string(player.GetLocX());
+                    movement = direction + moved;
+
+                    // Send to Server
+                    ClientSocket.deliver(movement.c_str());
+                    break;
+                }
+                else
+                {
+                    // Game Over
+                    SetGameOver(true);
+                    break;
+                }
+            }
+            default:
+            {
                 break;
             }
         }
@@ -433,6 +483,7 @@ void GameControllerClient::MovePlayer()
 void GameControllerClient::UpdateGame()
 {
     char buffer[MAX_BYTES];
+    memset(buffer, '\0', MAX_BYTES);
     size_t bytes = 0;
 
     // Check Server Connection

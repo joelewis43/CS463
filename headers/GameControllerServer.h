@@ -36,7 +36,6 @@ class GameControllerServer {
     private:
         // GameBoard GameBoard;                                 // Game Board Object
         // Environment Object?
-        // Timer Settings?
         Player player1;
         Player player2;
         Player player1and2;
@@ -75,8 +74,8 @@ class GameControllerServer {
         void MoveObjects();                                     // Update Object Locations
         void MoveEnvironment();                                 // Move Environment
         void UpdateEnvironment();                               // Sets New Environment
-        void UpdateGame();                                      // Update Game State
-        void UpdateScore();                                     // Update Game's Score
+        void UpdateGame(double, float);                                      // Update Game State
+        void UpdateScore(double, float);                                     // Update Game's Score
         void SendMap();                                         // Send Map to Client/Server
 
         // Getters

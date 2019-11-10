@@ -40,6 +40,11 @@ void GameControllerServer::MainGameLoop()
     // Time Seed for Score Keeping
     srand(time(NULL));
 
+    // Setup Timer
+    std::clock_t start;
+    double duration = 0.0;
+    float timer = 0.0;
+
     // Wait for two clients to connect
     std::cout << "Waiting for clients ..." << std::endl;
     ServerSocket.waitForClients();
@@ -84,10 +89,6 @@ void GameControllerServer::MainGameLoop()
             }
         }
 
-        // Wait for two clients to connect
-        //std::cout << "Waiting for clients ..." << std::endl;
-        //ServerSocket.waitForClients();
-
         // Get Players Names
         NameMenu();
 
@@ -104,7 +105,7 @@ void GameControllerServer::MainGameLoop()
         while(!GetGameOver())
         {
             // Update Game
-            UpdateGame();
+            UpdateGame(duration, timer);
         }
     }
 }
@@ -281,7 +282,7 @@ void GameControllerServer::SaveScore(std::string playerName, int score)
 }
 
 // Updates Score Based on Timer
-void GameControllerServer::UpdateScore()
+void GameControllerServer::UpdateScore(double duration, float timer)
 {
     duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
     timer = floor(((duration / 60.0) / 60.0) * 10000);
@@ -371,21 +372,24 @@ void GameControllerServer::ControlSelection()
 
     if(player1Controls == 1)
     {
+        std::string control1 = "1";
+        ServerSocket.deliver1(control1.c_str());
+
+        std::string control2 = "2";
+        ServerSocket.deliver2(control2.c_str());
+
         player2Controls = 2;
     }
     else if(player1Controls == 2)
     {
+        std::string control1 = "2";
+        ServerSocket.deliver1(control1.c_str());
+
+        std::string control2 = "1";
+        ServerSocket.deliver2(control2.c_str());
+
         player2Controls = 1;
     }
-
-    // Send Command to Clients to indicate control types
-    char msg1[64];
-    sprintf(msg1, "controls %d", player1Controls);
-
-    char msg2[64];
-    sprintf(msg2, "controls %d", player2Controls);
-
-    ServerSocket.deliver(msg1, msg2);
 
     sleep(1);
 }
@@ -396,6 +400,7 @@ void GameControllerServer::CountDownScreen()
     // Tell Clients to start countdowns
     const char* msg = "countdown";
     ServerSocket.deliver(msg);
+    sleep(3);
     //// OR
     ///// Have countdown screen in Tevin's game env
 }
@@ -420,9 +425,76 @@ void GameControllerServer::CreateSpecialEvent()
 // Update Player Location
 void GameControllerServer::MovePlayer()
 {
-    // Receive Data From Client
+    char x = 'x';
+    char y = 'y';
+    int move_x = 0;
+    int move_y = 0;
+    std::string s = "";
+    char buffer1[MAX_BYTES];
+    char buffer2[MAX_BYTES];
+    memset(buffer1, '\0', MAX_BYTES);
+    memset(buffer2, '\0', MAX_BYTES);
 
-    // Update Player Location (X|Y)
+    // Receive Data From Client
+    ServerSocket.receive1(buffer1);
+    ServerSocket.receive2(buffer2);
+
+    // Update Player Location (X|Y) for Player 1
+    if(buffer1[0] == x)
+    {
+        for (int i = 1; i < MAX_BYTES; i++)
+        {
+            if(buffer1[i] == '\0')
+            {
+                break;
+            }
+            s += buffer1[i];
+        }
+        move_x = stoi(s);
+    }
+    else if (buffer1[0] == y)
+    {
+        for (int i = 1; i < MAX_BYTES; i++)
+        {
+            if(buffer1[i] == '\0')
+            {
+                break;
+            }
+            s += buffer1[i];
+        }
+        move_y = stoi(s);
+    }
+
+    // Update Player Location (X|Y) for Player 2
+    s = "";
+    if(buffer2[0] == x)
+    {
+        for (int i = 1; i < MAX_BYTES; i++)
+        {
+            if(buffer2[i] == '\0')
+            {
+                break;
+            }
+            s += buffer2[i];
+        }
+        move_x = stoi(s);
+    }
+    else if (buffer2[0] == y)
+    {
+        for (int i = 1; i < MAX_BYTES; i++)
+        {
+            if(buffer2[i] == '\0')
+            {
+                break;
+            }
+            s += buffer2[i];
+        }
+        move_y = stoi(s);
+    }
+
+    // Update Player
+    player1and2.SetLocX(move_x);
+    player1and2.SetLocY(move_y);
 
     // Update Map
 
@@ -454,7 +526,7 @@ void GameControllerServer::SendMap()
 }
 
 // Update Game State
-void GameControllerServer::UpdateGame()
+void GameControllerServer::UpdateGame(double duration, float timer)
 {
     // Check Server Connection
     if(ServerSocket.getConnection())
@@ -484,7 +556,7 @@ void GameControllerServer::UpdateGame()
         CheckCollisions();
 
         // Update Score
-        UpdateScore();
+        UpdateScore(duration, timer);
 
         // Send Map to Client
         SendMap();
