@@ -89,18 +89,22 @@ void GameControllerServer::MainGameLoop()
             }
         }
 
+        std::cout << "Getting Player Names ..." << std::endl;
         // Get Players Names
         NameMenu();
 
+        std::cout << "Sending Players Ready Message ..." << std::endl;
         // Tell Clients connections have been made
         AwaitingPlayer();
 
+        std::cout << "Tell Clients to Begin Countdown ..." << std::endl;
         // Tell Clients to Start Countdowns
         CountDownScreen();
 
         // Begin Timer
         start = std::clock();
 
+        std::cout << "Starting Game ..." << std::endl;
         // Begin Game
         while(!GetGameOver())
         {
@@ -309,7 +313,7 @@ void GameControllerServer::NameMenu()
         // Receive Client 1 Signal
         ServerSocket.receive1(buffer1);
 
-        if(strcmp( buffer1, "! name"))
+        if(strcmp( buffer1, "! name") == 0)
         {
             memset(buffer1, '\0', MAX_BYTES);
 
@@ -319,7 +323,7 @@ void GameControllerServer::NameMenu()
             // Set Name
             player_a = name1;
         }
-        else if(strcmp( buffer1, "! pReady"))
+        else if(strcmp( buffer1, "! pReady") == 0)
         {
             NameSetCounter++;
         }
@@ -327,7 +331,7 @@ void GameControllerServer::NameMenu()
         // Receive Client 2 Signal
         ServerSocket.receive2(buffer2);
 
-        if(strcmp( buffer2, "! name"))
+        if(strcmp( buffer2, "! name") == 0)
         {
             memset(buffer2, '\0', MAX_BYTES);
 
@@ -337,7 +341,7 @@ void GameControllerServer::NameMenu()
             // Set Name
             player_b = name2;
         }
-        else if(strcmp( buffer1, "! pReady"))
+        else if(strcmp( buffer1, "! pReady") == 0)
         {
             NameSetCounter++;
         }

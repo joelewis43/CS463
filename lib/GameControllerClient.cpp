@@ -277,7 +277,7 @@ void GameControllerClient::AwaitingPlayer()
 
         ClientSocket.receive(buffer);
 
-        if(strcmp(buffer, "Matchmaking Completed!") == 1)
+        if(strcmp(buffer, "Matchmaking Completed!") == 0)
         {
             PlayerJoined2 = true;
         }
@@ -299,10 +299,10 @@ void GameControllerClient::ControlSelection()
     ClientSocket.receiveBlock(buffer);
 
     // Logic to Determine Player Controls
-    if(strcmp(buffer, "1") == 1)
+    if(strcmp(buffer, "1") == 0)
     {
         ControlType = 1;
-    } else if(strcmp(buffer, "2") == 1)
+    } else if(strcmp(buffer, "2") == 0)
     {
         ControlType = 2;
     }
