@@ -72,7 +72,9 @@ void GameControllerServer::MainGameLoop()
             }
             else if(strcmp( buffer1, "! pReady") == 0)
             {
+                std::cout << "Player 1 Ready ..." << std::endl;
                 ReadyCounter++;
+                memset(buffer1, '\0', MAX_BYTES);
             }
 
             // Receive Client 2 Signal
@@ -83,9 +85,11 @@ void GameControllerServer::MainGameLoop()
                 LeaderBoard(2);
                 memset(buffer2, '\0', MAX_BYTES);
             }
-            else if(strcmp( buffer1, "! pReady") == 0)
+            else if(strcmp( buffer2, "! pReady") == 0)
             {
+                std::cout << "Player 2 Ready ..." << std::endl;
                 ReadyCounter++;
+                memset(buffer2, '\0', MAX_BYTES);
             }
         }
 
@@ -97,6 +101,9 @@ void GameControllerServer::MainGameLoop()
         // Tell Clients connections have been made
         AwaitingPlayer();
 
+        std::cout << "Tell Players their Controls..." << std::endl;
+        ControlSelection();
+
         std::cout << "Tell Clients to Begin Countdown ..." << std::endl;
         // Tell Clients to Start Countdowns
         CountDownScreen();
@@ -105,11 +112,12 @@ void GameControllerServer::MainGameLoop()
         start = std::clock();
 
         std::cout << "Starting Game ..." << std::endl;
+
         // Begin Game
         while(!GetGameOver())
         {
             // Update Game
-            UpdateGame(duration, timer);
+            //UpdateGame(duration, timer);
         }
     }
 }
@@ -334,7 +342,6 @@ void GameControllerServer::NameMenu()
                 player1Ready++;
                 std::cout << "Player 1 Name Received." << std::endl;
             }
-            //memset(buffer1, '\0', MAX_BYTES);
         }
 
         if(player2Ready == 0)
@@ -356,8 +363,9 @@ void GameControllerServer::NameMenu()
                 player2Ready++;
                 std::cout << "Player 2 Name Received." << std::endl;
             }
-            //memset(buffer2, '\0', MAX_BYTES);
         }
+        if(player1Ready == 1 && player2Ready == 1)
+            break;
     }
 
     // Concatenate Names
@@ -389,6 +397,35 @@ void GameControllerServer::ControlSelection()
     // 1 = Up/Down
     // 2 = Left/Right
 
+    std::cout << "Sending Controls to Players" << std::endl;
+    const char* msg = "controls";
+    std::string message = "controls";
+    ServerSocket.deliver(message.c_str());
+
+
+    char buffer1[MAX_BYTES];
+    char buffer2[MAX_BYTES];
+    memset(buffer1, '\0', MAX_BYTES);
+    memset(buffer2, '\0', MAX_BYTES);
+    int sendCounter = 0;
+    while(sendCounter != 2)
+    {
+        ServerSocket.receive1(buffer1);
+        if(strcmp( buffer1, "send") == 0)
+        {
+            sendCounter++;
+            memset(buffer1, '\0', MAX_BYTES);
+        }
+
+        ServerSocket.receive2(buffer2);
+        if(strcmp( buffer2, "send") == 0)
+        {
+            sendCounter++;
+            memset(buffer2, '\0', MAX_BYTES);
+        }
+    }
+
+    std::cout << "Delivering Controls" << std::endl;
     if(player1Controls == 1)
     {
         std::string control1 = "1";
@@ -410,15 +447,50 @@ void GameControllerServer::ControlSelection()
         player2Controls = 1;
     }
 
-    sleep(1);
+    // Clients in Menu
+    int ReadyCounter = 0;
+
+    char buf1[MAX_BYTES];
+    char buf2[MAX_BYTES];
+    memset(buf1, '\0', MAX_BYTES);
+    memset(buf2, '\0', MAX_BYTES);
+
+    // Loop Until Both Players Indicate They Are Ready to Play
+    while(ReadyCounter != 2)
+    {
+        // Receive Client 1 Signal
+        ServerSocket.receive1(buf1);
+
+        if(strcmp( buf1, "ready") == 0)
+        {
+            std::cout << "Player 1 Ready ..." << std::endl;
+            ReadyCounter++;
+            memset(buf1, '\0', MAX_BYTES);
+        }
+
+        // Receive Client 2 Signal
+        ServerSocket.receive2(buf2);
+
+        if(strcmp( buf2, "ready") == 0)
+        {
+            std::cout << "Player 2 Ready ..." << std::endl;
+            ReadyCounter++;
+            memset(buf2, '\0', MAX_BYTES);
+        }
+    }
+
+    sleep(5);
 }
 
 // Displayed Before Game Starts
 void GameControllerServer::CountDownScreen()
 {
     // Tell Clients to start countdowns
+    sleep(1);
+    std::cout << "Sending Countdown Code" << std::endl;
     const char* msg = "countdown";
-    ServerSocket.deliver(msg);
+    std::string message = "countdown";
+    ServerSocket.deliver(message.c_str());
     sleep(3);
     //// OR
     ///// Have countdown screen in Tevin's game env

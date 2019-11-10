@@ -46,6 +46,9 @@ void GameControllerClient::MainGameLoop()
     // Menus
     MainMenu();
 
+    // Display Game Count Down
+    //CountDownScreen();
+
     if(GetQuitGame() == false)
     {
         // Initialize ncurses
@@ -60,13 +63,10 @@ void GameControllerClient::MainGameLoop()
         timeout(1);
         nodelay(stdscr, TRUE);
 
-        // Display Game Count Down
-        CountDownScreen();
-
         // Begin Game
         while(GetGameOver() != true && GetServerConnection() == true)
         {
-            UpdateGame();
+            //UpdateGame();
         }
     }
     else
@@ -117,6 +117,7 @@ void GameControllerClient::MainMenu()
                     NameMenu();
                     AwaitingPlayer();   // Listening to Server / Tell Server Client is Ready
                     ControlSelection();
+                    CountDownScreen();
                     break;
                 case 2:
                     // Leader Boards
@@ -283,6 +284,8 @@ void GameControllerClient::AwaitingPlayer()
         }
     }
 
+    memset(buffer, '\0', MAX_BYTES);
+
     std::cout << "The Other Player Has Joined!" << std::endl;
     sleep(1);
 }
@@ -290,25 +293,51 @@ void GameControllerClient::AwaitingPlayer()
 // Player Selects Controls
 void GameControllerClient::ControlSelection()
 {
+    std::cout << "\033[2J\033[1;1H";
+    std::cout << "Ready for Controls..." << std::endl;
+
     // Ask the server what controls you are assigned
     //const char *msg = "? controls";
     //ClientSocket.deliver(msg);
+    char one = '1';
+    char two = '2';
+    std::string send = "send";
+
+    char buff[MAX_BYTES];
+    memset(buff, '\0', MAX_BYTES);
+    while(1)
+    {
+        ClientSocket.receive(buff);
+        if(strcmp(buff, "controls") == 0)
+        {
+            std::cout << "Beginning Control Reception..." << std::endl;
+            ClientSocket.deliver(send.c_str());
+            break;
+        }
+    }
 
     char buffer[MAX_BYTES];
     memset(buffer, '\0', MAX_BYTES);
-    ClientSocket.receiveBlock(buffer);
 
-    // Logic to Determine Player Controls
-    if(strcmp(buffer, "1") == 0)
+    while (ControlType == 0)
     {
-        ControlType = 1;
-    } else if(strcmp(buffer, "2") == 0)
-    {
-        ControlType = 2;
-    }
-    else
-    {
-        std::cout << "Failure to Set Controls" << std::endl;
+        ClientSocket.receive(buffer);
+
+        // Logic to Determine Player Controls
+        if(buffer[0] == one)
+        {
+            ControlType = 1;
+            break;
+        }
+        else if(buffer[0] == two)
+        {
+            ControlType = 2;
+            break;
+        }
+        else
+        {
+            std::cout << "Failure to Set Controls" << std::endl;
+        }
     }
 
     // Display controls
@@ -321,6 +350,10 @@ void GameControllerClient::ControlSelection()
     {
         std::cout << player.GetName() <<"'s controls are:" << " Left/Right" << std::endl;
     }
+
+    std::string ready = "ready";
+    ClientSocket.deliver(ready.c_str());
+
     sleep(5);
 }
 
@@ -332,21 +365,38 @@ void GameControllerClient::CountDownScreen()
     // it should call this function
     char buffer[MAX_BYTES];
     memset(buffer, '\0', MAX_BYTES);
-    ClientSocket.receive(buffer);
 
-    if(strcmp(buffer, "countdown") == 1)
+    /*std::cout << "Count Down Screen" << std::endl;
+
+    while (1)
     {
-        std::cout << "\033[2J\033[1;1H";
-        std::cout << "Game Starting in..." << std::endl;
+        ClientSocket.receive(buffer);
 
-        std::cout << "\33[2K\r3" << std::flush;
-        sleep(1);
-        std::cout << "\33[2K\r2" << std::flush;
-        sleep(1);
-        std::cout << "\33[2K\r1" << std::flush;
-        sleep(1);
-        std::cout << "\033[2J\033[1;1H";
-    }
+        if(strcmp(buffer, "countdown") == 1)
+        {
+            std::cout << "\033[2J\033[1;1H";
+            std::cout << "Game Starting in..." << std::endl;
+
+            std::cout << "\33[2K\r3" << std::flush;
+            sleep(1);
+            std::cout << "\33[2K\r2" << std::flush;
+            sleep(1);
+            std::cout << "\33[2K\r1" << std::flush;
+            sleep(1);
+            std::cout << "\033[2J\033[1;1H";
+            break;
+        }
+    }*/
+    std::cout << "\033[2J\033[1;1H";
+    std::cout << "Game Starting in..." << std::endl;
+
+    std::cout << "\33[2K\r3" << std::flush;
+    sleep(1);
+    std::cout << "\33[2K\r2" << std::flush;
+    sleep(1);
+    std::cout << "\33[2K\r1" << std::flush;
+    sleep(1);
+    std::cout << "\033[2J\033[1;1H";
 }
 
 // Displayed After Player Loses
