@@ -22,15 +22,18 @@
 #include "Player.h"
 #include "clientSocket.h"
 #include <ncurses.h>
+#include "matrix.h"
+#include "window.h"
 
 class GameControllerClient {
     private:
         clientSocket ClientSocket;                  // Client to Server Connection
-        Player  player;                             // Player Object
-        bool    QuitGame = false;                   // Quit Game
-        bool    ServerConnected = false;            // Server Connection
-        bool    GameOver = false;                   // Game Over
-        int     ControlType = 0;                    // 1 = Up/Down, 2 = Left/Right
+        Player       player;                        // Player Object
+        bool         QuitGame = false;              // Quit Game
+        bool         ServerConnected = false;       // Server Connection
+        bool         GameOver = false;              // Game Over
+        int          ControlType = 0;               // 1 = Up/Down, 2 = Left/Right
+        GameMatrix   board;                         // Game Board
     protected:
     public:
         // Constructor/Destructor
@@ -48,7 +51,7 @@ class GameControllerClient {
         void GameOverMenu();                        // Displayed After Player Loses
         void ServerConnection();                    // Checks for Server Connection
         void MovePlayer();                          // Update Player Location
-        void UpdateGame();                          // Update Game
+        void UpdateGame(WINDOW *window);                          // Update Game
 
 
         // undefined

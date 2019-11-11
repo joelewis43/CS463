@@ -76,6 +76,17 @@ class serverSocket {
         size_t receive2(char buffer[MAX_BYTES]);
 
         /**
+         * Reads data from client socket.
+         * Blocks data until data has been received
+         * 
+         * @param buffer - buffer of size MAX_BYTES to read data into
+         * @param size - the expected size of the message
+         * @returns - the number of bytes read from the socket
+         **/
+        size_t receive1(char *buffer, int size);
+        size_t receive2(char *buffer, int size);
+
+        /**
          * Closes the respective client's socket
          **/
         void closeClient1();
@@ -118,6 +129,17 @@ class serverSocket {
          * @param id - the client id to read (0 or 1)
         **/
         size_t receive(char buffer[MAX_BYTES], int clientID);
+
+        /**
+         * Reads data from specified socket
+         * 
+         * Blocks the thread until data has been received
+         * 
+         * @param buffer - the buffer to store the response
+         * @param size - the expected size of the message
+         * @param id - the client id to read (0 or 1)
+        **/
+        size_t receive(char *buffer, int size, int clientID);
 
         /**
          * Prints the given message upon error and exits with exitCode

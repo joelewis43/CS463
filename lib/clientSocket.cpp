@@ -59,6 +59,38 @@ size_t clientSocket::receive(char buffer[MAX_BYTES]) {
     return total;
 }
 
+size_t clientSocket::receive(char *buffer, int size) {
+    char temp[size];
+    int total = 0, current = 0, bufsize = size;
+    int i = 0;
+
+    do {
+        memset(temp, '\0', size);
+
+        // read from the socket
+        current = recv(sock, temp, bufsize, 0);
+        
+        if (current > 0) { 
+
+            // add the new bytes to total
+            total += current;
+            bufsize -= current;
+
+            // append the temp string to buffer
+            for (int x = 0; x < strlen(temp); x++) {
+                buffer[i] = temp[x];
+                i++;
+                // SHOULD REALLY CHECK IF i IS APPROACHING MAX_BYTES
+            }
+        }
+    } while(bufsize > 0 && current > 0);
+
+    if (total < 0)
+        return 0;
+
+    return total;
+}
+
 size_t clientSocket::receiveBlock(char buffer[MAX_BYTES]) {
 
     char temp[MAX_BYTES];

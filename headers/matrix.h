@@ -1,26 +1,33 @@
+#ifndef GAMEMATRIX_H
+#define GAMEMATRIX_H
+
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <deque>
 #include <vector>
 #include <functional>
 #include <algorithm>
 #include <iterator>
+#include <ncurses.h>
 
 #include "object.h"
-#include "character.h"
-#include "comet.h"
 
 using std::cout;
 using std::endl;
+using std::deque;
 using std::string;
 using std::vector;
-
-#ifndef GAMEMATRIX_H
-#define GAMEMATRIX_H
 
 class GameMatrix
 {
 private:
+    // Cache Player's X coordinate
+    int playerX;
+    // Cache Player's Y coordinate
+    int playerY;
+    // Player object used for reference within the matrix
+    PlayerObject *playerObject;
     /**
      * Underlying matrix container
      * 
@@ -33,7 +40,7 @@ private:
      * row and column member to the class and  computing the end of a row for each
      * matrix iteration
      **/
-    vector<vector<Object *> > buffer;
+    deque<vector<Object *>> buffer;
 
     /**
      * Applies a function for each cell in the matrix to
@@ -91,7 +98,7 @@ public:
      * Updates an index in the matrix with the passed value
      * 
      * @param row - Row the item should added to
-     * @param col - COlumn the item should be added to
+     * @param col - Column the item should be added to
      **/
     void update(int row, int col, Object *object);
 
@@ -109,6 +116,23 @@ public:
      * 
      **/
     void updateTop(vector<Object *> &row);
+
+    /**
+     * Creates the PlayerObject and places it in the matrix at the
+     * specified coordinates
+     * 
+     * @param x - X Coordinate
+     * @param y - Y Coordinate
+     **/
+    void initPlayerObject(int x, int y);
+
+    /**
+     * Updates the player's position on the game matrix
+     * 
+     * @param newY - Y coordinate
+     * @param newX - X Coordinate
+     **/
+    void updatePlayerPosition(int newY, int newX);
 
     /**
      * Initializes or updates the matrix with objects based on
@@ -142,6 +166,28 @@ public:
      * @returns - ID representation of the matrix
      **/
     string serialize();
+
+    /**
+     * Prints the contents of the GameMatrix ot the ncurses
+     * window
+     * 
+     * @param window - A pointer to an ncurses window object
+    **/
+    void print(WINDOW *window);
+
+    /**
+     * Getter for the number of rows
+     * 
+     * @returns - The number of rows in the matrix
+     **/
+    int rows();
+
+    /**
+     * Getter for the number of columns
+     * 
+     * @returns - The numbe of columns in the matrix
+     **/
+    int cols();
 
     /**
      * Overloads the substrict operator

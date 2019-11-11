@@ -7,7 +7,6 @@
 .idea/workspace.xml
 *.txt
 .vscode/
-data/*
 
 # Exceptions #
 ##############

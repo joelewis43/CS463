@@ -3,7 +3,7 @@
 WINDOW *createBorderWindow()
 {
     WINDOW *local_win;
-    local_win = newwin(LINES, COLS, 0, 0);
+    local_win = newwin(GAMEBOARD_WINDOW_HEIGHT, GAMEBOARD_WINDOW_WIDTH, 0, 0);
     // Add borders to the window
     box(local_win, 0, 0);
 

@@ -1,15 +1,15 @@
 all: client server
 
 
-client: client.o GameControllerClient.o Player.o clientSocket.o
-	g++ -g -std=c++0x client.o GameControllerClient.o Player.o clientSocket.o -o client -lncurses
+client: client.o GameControllerClient.o Player.o clientSocket.o gameboard.o
+	g++ -g -std=c++0x client.o GameControllerClient.o Player.o clientSocket.o gameboard.o -o client -lncurses
 
 client.o: client.cpp
 	g++ -c -g -std=c++0x client.cpp
 
 
-server: server.o GameControllerServer.o Player.o serverSocket.o
-	g++ -g -std=c++0x server.o GameControllerServer.o Player.o serverSocket.o -o server -lncurses
+server: server.o GameControllerServer.o Player.o serverSocket.o gameboard.o
+	g++ -g -std=c++0x server.o GameControllerServer.o Player.o serverSocket.o gameboard.o -o server -lncurses
 
 server.o: server.cpp
 	g++ -c -g -std=c++0x server.cpp
@@ -33,16 +33,19 @@ clientSocket.o: lib/clientSocket.cpp headers/clientSocket.h
 	g++ -c -g -std=c++0x lib/clientSocket.cpp
 
 
-gameboard.o: matrix.o city.o environment.o random.o window.o
-	ld -r matrix.o city.o environment.o random.o window.o -o gameboard.o
+gameboard.o: matrix.o asteroid.o city.o gameEnvironment.o random.o window.o
+	ld -r matrix.o asteroid.o city.o gameEnvironment.o random.o window.o -o gameboard.o
+
+asteroid.o: headers/asteroid.h lib/asteroid.cpp
+	g++ -c -g -std=c++0x lib/asteroid.cpp
 
 city.o: headers/city.h lib/city.cpp
 	g++ -c -g -std=c++0x lib/city.cpp
 
-environment.o: headers/environment.h lib/environment.cpp
-	g++ -c -g -std=c++0x lib/environment.cpp
+gameEnvironment.o: headers/gameEnvironment.h lib/gameEnvironment.cpp
+	g++ -c -g -std=c++0x lib/gameEnvironment.cpp
 
-matrix.o: lib/matrix.cpp headers/matrix.h headers/object.h headers/character.h headers/comet.h
+matrix.o: lib/matrix.cpp headers/matrix.h headers/object.h
 	g++ -c -g -std=c++0x lib/matrix.cpp
 
 random.o: headers/random.h lib/random.cpp

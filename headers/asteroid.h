@@ -1,8 +1,33 @@
-#include "builder.h"
+#ifndef ASTEROID_LEVEL_H
+#define ASTEROID_LEVEL_H
 
-class AsteroidLevel : public LevelBuilder {
+#include "builder.h"
+#include "random.h"
+#include <math.h>
+
+class AsteroidLevel : public LevelBuilder
+{
 public:
-  AsteroidLevel(int cols) : LevelBuilder(cols) {};
+  /**
+   * Constructor for a LevelBuilder object
+   * 
+   * @param rows - Number of rows that should generated for the level
+   * @param cols - Number of columns for a row of the level
+   **/
+  AsteroidLevel(int rows, int cols, int screenHeight) : LevelBuilder(rows, cols, screenHeight)
+  {
+    construct();
+  };
+  /**
+   * Constructs the entire level and stores the level
+   * in the level container
+   **/
   void construct();
-  vector<Object *> build();
+
+  /**
+   * Destructor for the AsteroidLevel
+   **/
+  ~AsteroidLevel();
 };
+
+#endif // !ASTEROID_LEVEL_H

@@ -1,4 +1,27 @@
 #include <ncurses.h>
+#include <chrono>
+#include <thread>
+
+#ifndef GAMEBOARD_WINDOW_HEIGHT
+#define GAMEBOARD_WINDOW_HEIGHT 35
+#endif // !GAMEBOARD_WINDOW_HEIGHT
+
+#ifndef GAMEBOARD_WINDOW_WIDTH
+#define GAMEBOARD_WINDOW_WIDTH 200
+#endif // !GAMEBOARD_WINDOW_WIDTH
+
+#ifndef CONTENT_HEIGHT
+#define CONTENT_HEIGHT (GAMEBOARD_WINDOW_HEIGHT - 2)
+#endif // !CONTENT_HEIGHT
+
+#ifndef CONTENT_WIDTH
+#define CONTENT_WIDTH (GAMEBOARD_WINDOW_WIDTH - 3)
+#endif // !CONTENT_WIDTH
+
+#ifndef GAMEBOARD_BUFSIZE
+// Every cell of the window plus newlines and null terminator minus the row and column offset
+#define GAMEBOARD_BUFSIZE (CONTENT_HEIGHT * CONTENT_WIDTH) + CONTENT_HEIGHT + 1
+#endif // !GAMEBOARD_BUFSIZE
 
 /**
  * Creates an ncurses window with borders surrounding the boundaries
