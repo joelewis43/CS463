@@ -131,6 +131,10 @@ size_t serverSocket::receive2(char b[MAX_BYTES]) {
 size_t serverSocket::receive(char buffer[MAX_BYTES], int clientID) {
     
     char temp[MAX_BYTES];
+
+    memset(temp, '\0', MAX_BYTES);
+    memset(buffer, '\0', MAX_BYTES);
+
     int total = 0, current = 0;
     int i=0;
 
@@ -144,7 +148,7 @@ size_t serverSocket::receive(char buffer[MAX_BYTES], int clientID) {
             total += current;
 
             // append the temp string to buffer
-            for (int x=0; x < strlen(temp); x++) {
+            for (int x=0; x < current; x++) {
                 buffer[i] = temp[x];
                 i++;
                 // SHOULD REALLY CHECK IF i IS APPROACHING MAX_BYTES
@@ -156,4 +160,12 @@ size_t serverSocket::receive(char buffer[MAX_BYTES], int clientID) {
         return 0;
 
     return total;
+}
+
+void serverSocket::clearBuffers() {
+
+    char temp[MAX_BYTES];
+
+    while (receive(temp, 0) > 0) {}
+    while (receive(temp, 1) > 0) {}
 }

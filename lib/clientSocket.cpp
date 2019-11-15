@@ -28,6 +28,10 @@ void clientSocket::deliver(const char *msg) {
 size_t clientSocket::receive(char buffer[MAX_BYTES]) {
 
     char temp[MAX_BYTES];
+
+    memset(temp, '\0', MAX_BYTES);
+    memset(buffer, '\0', MAX_BYTES);
+
     int total = 0, current = 0;
     int i=0;
 
@@ -41,7 +45,7 @@ size_t clientSocket::receive(char buffer[MAX_BYTES]) {
             total += current;
 
             // append the temp string to buffer
-            for (int x=0; x < strlen(temp); x++) {
+            for (int x=0; x < current; x++) {
                 buffer[i] = temp[x];
                 i++;
                 // SHOULD REALLY CHECK IF i IS APPROACHING MAX_BYTES
@@ -128,4 +132,10 @@ void clientSocket::error(char const *msg, int exitCode) {
 
 bool clientSocket::getConnection() {
     return connected;
+}
+
+void clientSocket::clearBuffer() {
+    char temp[MAX_BYTES];
+
+    while(receive(temp)) {}
 }

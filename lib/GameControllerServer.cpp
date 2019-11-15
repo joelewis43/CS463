@@ -5,6 +5,7 @@
 #include "../headers/GameControllerServer.h"
 #include "../headers/Player.h"
 #include "../headers/serverSocket.h"
+#include "../headers/commands.h"
 
 ////////////////////////////////
 ///                          ///
@@ -13,7 +14,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerServer::GameControllerServer() : ServerSocket(99556), player1(), player2()
+GameControllerServer::GameControllerServer() : ServerSocket(6235), player1(), player2()
 {
     // Set Timer Settings Here?
 }
@@ -52,49 +53,70 @@ void GameControllerServer::MainGameLoop()
     while(1)
     {
         // Clients in Menu
-        int ReadyCounter = 0;
+        int ReadyPlayer1 = 0; // good movie
+        int ReadyPlayer2 = 0; // the sequel?
 
         char buffer1[MAX_BYTES];
         char buffer2[MAX_BYTES];
         memset(buffer1, '\0', MAX_BYTES);
         memset(buffer2, '\0', MAX_BYTES);
 
+        int bytes1 = 0;
+        int bytes2 = 0;
+
         // Loop Until Both Players Indicate They Are Ready to Play
-        while(ReadyCounter != 2)
+        while(!ReadyPlayer1 || !ReadyPlayer2)
         {
-            // Receive Client 1 Signal
-            ServerSocket.receive1(buffer1);
 
-            if(strcmp( buffer1, "? leaderboard") == 0)
+            // read from socket 1 if play is not yet ready
+            if (!ReadyPlayer1)
             {
-                LeaderBoard(1);
-                memset(buffer1, '\0', MAX_BYTES);
-            }
-            else if(strcmp( buffer1, "! pReady") == 0)
-            {
-                std::cout << "Player 1 Ready ..." << std::endl;
-                ReadyCounter++;
-                memset(buffer1, '\0', MAX_BYTES);
+                // Receive Client 1 Signal
+                bytes1 = ServerSocket.receive1(buffer1);
+
+                if (bytes1) {
+                    std::cout << buffer1 << std::endl;
+                }
+
+                if(strstr( buffer1, "? leaderboard"))
+                {
+                    LeaderBoard(1);
+                    memset(buffer1, '\0', MAX_BYTES);
+                }
+                else if(strstr( buffer1, "! pReady"))
+                {
+                    std::cout << "Player 1 Ready ..." << std::endl;
+                    ReadyPlayer1 = 1;
+                    memset(buffer1, '\0', MAX_BYTES);
+                }
             }
 
-            // Receive Client 2 Signal
-            ServerSocket.receive2(buffer2);
+            if (!ReadyPlayer2)
+            {
+                // Receive Client 2 Signal
+                bytes2 = ServerSocket.receive2(buffer2);
 
-            if(strcmp( buffer2, "? leaderboard") == 0)
-            {
-                LeaderBoard(2);
-                memset(buffer2, '\0', MAX_BYTES);
-            }
-            else if(strcmp( buffer2, "! pReady") == 0)
-            {
-                std::cout << "Player 2 Ready ..." << std::endl;
-                ReadyCounter++;
-                memset(buffer2, '\0', MAX_BYTES);
+                if (bytes2) {
+                    std::cout << buffer2 << std::endl;
+                }
+
+                if(strstr( buffer2, "? leaderboard"))
+                {
+                    LeaderBoard(2);
+                    memset(buffer2, '\0', MAX_BYTES);
+                }
+                else if(strstr( buffer2, "! pReady"))
+                {
+                    std::cout << "Player 2 Ready ..." << std::endl;
+                    ReadyPlayer2 = 1;
+                    memset(buffer2, '\0', MAX_BYTES);
+                }
             }
         }
 
         std::cout << "Getting Player Names ..." << std::endl;
         // Get Players Names
+        AwaitingPlayer();
         NameMenu();
 
         std::cout << "Sending Players Ready Message ..." << std::endl;
@@ -139,6 +161,7 @@ void GameControllerServer::LeaderBoard(int player)
     if (!fp)
     {
         std::cout << "Failed to Retrieve LeaderBoards" << std::endl;
+        ServerSocket.deliver1("Server failed to open Leaderboard");
     }
     else
     {
@@ -304,6 +327,8 @@ void GameControllerServer::UpdateScore(double duration, float timer)
 // Select Player Name
 void GameControllerServer::NameMenu()
 {
+    ServerSocket.clearBuffers();
+
     char name1[6];
     char name2[6];
     memset(name1, '\0', 6);
@@ -320,51 +345,48 @@ void GameControllerServer::NameMenu()
     memset(buffer1, '\0', MAX_BYTES);
     memset(buffer2, '\0', MAX_BYTES);
 
+    int bytes = 0;
+
     // Loop Until Both Players Indicate Their Names Are Set
-    while(NameSetCounter != 2)
+    while(1)
     {
         if(player1Ready == 0)
         {
             // Receive Client 1 Signal
             ServerSocket.receive1(buffer1);
 
-            if(strcmp( buffer1, "! name") == 0)
+            if(strstr(buffer1, "! name"))
             {
                 std::cout << "Retrieving P1 Name..." << std::endl;
                 memset(buffer1, '\0', MAX_BYTES);
 
-                // Get Name
-                ServerSocket.receive1(name1);
-
                 // Set Name
                 player_a = name1;
-                NameSetCounter++;
-                player1Ready++;
+                player1Ready = 1;
                 std::cout << "Player 1 Name Received." << std::endl;
             }
         }
 
         if(player2Ready == 0)
         {
-            // Receive Client 2 Signal
-            ServerSocket.receive2(buffer2);
+            // Receive Client 1 Signal
+            bytes = ServerSocket.receive2(buffer2);
+            if (bytes)
+                std::cout << buffer2 << std::endl;
 
-            if(strcmp( buffer2, "! name") == 0)
+
+            if(strstr(buffer2, "! name"))
             {
                 std::cout << "Retrieving P2 Name..." << std::endl;
                 memset(buffer2, '\0', MAX_BYTES);
 
-                // Get Name
-                ServerSocket.receive2(name2);
-
                 // Set Name
-                player_b = name2;
-                NameSetCounter++;
-                player2Ready++;
+                player_a = name2;
+                player2Ready = 1;
                 std::cout << "Player 2 Name Received." << std::endl;
             }
         }
-        if(player1Ready == 1 && player2Ready == 1)
+        if(player1Ready && player2Ready )
             break;
     }
 
@@ -398,9 +420,10 @@ void GameControllerServer::ControlSelection()
     // 2 = Left/Right
 
     std::cout << "Sending Controls to Players" << std::endl;
+    
+    // send controls command to let client know it 
     const char* msg = "controls";
-    std::string message = "controls";
-    ServerSocket.deliver(message.c_str());
+    ServerSocket.deliver(msg);
 
 
     char buffer1[MAX_BYTES];
@@ -408,12 +431,14 @@ void GameControllerServer::ControlSelection()
     memset(buffer1, '\0', MAX_BYTES);
     memset(buffer2, '\0', MAX_BYTES);
     int sendCounter = 0;
+    int bytes = 0;
     while(sendCounter != 2)
     {
         ServerSocket.receive1(buffer1);
         if(strcmp( buffer1, "send") == 0)
         {
             sendCounter++;
+            std::cout << "player 1 ready\n";
             memset(buffer1, '\0', MAX_BYTES);
         }
 
@@ -421,6 +446,7 @@ void GameControllerServer::ControlSelection()
         if(strcmp( buffer2, "send") == 0)
         {
             sendCounter++;
+            std::cout << "player 2 ready\n";
             memset(buffer2, '\0', MAX_BYTES);
         }
     }

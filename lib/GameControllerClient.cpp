@@ -5,6 +5,7 @@
 #include "../headers/GameControllerClient.h"
 #include "../headers/Player.h"
 #include "../headers/clientSocket.h"
+#include "../headers/commands.h"
 
 ////////////////////////////////
 ///                          ///
@@ -13,7 +14,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 99556)
+GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 6235)
 {
 
 }
@@ -181,6 +182,8 @@ void GameControllerClient::NameMenu()
 {
     std::string name = "";
 
+    AwaitingPlayer();
+
     while(1)
     {
         // Clear Screen
@@ -204,11 +207,11 @@ void GameControllerClient::NameMenu()
                 player.SetName(name);
 
                 // Tell Server the Name is Coming
-                const char *msg = "! name";
-                ClientSocket.deliver(msg);
+                std::string msg = "! name " + name;
+                ClientSocket.deliver(msg.c_str());
 
                 // Tell it to Server
-                ClientSocket.deliver(name.c_str());
+                // ClientSocket.deliver(name.c_str());
                 break;
             }
             else
@@ -266,6 +269,8 @@ void GameControllerClient::AwaitingPlayer()
 {
     bool PlayerJoined2 = false;
 
+    // ClientSocket.clearBuffer();
+
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Waiting for your partner..." << std::endl;
     std::cout << "Thank you for your patience" << std::endl;
@@ -276,9 +281,11 @@ void GameControllerClient::AwaitingPlayer()
     while(PlayerJoined2 != true)
     {
 
-        ClientSocket.receive(buffer);
+        int bytes = ClientSocket.receive(buffer);
+        if (bytes)
+            std::cout << buffer << std::endl;
 
-        if(strcmp(buffer, "Matchmaking Completed!") == 0)
+        if(strstr(buffer, "Matchmaking Completed!") == 0)
         {
             PlayerJoined2 = true;
         }
@@ -305,10 +312,13 @@ void GameControllerClient::ControlSelection()
 
     char buff[MAX_BYTES];
     memset(buff, '\0', MAX_BYTES);
+    
     while(1)
     {
-        ClientSocket.receive(buff);
-        if(strcmp(buff, "controls") == 0)
+        if (ClientSocket.receive(buff))
+            std::cout << "DEBUG: " << buff << std::endl;
+
+        if(strstr(buff, "controls") == 0)
         {
             std::cout << "Beginning Control Reception..." << std::endl;
             ClientSocket.deliver(send.c_str());
@@ -321,7 +331,8 @@ void GameControllerClient::ControlSelection()
 
     while (ControlType == 0)
     {
-        ClientSocket.receive(buffer);
+        ClientSocket.receiveBlock(buffer);
+        std::cout << buffer << std::endl;
 
         // Logic to Determine Player Controls
         if(buffer[0] == one)

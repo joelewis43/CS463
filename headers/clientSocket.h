@@ -63,7 +63,7 @@ class clientSocket {
 
         bool getConnection();
 
-
+        void clearBuffer();
 
     private:
 

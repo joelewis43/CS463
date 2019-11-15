@@ -95,6 +95,8 @@ class serverSocket {
         **/
         bool getConnection();
 
+
+        void clearBuffers();
     private:
 
         char *ip;
