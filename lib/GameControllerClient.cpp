@@ -16,14 +16,12 @@
 // Constructor
 GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 6235)
 {
-
+    board = GameMatrix(CONTENT_WIDTH, CONTENT_WIDTH);
 }
 
 // Destructor
 GameControllerClient::~GameControllerClient()
 {
-
-
 }
 
 ////////////////////////////////
@@ -55,6 +53,9 @@ void GameControllerClient::MainGameLoop()
         // Initialize ncurses
         initscr();
 
+        WINDOW *borderWindow = createBorderWindow();
+        WINDOW *contentWindow = createContentWindow(borderWindow);
+
         // Settings
         noecho();
         // cbreak(void);
@@ -67,8 +68,13 @@ void GameControllerClient::MainGameLoop()
         // Begin Game
         while(GetGameOver() != true && GetServerConnection() == true)
         {
-            //UpdateGame();
+            UpdateGame(contentWindow);
+            std::chrono::duration<int, std::milli> timespan(150);
+            std::this_thread::sleep_for(timespan);
         }
+
+        delwin(contentWindow);
+        delwin(borderWindow);
     }
     else
     {
@@ -80,12 +86,7 @@ void GameControllerClient::MainGameLoop()
         sleep(1);
     }
 
-    // Game Ends
-    // Clear Screen
-    std::cout << "\033[2J\033[1;1H";
-    std::cout << "Thanks for playing!" << std::endl;
-    endwin();
-    sleep(1);
+    std::cout << "I've made a huge mistake" << std::endl;
 }
 
 // Main Menu
@@ -258,8 +259,10 @@ void GameControllerClient::NameMenu()
 void GameControllerClient::ServerConnection()
 {
     // Check Server Connection Is Not Interrupted
-    if(!ClientSocket.getConnection())
+    if(ClientSocket.getConnection())
     {
+        SetServerConnection(true);
+    } else {
         SetServerConnection(false);
     }
 }
@@ -541,21 +544,27 @@ void GameControllerClient::MovePlayer()
 }
 
 //
-void GameControllerClient::UpdateGame()
+void GameControllerClient::UpdateGame(WINDOW *window)
 {
-    char buffer[MAX_BYTES];
-    memset(buffer, '\0', MAX_BYTES);
+    std::string ack = "ack";
+    char buffer[GAMEBOARD_BUFSIZE];
     size_t bytes = 0;
+
+    memset(buffer, '\0', GAMEBOARD_BUFSIZE);
 
     // Check Server Connection
     ServerConnection();
 
-    // Receive Data From Server (non-blocking)
-    bytes = ClientSocket.receive(buffer);
+    // Receive Data From Server (blocking)
+    bytes = ClientSocket.receive(buffer, GAMEBOARD_BUFSIZE);
+
+    ClientSocket.deliver(ack.c_str());
 
     /* 
         USE bytes TO DETERMINE IF UPDATE IS NEEDED
     */
+
+   board.loadFromStr(std::string(buffer));
 
     // Server say there was a collision
     if(GetCollisionOccur())
@@ -565,6 +574,7 @@ void GameControllerClient::UpdateGame()
     }
 
     // Print Screen
+    board.print(window);
 
     // Movement Selection (handles sending move to server)
     MovePlayer();
@@ -632,6 +642,6 @@ void GameControllerClient::SetGameOver(bool GameOverSet)
 
 void GameControllerClient::CheckCollisions() {}
 
-bool GameControllerClient::GetCollisionOccur() {}
+bool GameControllerClient::GetCollisionOccur() { return false; }
 
 size_t GameControllerClient::GetScore() {}

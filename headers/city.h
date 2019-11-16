@@ -1,18 +1,20 @@
-#include "builder.h"
-#include "comet.h"
-#include "random.h"
-
 #ifndef CITY_LEVEL_H
 #define CITY_LEVEL_H
 
-class CityLevel : public LevelBuilder {
+#include "builder.h"
+#include "object.h"
+#include "random.h"
+
+class CityLevel : public LevelBuilder
+{
 public:
   /**
    * Constructor for a CityLevel object
    * 
    * @param cols - Number of columns for a row of the level
    **/
-  CityLevel(int rows, int cols) : LevelBuilder(rows, cols) {
+  CityLevel(int rows, int cols, int screenHeight) : LevelBuilder(rows, cols, screenHeight)
+  {
     construct();
   };
 
@@ -21,13 +23,6 @@ public:
    * in the level container
    **/
   void construct();
-
-  /**
-   * Returns the next available row of the level
-   * 
-   * @returns - A vector or row of Object pointers
-   **/
-  vector<Object *> nextRow();
 
   /**
    * Returns the new direction of the directional skew
@@ -61,16 +56,9 @@ public:
   double adjustSkew(int direction, double skew);
 
   /**
-   * Clears the contents of the matrix by freeing
-   * memory and deleting all cells
-   **/
-  void clear();
-
-  /**
-   * Destructor for the LevelBuilder
+   * Destructor for the CityLevel
    **/
   ~CityLevel();
-
 };
 
 #endif // !CITY_LEVEL_H

@@ -24,6 +24,8 @@
 #include "serverSocket.h"
 #include <ncurses.h>
 #include <string.h>
+#include "gameEnvironment.h"
+#include "window.h"
 
 struct ScoreOrganizer
 {
@@ -35,7 +37,7 @@ struct ScoreOrganizer
 class GameControllerServer {
     private:
         // GameBoard GameBoard;                                 // Game Board Object
-        // Environment Object?
+        GameEnvironment gameEnvironment;
         Player player1;
         Player player2;
         Player player1and2;

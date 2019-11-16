@@ -52,7 +52,53 @@ public:
      **/
     virtual const char toChar() = 0;
 
-    virtual ~Object() {};
+    virtual ~Object(){};
+};
+
+class PlayerObject : public Object
+{
+    /**
+     * Returns the ASCII character for the Player Object
+     * 
+     * @returns - The ASCII character for the Player Object
+     **/
+    const char toChar()
+    {
+        return '^';
+    }
+
+    /**
+     * Returns the ID for the Player Object
+     * 
+     * @returns - The ID for the Player Object
+     **/
+    const char toID()
+    {
+        return '1';
+    }
+};
+
+class CollisionObject : public Object
+{
+    /**
+     * Returns the ASCII character for the Player Object
+     * 
+     * @returns - The ASCII character for the Player Object
+     **/
+    const char toChar()
+    {
+        return '#';
+    }
+
+    /**
+     * Returns the ID for the Collision Object
+     * 
+     * @returns - The ID for the Collision Object
+     **/
+    const char toID()
+    {
+        return '2';
+    }
 };
 
 #endif // !OBJECT_H

@@ -54,6 +54,15 @@ class clientSocket {
 
         /**
          * Reads data from the server.
+         * Blocks data until the expected data has been received
+         * 
+         * @param buffer - buffer of size MAX_BYTES to read data into
+         * @returns - the number of bytes read from the socket
+         **/
+        size_t receive(char *buffer, int size);
+
+        /**
+         * Reads data from the server.
          * Blocks until data is read and the buffer is empty again
          * 
          * @param buffer - buffer of size MAX_BYTES to read data into

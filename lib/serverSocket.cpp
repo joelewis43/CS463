@@ -97,7 +97,6 @@ void serverSocket::error(char const *msg, int exitCode) {
 }
 
 void serverSocket::deliver(const char *msg) {
-
     send(clients[0], msg, strlen(msg), 0);
     send(clients[1], msg, strlen(msg), 0);
 
@@ -126,6 +125,14 @@ size_t serverSocket::receive1(char b[MAX_BYTES]) {
 
 size_t serverSocket::receive2(char b[MAX_BYTES]) {
     return receive(b, 1);
+}
+
+size_t serverSocket::receive1(char *b, int size) {
+    return receive(b, size, 0);
+}
+
+size_t serverSocket::receive2(char *b, int size) {
+    return receive(b, size, 1);
 }
 
 size_t serverSocket::receive(char buffer[MAX_BYTES], int clientID) {
@@ -168,4 +175,36 @@ void serverSocket::clearBuffers() {
 
     while (receive(temp, 0) > 0) {}
     while (receive(temp, 1) > 0) {}
+}
+
+size_t serverSocket::receive(char *buffer, int size, int clientID) {
+    
+    char temp[size];
+    int total = 0, current = 0, bufsize = size;
+    int i=0;
+
+    do {
+        memset(temp, '\0', size);
+        // read from the socket
+        current = recv(clients[clientID], temp, bufsize, 0);
+        
+        if (current > 0) { 
+
+            // add the new bytes to total
+            total += current;
+            bufsize -= current;
+
+            // append the temp string to buffer
+            for (int x=0; x < strlen(temp); x++) {
+                buffer[i] = temp[x];
+                i++;
+                // SHOULD REALLY CHECK IF i IS APPROACHING MAX_BYTES
+            }
+        }
+    } while(bufsize > 0 && current > 0);
+
+    if (total < 0)
+        return 0;
+
+    return total;
 }

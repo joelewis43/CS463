@@ -1,20 +1,22 @@
 #include "../headers/city.h"
+#include <iostream>
 
-void CityLevel::construct() {
+void CityLevel::construct()
+{
   // Determines the free space
   int direction = 1;
   double tolerance = 0.75, skew = 0.50;
 
   for (int i = 0; i < rows; i++)
   {
-    vector<Object *> row(cols);
+    vector<Object *> row(cols, nullptr);
     // Gives the maximum number of columns that can be used for the skyscrapers
     double usableArea = cols * (1 - tolerance);
     // Left Block area
     int left = static_cast<int>(usableArea * skew);
     // Right Block area
     int right = static_cast<int>(usableArea * (1 - skew));
-    
+
     int leftArea = randomInt(0, left);
 
     int rightArea = randomInt(cols - right, cols - 1);
@@ -22,13 +24,13 @@ void CityLevel::construct() {
     // Setup the row for the city skyscraper
     for (int j = 0; j <= leftArea; j++)
     {
-      row[j] = new Comet();
+      row[j] = new CollisionObject();
     }
     for (int j = cols - 1; j >= rightArea; j--)
     {
-      row[j] = new Comet();
+      row[j] = new CollisionObject();
     }
-    
+
     // Add row to the level
     level.push_back(row);
 
@@ -67,38 +69,13 @@ int CityLevel::adjustDirection(int direction, double skew)
   if (skew >= 0.85)
   {
     return 0;
-  } else if (skew <= 0.15)
+  }
+  else if (skew <= 0.15)
   {
     return 1;
   }
 
   return direction;
-}
-
-vector<Object *> CityLevel::nextRow()
-{
-  vector<Object *> row = level.at(0);
-  level.erase(level.begin());
-
-  return row;
-}
-
-void CityLevel::clear()
-{
-  for (vector<Object *> &row : level)
-  {
-    for (Object *obj : row)
-    {
-      if (obj != nullptr)
-      {
-        delete obj;
-      }
-    }
-
-    row.clear();
-  }
-
-  level.clear();
 }
 
 CityLevel::~CityLevel()

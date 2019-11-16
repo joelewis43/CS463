@@ -17,6 +17,7 @@
 GameControllerServer::GameControllerServer() : ServerSocket(6235), player1(), player2()
 {
     // Set Timer Settings Here?
+    gameEnvironment = GameEnvironment(CONTENT_HEIGHT, CONTENT_WIDTH, 1000);
 }
 
 // Destructor
@@ -135,11 +136,20 @@ void GameControllerServer::MainGameLoop()
 
         std::cout << "Starting Game ..." << std::endl;
 
+        // Initialize the player's position on the gameboard
+        int mid = (GAMEBOARD_WINDOW_WIDTH - 1) / 2;
+        player1and2.SetLocX(mid);
+        player1and2.SetLocY(GAMEBOARD_WINDOW_HEIGHT - 5);
+
+        gameEnvironment.setInitialPlayerPosition(player1and2);
+
         // Begin Game
         while(!GetGameOver())
         {
             // Update Game
-            //UpdateGame(duration, timer);
+            UpdateGame(duration, timer);
+            // std::chrono::duration<int, std::milli> timespan(150);
+            // std::this_thread::sleep_for(timespan);
         }
     }
 }
@@ -531,6 +541,7 @@ bool GameControllerServer::CheckCollisions()
     //SetCollisionOccur(true);
 
     // tell clients
+    return Collision;
 }
 
 // Create Special Game Events
@@ -614,20 +625,19 @@ void GameControllerServer::MovePlayer()
     player1and2.SetLocY(move_y);
 
     // Update Map
-
+    gameEnvironment.updatePlayerPosition(player1and2);
     // continue
 }
 
 // Update Object Locations
 void GameControllerServer::MoveObjects()
 {
-
 }
 
 // Move Environment
 void GameControllerServer::MoveEnvironment()
 {
-
+    gameEnvironment.advance(player1and2);
 }
 
 // Sets New Environment
@@ -639,7 +649,32 @@ void GameControllerServer::UpdateEnvironment()
 // Send Map to Client/Server
 void GameControllerServer::SendMap()
 {
+    std::string ack = "ack";
+    char buffer1[4];
+    char buffer2[4];
 
+    memset(buffer1, '\0', 4);
+    memset(buffer2, '\0', 4);
+
+    std::cout << "Sending Map Data to Clients" << std::endl;
+
+    std::string serializedMap = gameEnvironment.getMap();
+
+    ServerSocket.deliver(serializedMap.c_str());
+
+    std::cout << "Map Data Sent to Clients" << std::endl;
+
+    ServerSocket.receive1(buffer1, 4);
+    ServerSocket.receive2(buffer2, 4);
+
+    if (strcmp(ack.c_str(), buffer1) == 0)
+    {
+        std::cout << "Client 1 Acknowledged Receipt of Data" << std::endl;
+    }
+    if (strcmp(ack.c_str(), buffer2) == 0)
+    {
+        std::cout << "Client 2 Acknowledged Receipt of Data" << std::endl;
+    }
 }
 
 // Update Game State
@@ -651,16 +686,16 @@ void GameControllerServer::UpdateGame(double duration, float timer)
         // Print Screen
 
         // Update Player
-        MovePlayer();
+        // MovePlayer();
 
         // Clear Screen
         std::cout << "\033[2J\033[1;1H";
 
         // Create Special Event
-        CreateSpecialEvent();
+        // CreateSpecialEvent();
 
         // Move Objects
-        MoveObjects();
+        // MoveObjects();
 
         // Update Environment
         //if(score > X)
