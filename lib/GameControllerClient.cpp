@@ -442,7 +442,8 @@ void GameControllerClient::MovePlayer()
         {
             case KEY_UP:
             {
-                CheckCollisions();
+                std::string up = "up";
+                CheckCollisions(up);
                 if(GetCollisionOccur() == false)
                 {
                     player.MoveUp();
@@ -463,7 +464,8 @@ void GameControllerClient::MovePlayer()
             }
             case KEY_DOWN:
             {
-                CheckCollisions();
+                std::string down  = "down";
+                CheckCollisions(down);
                 if(GetCollisionOccur() == false)
                 {
                     player.MoveDown();
@@ -494,7 +496,8 @@ void GameControllerClient::MovePlayer()
         {
             case KEY_LEFT:
             {
-                CheckCollisions();
+                std::string left = "left";
+                CheckCollisions(left);
                 if(GetCollisionOccur() == false)
                 {
                     player.MoveLeft();
@@ -515,6 +518,7 @@ void GameControllerClient::MovePlayer()
             }
             case KEY_RIGHT:
             {
+                std::string right = "right";
                 CheckCollisions();
 
                 if(GetCollisionOccur() == false)
@@ -583,6 +587,44 @@ void GameControllerClient::UpdateGame(WINDOW *window)
     ServerConnection();
 }
 
+// Check Collisions
+void GameControllerClient::CheckCollisions(std::string direction) {
+    int playerLocX = 0;
+    int playerLocY = 0;
+    char boardLoc = '';
+    switch(direction)
+    {
+        case "up":
+            playerLocY = GetPlayerObject().GetLocY() + 1;   // Next Player Location Y
+            playerLocX = GetPlayerObject().GetLocX();       // Player Location X
+            boardLoc = board.at(playerLocY, playerLocX);    // Board at Future Player Location
+            if(boardLoc != ' ')                             // Check to See if Empty
+                SetCollision(true);                         // Set Collision if Not Empty
+            break;
+        case "down:":
+            playerLocY = GetPlayerObject().GetLocY() - 1;   // Next Player Location Y
+            playerLocX = GetPlayerObject().GetLocX();       // Player Location X
+            boardLoc = board.at(playerLocY, playerLocX);    // Board at Future Player Location
+            if(boardLoc != ' ')                             // Check to See if Empty
+                SetCollision(true);                         // Set Collision if Not Empty
+            break;
+        case "left":
+            playerLocY = GetPlayerObject().GetLocY();       // Player Location Y
+            playerLocX = GetPlayerObject().GetLocX() - 1;   // Next Player Location X
+            boardLoc = board.at(playerLocY, playerLocX);    // Board at Future Player Location
+            if(boardLoc != ' ')                             // Check to See if Empty
+                SetCollision(true);                         // Set Collision if Not Empty
+            break;
+        case "right":
+            playerLocY = GetPlayerObject().GetLocY();       // Player Location Y
+            playerLocX = GetPlayerObject().GetLocX() + 1;   // Next Player Location X
+            boardLoc = board.at(playerLocY, playerLocX);    // Board at Future Player Location
+            if(boardLoc != ' ')                             // Check to See if Empty
+                SetCollision(true);                         // Set Collision if Not Empty
+            break;
+    }
+}
+
 
 ////////////////////////////////
 ///                          ///
@@ -614,6 +656,12 @@ bool GameControllerClient::GetGameOver()
     return GameOver;
 }
 
+// Get Collision
+bool GameControllerClient::GetCollisionOccur()
+{
+    return Collision;
+}
+
 ////////////////////////////////
 ///                          ///
 ///         Setters          ///
@@ -639,9 +687,10 @@ void GameControllerClient::SetGameOver(bool GameOverSet)
     GameOver = GameOverSet;
 }
 
-
-void GameControllerClient::CheckCollisions() {}
-
-bool GameControllerClient::GetCollisionOccur() { return false; }
+// Set Collision
+void SetCollision(bool CollisionBool)
+{
+    Collision = CollisionBool;
+}
 
 size_t GameControllerClient::GetScore() {}

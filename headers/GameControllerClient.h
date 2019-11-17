@@ -34,6 +34,7 @@ class GameControllerClient {
         bool         GameOver = false;              // Game Over
         int          ControlType = 0;               // 1 = Up/Down, 2 = Left/Right
         GameMatrix   board;                         // Game Board
+        bool         Collision = false;             // Collision Occurred?
     protected:
     public:
         // Constructor/Destructor
@@ -52,11 +53,8 @@ class GameControllerClient {
         void ServerConnection();                    // Checks for Server Connection
         void MovePlayer();                          // Update Player Location
         void UpdateGame(WINDOW *window);                          // Update Game
+        void CheckCollisions(std::string);
 
-
-        // undefined
-        void CheckCollisions();
-        bool GetCollisionOccur();
         size_t GetScore();
 
 
@@ -68,12 +66,14 @@ class GameControllerClient {
         Player  GetPlayerObject();                  // Get Player Object
         bool    GetServerConnection();              // Get Server Connection
         bool    GetGameOver();                      // Get Game Over
+        bool    GetCollisionOccur();                // Get Collision
 
         // Setters
         //void setPlayerName(std::string);
         void    SetQuitGame(bool);                  // Set QuitGame
         void    SetServerConnection(bool);          // Set Server Connection
         void    SetGameOver(bool);                  // Set Game Over
+        void    SetCollision(bool);                 // Set Collision
 };
 
 
