@@ -148,8 +148,8 @@ void GameControllerServer::MainGameLoop()
         {
             // Update Game
             UpdateGame(duration, timer);
-            // std::chrono::duration<int, std::milli> timespan(150);
-            // std::this_thread::sleep_for(timespan);
+            std::chrono::duration<int, std::milli> timespan(150);
+            std::this_thread::sleep_for(timespan);
         }
     }
 }

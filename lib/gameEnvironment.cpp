@@ -63,7 +63,7 @@ void GameEnvironment::advance(Player &player)
     // Advance all rows in the matrix forward by 1
     matrix.advance();
     // Update the player's position (This will put the player in the row or position
-    // they were before advancing the matrix by one)
+    // specified by the coordinates given by the player object)
     updatePlayerPosition(player);
     // Add the next availbale row from the game level
     seed();

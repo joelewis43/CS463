@@ -157,7 +157,7 @@ void GameControllerClient::LeaderBoard()
     // Clear Screen
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Leader Board Function" << std::endl;
-    sleep(0.5);
+    usleep(500);
 
     // Ask Server for LeaderBoard
     const char *msg = "? leaderboard";
@@ -443,7 +443,7 @@ void GameControllerClient::MovePlayer()
             case KEY_UP:
             {
                 std::string up = "up";
-                CheckCollisions(up);
+                CheckCollisions(UP);
                 if(GetCollisionOccur() == false)
                 {
                     player.MoveUp();
@@ -465,7 +465,7 @@ void GameControllerClient::MovePlayer()
             case KEY_DOWN:
             {
                 std::string down  = "down";
-                CheckCollisions(down);
+                CheckCollisions(DOWN);
                 if(GetCollisionOccur() == false)
                 {
                     player.MoveDown();
@@ -497,7 +497,7 @@ void GameControllerClient::MovePlayer()
             case KEY_LEFT:
             {
                 std::string left = "left";
-                CheckCollisions(left);
+                CheckCollisions(LEFT);
                 if(GetCollisionOccur() == false)
                 {
                     player.MoveLeft();
@@ -519,7 +519,7 @@ void GameControllerClient::MovePlayer()
             case KEY_RIGHT:
             {
                 std::string right = "right";
-                CheckCollisions();
+                CheckCollisions(RIGHT);
 
                 if(GetCollisionOccur() == false)
                 {
@@ -588,41 +588,38 @@ void GameControllerClient::UpdateGame(WINDOW *window)
 }
 
 // Check Collisions
-void GameControllerClient::CheckCollisions(std::string direction) {
+void GameControllerClient::CheckCollisions(DIRECTION direction) {
     int playerLocX = 0;
     int playerLocY = 0;
-    char boardLoc = '';
+    Object *boardObject = nullptr;
+
     switch(direction)
     {
-        case "up":
+        case UP:
             playerLocY = GetPlayerObject().GetLocY() + 1;   // Next Player Location Y
             playerLocX = GetPlayerObject().GetLocX();       // Player Location X
-            boardLoc = board.at(playerLocY, playerLocX);    // Board at Future Player Location
-            if(boardLoc != ' ')                             // Check to See if Empty
-                SetCollision(true);                         // Set Collision if Not Empty
             break;
-        case "down:":
+        case DOWN:
             playerLocY = GetPlayerObject().GetLocY() - 1;   // Next Player Location Y
             playerLocX = GetPlayerObject().GetLocX();       // Player Location X
-            boardLoc = board.at(playerLocY, playerLocX);    // Board at Future Player Location
-            if(boardLoc != ' ')                             // Check to See if Empty
-                SetCollision(true);                         // Set Collision if Not Empty
             break;
-        case "left":
+        case LEFT:
             playerLocY = GetPlayerObject().GetLocY();       // Player Location Y
             playerLocX = GetPlayerObject().GetLocX() - 1;   // Next Player Location X
-            boardLoc = board.at(playerLocY, playerLocX);    // Board at Future Player Location
-            if(boardLoc != ' ')                             // Check to See if Empty
-                SetCollision(true);                         // Set Collision if Not Empty
             break;
-        case "right":
+        case RIGHT:
             playerLocY = GetPlayerObject().GetLocY();       // Player Location Y
             playerLocX = GetPlayerObject().GetLocX() + 1;   // Next Player Location X
-            boardLoc = board.at(playerLocY, playerLocX);    // Board at Future Player Location
-            if(boardLoc != ' ')                             // Check to See if Empty
-                SetCollision(true);                         // Set Collision if Not Empty
             break;
     }
+
+    boardObject = board.at(playerLocY, playerLocX); // Board at Future Player Location
+
+    if (boardObject != nullptr && boardObject->toChar() != ' ')
+    {
+        SetCollision(true);
+    }
+
 }
 
 
@@ -688,7 +685,7 @@ void GameControllerClient::SetGameOver(bool GameOverSet)
 }
 
 // Set Collision
-void SetCollision(bool CollisionBool)
+void GameControllerClient::SetCollision(bool CollisionBool)
 {
     Collision = CollisionBool;
 }

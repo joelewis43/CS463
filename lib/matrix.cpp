@@ -10,6 +10,7 @@ GameMatrix::GameMatrix()
 GameMatrix::GameMatrix(int rows, int cols) : GameMatrix()
 {
     buffer = deque<vector<Object *>>(rows, vector<Object *>(cols));
+    playerObject = nullptr;
 }
 
 Object *GameMatrix::at(int row, int col)
@@ -61,11 +62,14 @@ void GameMatrix::advance()
     // Update the Y coordinate for the player
     if (playerY <= rows() - 1)
     {
+        // Set the advanced to position to null
         if (rows() > 1 && playerY <= rows() - 2)
         {
             update(playerY + 1, playerX, nullptr);
         }
 
+        // Set the player back to where they were before
+        // Environment moved 1 step, player effectively moved forward 1 step
         update(playerY, playerX, playerObject);
     }
 }
@@ -85,7 +89,7 @@ void GameMatrix::initPlayerObject(int x, int y)
 
 void GameMatrix::updatePlayerPosition(int newX, int newY)
 {
-    if (newX >= cols() - 1 || newY >= rows() - 1)
+    if (newX > cols() - 1 || newY > rows() - 1)
     {
         return;
     }
