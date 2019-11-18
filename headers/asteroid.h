@@ -16,13 +16,58 @@ public:
    **/
   AsteroidLevel(int rows, int cols, int screenHeight) : LevelBuilder(rows, cols, screenHeight)
   {
-    construct();
   };
   /**
    * Constructs the entire level and stores the level
    * in the level container
    **/
   void construct();
+
+  /**
+   * Returns the next available row of the level
+   * 
+   * @returns - A vector or row of Object pointers
+   **/
+  vector<Object *> nextRow()
+  {
+      vector<Object *> row = level.at(0);
+      level.pop_front();
+
+      return row;
+  }
+
+  /**
+   * Indicates if a row is available in the level to be
+   * retrieved
+   * 
+   * @returns - True if a row is available
+   **/
+  bool rowAvailable()
+  {
+      return level.size() > 0;
+  }
+
+  /**
+   * Clears the contents of the matrix by freeing
+   * memory and deleting all cells
+   **/
+  void clear()
+  {
+      for (vector<Object *> &row : level)
+      {
+          for (int i = 0; i < row.size(); i++)
+          {
+              Object *obj = row[i];
+
+              if (obj != nullptr)
+              {
+                  delete obj;
+              }
+
+              row[i] = nullptr;
+          }
+      }
+  }
 
   /**
    * Destructor for the AsteroidLevel

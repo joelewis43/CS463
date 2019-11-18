@@ -53,5 +53,18 @@ void AsteroidLevel::construct()
 
 AsteroidLevel::~AsteroidLevel()
 {
-    clear();
+    for (vector<Object *> &row : level)
+    {
+        for (int i = 0; i < row.size(); i++)
+        {
+            Object *obj = row[i];
+
+            if (obj != nullptr)
+            {
+                delete obj;
+            }
+
+            row[i] = nullptr;
+        }
+    }
 }

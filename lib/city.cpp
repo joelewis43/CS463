@@ -1,5 +1,4 @@
 #include "../headers/city.h"
-#include <iostream>
 
 void CityLevel::construct()
 {
@@ -80,5 +79,18 @@ int CityLevel::adjustDirection(int direction, double skew)
 
 CityLevel::~CityLevel()
 {
-  clear();
+  for (vector<Object *> &row : level)
+  {
+    for (int i = 0; i < row.size(); i++)
+    {
+      Object *obj = row[i];
+
+      if (obj != nullptr)
+      {
+          delete obj;
+      }
+
+      row[i] = nullptr;
+    }
+  }
 }

@@ -7,10 +7,11 @@ GameMatrix::GameMatrix()
     playerX = playerY = 0;
 }
 
-GameMatrix::GameMatrix(int rows, int cols) : GameMatrix()
+GameMatrix::GameMatrix(int rows, int cols)
 {
     buffer = deque<vector<Object *>>(rows, vector<Object *>(cols));
     playerObject = nullptr;
+    playerX = playerY = 0;
 }
 
 Object *GameMatrix::at(int row, int col)
@@ -83,7 +84,12 @@ void GameMatrix::initPlayerObject(int x, int y)
 {
     playerX = x;
     playerY = y;
-    playerObject = new PlayerObject();
+
+    if (playerObject == nullptr)
+    {
+        playerObject = new PlayerObject();
+    }
+
     update(y, x, playerObject);
 }
 
@@ -122,6 +128,12 @@ void GameMatrix::loadFromStr(string str)
 {
     int row = 0, col = 0;
 
+    if (playerObject == nullptr)
+    {
+        cout << "No Object !!!!!!" << endl;
+        playerObject = new PlayerObject();
+    }
+
     // Clear the contents of the matrix
     // Be mindful of memory on the heap
     clear();
@@ -158,7 +170,7 @@ void GameMatrix::clear()
     {
         for (int i = 0; i < row.size(); i++)
         {
-            if (row[i] && row[i] != playerObject)
+            if (row[i] != nullptr && row[i] != playerObject)
             {
                 delete row[i];
             }
@@ -177,7 +189,7 @@ void GameMatrix::clearScreen()
 void GameMatrix::print(WINDOW *window)
 {
     wclear(window);
-    mvwprintw(window, 0, 0, toString().c_str());
+    mvwprintw(window, 0, 0, serialize().c_str());
     wrefresh(window);
 }
 
@@ -216,5 +228,10 @@ string GameMatrix::stringMap(std::function<const char(Object *)> func)
 GameMatrix::~GameMatrix()
 {
     clear();
-    delete playerObject;
+
+    if (playerObject != nullptr)
+    {
+        delete playerObject;
+        playerObject = nullptr;
+    }
 }

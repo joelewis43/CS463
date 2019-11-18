@@ -14,9 +14,8 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 6235)
+GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 6235), board(CONTENT_HEIGHT, CONTENT_WIDTH)
 {
-    board = GameMatrix(CONTENT_WIDTH, CONTENT_WIDTH);
 }
 
 // Destructor
