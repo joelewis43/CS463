@@ -14,10 +14,9 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerServer::GameControllerServer() : ServerSocket(6235), player1(), player2()
+GameControllerServer::GameControllerServer() : ServerSocket(6235), player1(), player2(), gameEnvironment(CONTENT_HEIGHT, CONTENT_WIDTH, 1000)
 {
     // Set Timer Settings Here?
-    gameEnvironment = GameEnvironment(CONTENT_HEIGHT, CONTENT_WIDTH, 1000);
 }
 
 // Destructor
@@ -137,9 +136,9 @@ void GameControllerServer::MainGameLoop()
         std::cout << "Starting Game ..." << std::endl;
 
         // Initialize the player's position on the gameboard
-        int mid = (GAMEBOARD_WINDOW_WIDTH - 1) / 2;
+        int mid = (CONTENT_WIDTH - 1) / 2;
         player1and2.SetLocX(mid);
-        player1and2.SetLocY(GAMEBOARD_WINDOW_HEIGHT - 5);
+        player1and2.SetLocY(CONTENT_HEIGHT - 5);
 
         gameEnvironment.setInitialPlayerPosition(player1and2);
 
@@ -148,8 +147,8 @@ void GameControllerServer::MainGameLoop()
         {
             // Update Game
             UpdateGame(duration, timer);
-            // std::chrono::duration<int, std::milli> timespan(150);
-            // std::this_thread::sleep_for(timespan);
+            std::chrono::duration<int, std::milli> timespan(150);
+            std::this_thread::sleep_for(timespan);
         }
     }
 }
@@ -659,6 +658,8 @@ void GameControllerServer::SendMap()
     std::cout << "Sending Map Data to Clients" << std::endl;
 
     std::string serializedMap = gameEnvironment.getMap();
+
+    std::cout << serializedMap << std::endl;
 
     ServerSocket.deliver(serializedMap.c_str());
 

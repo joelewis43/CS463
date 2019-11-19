@@ -25,6 +25,8 @@
 #include "matrix.h"
 #include "window.h"
 
+enum DIRECTION {UP, DOWN, LEFT, RIGHT};
+
 class GameControllerClient {
     private:
         clientSocket ClientSocket;                  // Client to Server Connection
@@ -53,7 +55,7 @@ class GameControllerClient {
         void ServerConnection();                    // Checks for Server Connection
         void MovePlayer();                          // Update Player Location
         void UpdateGame(WINDOW *window);                          // Update Game
-        void CheckCollisions(std::string);
+        void CheckCollisions(DIRECTION direction);
 
         size_t GetScore();
 

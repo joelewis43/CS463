@@ -10,8 +10,6 @@ int main() {
 
   srand(time(NULL));
 
-  initscr();
-
   GameControllerServer gs;
 
   gs.MainGameLoop();

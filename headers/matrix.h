@@ -27,7 +27,7 @@ private:
     // Cache Player's Y coordinate
     int playerY;
     // Player object used for reference within the matrix
-    PlayerObject *playerObject;
+    PlayerObject *playerObject = nullptr;
     /**
      * Underlying matrix container
      * 

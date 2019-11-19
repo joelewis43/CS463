@@ -2,8 +2,11 @@
 #define LEVEL_BUILDER_H
 
 #include <vector>
+#include <deque>
 #include "object.h"
+#include <iostream>
 
+using std::deque;
 using std::vector;
 
 class LevelBuilder
@@ -17,7 +20,7 @@ protected:
     // Height of the terminal window
     int screenHeight;
     // Matrix containing the objects of the level
-    vector<vector<Object *>> level;
+    deque<vector<Object *>> level;
 
 public:
     /**
@@ -44,13 +47,7 @@ public:
      * 
      * @returns - A vector or row of Object pointers
      **/
-    vector<Object *> nextRow()
-    {
-        vector<Object *> row = level.at(0);
-        level.erase(level.begin());
-
-        return row;
-    }
+    virtual vector<Object *> nextRow() = 0;
 
     /**
      * Indicates if a row is available in the level to be
@@ -58,37 +55,18 @@ public:
      * 
      * @returns - True if a row is available
      **/
-    bool rowAvailable()
-    {
-        return level.size() > 0;
-    }
+    virtual bool rowAvailable() = 0;
 
     /**
      * Clears the contents of the matrix by freeing
      * memory and deleting all cells
      **/
-    void clear()
-    {
-        for (vector<Object *> &row : level)
-        {
-            for (int i = 0; i < row.size(); i++)
-            {
-                Object *obj = row[i];
-
-                if (obj != nullptr)
-                {
-                    delete obj;
-                }
-
-                row[i] = nullptr;
-            }
-        }
-    }
+    virtual void clear() = 0;
 
     /**
      * Destructor for the LevelBuilder
      **/
-    virtual ~LevelBuilder(){};
+    virtual ~LevelBuilder() {}
 };
 
 #endif // !LEVEL_BUILDER_H
