@@ -189,7 +189,7 @@ void GameMatrix::clearScreen()
 void GameMatrix::print(WINDOW *window)
 {
     wclear(window);
-    mvwprintw(window, 0, 0, serialize().c_str());
+    mvwprintw(window, 0, 0, toString().c_str());
     wrefresh(window);
 }
 

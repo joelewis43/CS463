@@ -138,7 +138,7 @@ void GameControllerServer::MainGameLoop()
         // Initialize the player's position on the gameboard
         int mid = (CONTENT_WIDTH - 1) / 2;
         player1and2.SetLocX(mid);
-        player1and2.SetLocY(CONTENT_HEIGHT - 5);
+        player1and2.SetLocY(CONTENT_HEIGHT - 25);
 
         gameEnvironment.setInitialPlayerPosition(player1and2);
 
@@ -658,8 +658,6 @@ void GameControllerServer::SendMap()
     std::cout << "Sending Map Data to Clients" << std::endl;
 
     std::string serializedMap = gameEnvironment.getMap();
-
-    std::cout << serializedMap << std::endl;
 
     ServerSocket.deliver(serializedMap.c_str());
 
