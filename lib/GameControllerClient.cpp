@@ -437,47 +437,25 @@ void GameControllerClient::MovePlayer()
         {
             case KEY_UP:
             {
-                std::string up = "up";
-                CheckCollisions(UP);
-                if(GetCollisionOccur() == false)
-                {
-                    player.MoveUp();
-                    direction = "y";
-                    moved = std::to_string(player.GetLocY());
-                    movement = direction + moved;
+                player.MoveUp();
+                direction = "y";
+                moved = "1";
+                movement = direction + moved;
 
-                    // Send to Server
-                    ClientSocket.deliver(movement.c_str());
-                    break;
-                }
-                else
-                {
-                    // Game Over
-                    SetGameOver(true);
-                    break;
-                }
+                // Send to Server
+                ClientSocket.deliver(movement.c_str());
+                break;
             }
             case KEY_DOWN:
             {
-                std::string down  = "down";
-                CheckCollisions(DOWN);
-                if(GetCollisionOccur() == false)
-                {
-                    player.MoveDown();
-                    direction = "y";
-                    moved = std::to_string(player.GetLocY());
-                    movement = direction + moved;
+                player.MoveDown();
+                direction = "y";
+                moved = "2";
+                movement = direction + moved;
 
-                    // Send to Server
-                    ClientSocket.deliver(movement.c_str());
-                    break;
-                }
-                else
-                {
-                    // Game Over
-                    SetGameOver(true);
-                    break;
-                }
+                // Send to Server
+                ClientSocket.deliver(movement.c_str());
+                break;
             }
             default:
             {
@@ -491,48 +469,25 @@ void GameControllerClient::MovePlayer()
         {
             case KEY_LEFT:
             {
-                std::string left = "left";
-                CheckCollisions(LEFT);
-                if(GetCollisionOccur() == false)
-                {
-                    player.MoveLeft();
-                    direction = "x";
-                    moved = std::to_string(player.GetLocX());
-                    movement = direction + moved;
+                player.MoveLeft();
+                direction = "x";
+                moved = "1";
+                movement = direction + moved;
 
-                    // Send to Server
-                    ClientSocket.deliver(movement.c_str());
-                    break;
-                }
-                else
-                {
-                    // Game Over
-                    SetGameOver(true);
-                    break;
-                }
+                // Send to Server
+                ClientSocket.deliver(movement.c_str());
+                break;
             }
             case KEY_RIGHT:
             {
-                std::string right = "right";
-                CheckCollisions(RIGHT);
+                player.MoveRight();
+                direction = "x";
+                moved = "2";
+                movement = direction + moved;
 
-                if(GetCollisionOccur() == false)
-                {
-                    player.MoveRight();
-                    direction = "x";
-                    moved = std::to_string(player.GetLocX());
-                    movement = direction + moved;
-
-                    // Send to Server
-                    ClientSocket.deliver(movement.c_str());
-                    break;
-                }
-                else
-                {
-                    // Game Over
-                    SetGameOver(true);
-                    break;
-                }
+                // Send to Server
+                ClientSocket.deliver(movement.c_str());
+                break;
             }
             default:
             {
@@ -563,7 +518,10 @@ void GameControllerClient::UpdateGame(WINDOW *window)
         USE bytes TO DETERMINE IF UPDATE IS NEEDED
     */
 
-   board.loadFromStr(std::string(buffer));
+    board.loadFromStr(std::string(buffer));
+
+    // Check if Collision Occurred
+    CheckCollisions();
 
     // Server say there was a collision
     if(GetCollisionOccur())
@@ -583,34 +541,14 @@ void GameControllerClient::UpdateGame(WINDOW *window)
 }
 
 // Check Collisions
-void GameControllerClient::CheckCollisions(DIRECTION direction) {
-    int playerLocX = 0;
-    int playerLocY = 0;
-    char boardObject = NULL_SPRITE;
+void GameControllerClient::CheckCollisions()
+{
+    char buffer[MAX_BYTES];
+    memset(buffer, '\0', MAX_BYTES);
 
-    switch(direction)
-    {
-        case UP:
-            playerLocY = GetPlayerObject().GetLocY() + 1;   // Next Player Location Y
-            playerLocX = GetPlayerObject().GetLocX();       // Player Location X
-            break;
-        case DOWN:
-            playerLocY = GetPlayerObject().GetLocY() - 1;   // Next Player Location Y
-            playerLocX = GetPlayerObject().GetLocX();       // Player Location X
-            break;
-        case LEFT:
-            playerLocY = GetPlayerObject().GetLocY();       // Player Location Y
-            playerLocX = GetPlayerObject().GetLocX() - 1;   // Next Player Location X
-            break;
-        case RIGHT:
-            playerLocY = GetPlayerObject().GetLocY();       // Player Location Y
-            playerLocX = GetPlayerObject().GetLocX() + 1;   // Next Player Location X
-            break;
-    }
+    ClientSocket.receive(buffer);
 
-    boardObject = board.at(playerLocY, playerLocX); // Board at Future Player Location
-
-    if (boardObject == COLLISION_SPRITE)
+    if(strstr(buffer, "collision_true") == 0)
     {
         SetCollision(true);
     }

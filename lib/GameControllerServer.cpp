@@ -532,15 +532,38 @@ void GameControllerServer::CountDownScreen()
 }
 
 // Checks for Player/Object Collisions
-bool GameControllerServer::CheckCollisions()
+void GameControllerServer::CheckCollisions() //DIRECTION direction
 {
-    // Logic For Collision
+    //int playerLocX = 0;
+    //int playerLocY = 0;
+    char boardObject = NULL_SPRITE;
 
-    // Set Collision to True if True
-    //SetCollisionOccur(true);
+    /*switch(direction)
+    {
+        case UP:
+            playerLocY = GetPlayerObject().GetLocY() + 1;   // Next Player Location Y
+            playerLocX = GetPlayerObject().GetLocX();       // Player Location X
+            break;
+        case DOWN:
+            playerLocY = GetPlayerObject().GetLocY() - 1;   // Next Player Location Y
+            playerLocX = GetPlayerObject().GetLocX();       // Player Location X
+            break;
+        case LEFT:
+            playerLocY = GetPlayerObject().GetLocY();       // Player Location Y
+            playerLocX = GetPlayerObject().GetLocX() - 1;   // Next Player Location X
+            break;
+        case RIGHT:
+            playerLocY = GetPlayerObject().GetLocY();       // Player Location Y
+            playerLocX = GetPlayerObject().GetLocX() + 1;   // Next Player Location X
+            break;
+    }*/
 
-    // tell clients
-    return Collision;
+    boardObject = board.at(GetPlayerObject().GetLocY(), GetPlayerObject().GetLocX()); // Board at Player Location
+
+    if (boardObject == COLLISION_SPRITE)
+    {
+        SetCollision(true);
+    }
 }
 
 // Create Special Game Events
@@ -619,13 +642,45 @@ void GameControllerServer::MovePlayer()
         move_y = stoi(s);
     }
 
-    // Update Player
-    player1and2.SetLocX(move_x);
-    player1and2.SetLocY(move_y);
+    // Movement Based On X-Axis Player
+    switch(move_x)
+    {
+        case 1:
+            player1and2.MoveLeft();
+            break;
+        case 2:
+            player1and2.MoveRight();
+            break;
+        default:
+            break;
+    }
+
+    // Movement Based On Y-Axis Player
+    switch(move_y)
+    {
+        case 1:
+            player1and2.MoveUp();
+            break;
+        case 2:
+            player1and2.MoveDown();
+            break;
+        default:
+            break;
+    }
+
+    // Check Collisions
+    CheckCollisions();
+
+    // Update Game State for Collision
+    if(GetCollisionOccur())
+    {
+        std::string message = "collision_true";
+        ServerSocket.deliver(message.c_str());
+        SetGameOver(true);
+    }
 
     // Update Map
     gameEnvironment.updatePlayerPosition(player1and2);
-    // continue
 }
 
 // Update Object Locations
@@ -685,7 +740,7 @@ void GameControllerServer::UpdateGame(double duration, float timer)
         // Print Screen
 
         // Update Player
-        // MovePlayer();
+        MovePlayer();
 
         // Clear Screen
         std::cout << "\033[2J\033[1;1H";
@@ -694,7 +749,7 @@ void GameControllerServer::UpdateGame(double duration, float timer)
         // CreateSpecialEvent();
 
         // Move Objects
-        // MoveObjects();
+        MoveObjects();
 
         // Update Environment
         //if(score > X)
@@ -704,7 +759,7 @@ void GameControllerServer::UpdateGame(double duration, float timer)
         MoveEnvironment();
 
         // Check for Collisions
-        CheckCollisions();
+        //CheckCollisions();
 
         // Update Score
         UpdateScore(duration, timer);
