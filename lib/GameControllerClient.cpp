@@ -115,6 +115,7 @@ void GameControllerClient::MainMenu()
                     // Play Game - Set Name
                     // Tell Server Player is Ready to Play
                     ClientSocket.deliver(msg);
+                    AwaitingPlayer();
                     NameMenu();
                     AwaitingPlayer();   // Listening to Server / Tell Server Client is Ready
                     ControlSelection();
@@ -182,8 +183,6 @@ void GameControllerClient::NameMenu()
 {
     std::string name = "";
 
-    AwaitingPlayer();
-
     while(1)
     {
         // Clear Screen
@@ -209,9 +208,6 @@ void GameControllerClient::NameMenu()
                 // Tell Server the Name is Coming
                 std::string msg = "! name " + name;
                 ClientSocket.deliver(msg.c_str());
-
-                // Tell it to Server
-                // ClientSocket.deliver(name.c_str());
                 break;
             }
             else
@@ -287,7 +283,7 @@ void GameControllerClient::AwaitingPlayer()
         if (bytes)
             std::cout << buffer << std::endl;
 
-        if(strstr(buffer, "Matchmaking Completed!") == 0)
+        if(strstr(buffer, "Matchmaking Completed!"))
         {
             PlayerJoined2 = true;
         }
