@@ -61,10 +61,9 @@ public:
    * 
    * @returns - A vector or row of Object pointers
    **/
-  vector<Object *> nextRow()
+  vector<char> nextRow()
   {
-    std::cout << level.size() << std::endl;
-    vector<Object *> row = level.at(0);
+    vector<char> row = level.at(0);
     level.pop_front();
 
     return row;
@@ -87,18 +86,11 @@ public:
    **/
   void clear()
   {
-      for (vector<Object *> &row : level)
+      for (vector<char> &row : level)
       {
           for (int i = 0; i < row.size(); i++)
           {
-              Object *obj = row[i];
-
-              if (obj != nullptr)
-              {
-                  delete obj;
-              }
-
-              row[i] = nullptr;
+              row[i] = NULL_SPRITE;
           }
       }
   }

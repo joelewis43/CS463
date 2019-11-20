@@ -67,7 +67,7 @@ void GameEnvironment::seed()
 
     if (currentLevel()->rowAvailable())
     {
-        vector<Object *> newRow = currentLevel()->nextRow();
+        vector<char> newRow = currentLevel()->nextRow();
         matrix.updateTop(newRow);
     }
 }

@@ -8,7 +8,7 @@ void CityLevel::construct()
 
   for (int i = 0; i < rows; i++)
   {
-    vector<Object *> row(cols, nullptr);
+    vector<char> row(cols, NULL_SPRITE);
     // Gives the maximum number of columns that can be used for the skyscrapers
     double usableArea = cols * (1 - tolerance);
     // Left Block area
@@ -23,11 +23,11 @@ void CityLevel::construct()
     // Setup the row for the city skyscraper
     for (int j = 0; j <= leftArea; j++)
     {
-      row[j] = new CollisionObject();
+      row[j] = COLLISION_SPRITE;
     }
     for (int j = cols - 1; j >= rightArea; j--)
     {
-      row[j] = new CollisionObject();
+      row[j] = COLLISION_SPRITE;
     }
 
     // Add row to the level
@@ -77,20 +77,4 @@ int CityLevel::adjustDirection(int direction, double skew)
   return direction;
 }
 
-CityLevel::~CityLevel()
-{
-  for (vector<Object *> &row : level)
-  {
-    for (int i = 0; i < row.size(); i++)
-    {
-      Object *obj = row[i];
-
-      if (obj != nullptr)
-      {
-          delete obj;
-      }
-
-      row[i] = nullptr;
-    }
-  }
-}
+CityLevel::~CityLevel() {}
