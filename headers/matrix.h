@@ -26,8 +26,7 @@ private:
     int playerX;
     // Cache Player's Y coordinate
     int playerY;
-    // Player object used for reference within the matrix
-    PlayerObject *playerObject = nullptr;
+
     /**
      * Underlying matrix container
      * 
@@ -40,7 +39,7 @@ private:
      * row and column member to the class and  computing the end of a row for each
      * matrix iteration
      **/
-    deque<vector<Object *>> buffer;
+    deque<vector<char>> buffer;
 
     /**
      * Applies a function for each cell in the matrix to
@@ -51,7 +50,7 @@ private:
      * @returns - Returns a string with each character beign a cell
      *            from the matrix and each row delimited by \n characters
      **/
-    string stringMap(std::function<const char(Object *)> func);
+    string stringMap(std::function<const char(char)> func);
 
 public:
     /**
@@ -90,17 +89,18 @@ public:
      * @param row - Row in the matrix
      * @param col - Column in the matrix
      * 
-     * @returns - A pointer to an object in the matrix
+     * @returns - A character
      **/
-    Object *at(int row, int col);
+    char at(int row, int col);
 
     /**
      * Updates an index in the matrix with the passed value
      * 
      * @param row - Row the item should added to
      * @param col - Column the item should be added to
+     * @param ch - A character
      **/
-    void update(int row, int col, Object *object);
+    void update(int row, int col, char ch);
 
     /**
      * Advances the board by one-step by moving the contents
@@ -115,7 +115,7 @@ public:
      * @param row - Row of Object pointers
      * 
      **/
-    void updateTop(vector<Object *> &row);
+    void updateTop(vector<char> &row);
 
     /**
      * Creates the PlayerObject and places it in the matrix at the
@@ -196,7 +196,7 @@ public:
      * 
      * @returns - A reference to a row in the matrix
      **/
-    vector<Object *> &operator[](int index);
+    vector<char> &operator[](int index);
 
     /**
      * Descructor for the class

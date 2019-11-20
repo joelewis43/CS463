@@ -14,7 +14,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 6235), board(CONTENT_HEIGHT, CONTENT_WIDTH)
+GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 6235), board(CONTENT_HEIGHT, CONTENT_WIDTH - 1)
 {
 }
 
@@ -586,7 +586,7 @@ void GameControllerClient::UpdateGame(WINDOW *window)
 void GameControllerClient::CheckCollisions(DIRECTION direction) {
     int playerLocX = 0;
     int playerLocY = 0;
-    Object *boardObject = nullptr;
+    char boardObject = NULL_SPRITE;
 
     switch(direction)
     {
@@ -610,7 +610,7 @@ void GameControllerClient::CheckCollisions(DIRECTION direction) {
 
     boardObject = board.at(playerLocY, playerLocX); // Board at Future Player Location
 
-    if (boardObject != nullptr && boardObject->toChar() != ' ')
+    if (boardObject == COLLISION_SPRITE)
     {
         SetCollision(true);
     }

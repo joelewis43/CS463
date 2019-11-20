@@ -20,7 +20,7 @@ protected:
     // Height of the terminal window
     int screenHeight;
     // Matrix containing the objects of the level
-    deque<vector<Object *>> level;
+    deque<vector<char>> level;
 
 public:
     /**
@@ -47,7 +47,7 @@ public:
      * 
      * @returns - A vector or row of Object pointers
      **/
-    virtual vector<Object *> nextRow() = 0;
+    virtual vector<char> nextRow() = 0;
 
     /**
      * Indicates if a row is available in the level to be

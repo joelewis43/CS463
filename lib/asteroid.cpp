@@ -5,13 +5,13 @@ void AsteroidLevel::construct()
 {
     int minHeight = 4, minWidth = 5, maxHeight = 10, maxWidth = 20;
     int numAsteroids = 12, incrementor = rows / screenHeight;
+    // Frame container
+    // Add Asteroids to the frame
+    deque<vector<char>> frame = deque<vector<char>>(screenHeight, vector<char>(cols));
 
     // Frame by Frame create the asteroids that will be used for the level
     for (int i = 0; i < rows; i += incrementor)
     {
-        // Frame container
-        vector<vector<Object *>> frame = vector<vector<Object *>>(screenHeight, vector<Object *>(cols));
-        // Add Asteroids to the frame
         for (int j = 0; j < numAsteroids; j++)
         {
             int xc = 0, yc = 0;
@@ -33,7 +33,7 @@ void AsteroidLevel::construct()
                         break;
                     }
 
-                    frame[sy][sx] = new CollisionObject();
+                    frame[sy][sx] = COLLISION_SPRITE;
                     xc += 1;
                 }
                 xc = 0;
@@ -44,6 +44,7 @@ void AsteroidLevel::construct()
         for (int j = 0; j < frame.size(); j++)
         {
             level.push_back(frame[j]);
+            std::fill(frame[j].begin(), frame[j].end(), NULL_SPRITE);
         }
 
         // Increase difficulty by increasing the number of asteroids per frame
@@ -51,20 +52,4 @@ void AsteroidLevel::construct()
     }
 }
 
-AsteroidLevel::~AsteroidLevel()
-{
-    for (vector<Object *> &row : level)
-    {
-        for (int i = 0; i < row.size(); i++)
-        {
-            Object *obj = row[i];
-
-            if (obj != nullptr)
-            {
-                delete obj;
-            }
-
-            row[i] = nullptr;
-        }
-    }
-}
+AsteroidLevel::~AsteroidLevel() {}

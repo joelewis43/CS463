@@ -15,12 +15,12 @@
 #endif // !CONTENT_HEIGHT
 
 #ifndef CONTENT_WIDTH
-#define CONTENT_WIDTH (GAMEBOARD_WINDOW_WIDTH - 3)
+#define CONTENT_WIDTH (GAMEBOARD_WINDOW_WIDTH - 2)
 #endif // !CONTENT_WIDTH
 
 #ifndef GAMEBOARD_BUFSIZE
 // Every cell of the window plus newlines and null terminator minus the row and column offset
-#define GAMEBOARD_BUFSIZE (CONTENT_HEIGHT * CONTENT_WIDTH) + CONTENT_HEIGHT + 1
+#define GAMEBOARD_BUFSIZE (CONTENT_HEIGHT * (CONTENT_WIDTH - 1)) + (CONTENT_HEIGHT - 1) + 1
 #endif // !GAMEBOARD_BUFSIZE
 
 /**

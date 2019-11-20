@@ -2,24 +2,22 @@
 
 GameMatrix::GameMatrix()
 {
-    buffer = deque<vector<Object *>>();
-    playerObject = nullptr;
+    buffer = deque<vector<char>>();
     playerX = playerY = 0;
 }
 
 GameMatrix::GameMatrix(int rows, int cols)
 {
-    buffer = deque<vector<Object *>>(rows, vector<Object *>(cols));
-    playerObject = nullptr;
+    buffer = deque<vector<char>>(rows, vector<char>(cols));
     playerX = playerY = 0;
 }
 
-Object *GameMatrix::at(int row, int col)
+char GameMatrix::at(int row, int col)
 {
     return buffer.at(row).at(col);
 }
 
-void GameMatrix::update(int row, int col, Object *obj)
+void GameMatrix::update(int row, int col, char ch)
 {
     // Free memory for objects that are being overwritten
     if (row >= rows() || col >= cols())
@@ -27,12 +25,7 @@ void GameMatrix::update(int row, int col, Object *obj)
         return;
     }
 
-    if (buffer[row][col] != nullptr && buffer[row][col] != playerObject)
-    {
-        delete buffer[row][col];
-    }
-
-    buffer[row][col] = obj;
+    buffer[row][col] = ch;
 }
 
 void GameMatrix::advance()
@@ -40,25 +33,11 @@ void GameMatrix::advance()
     int r_len = rows(), c_len = cols();
     int r_offset = r_len - 1;
 
-    // Free memory in the last row (offscreen)
-    for (int i = 0; i < c_len; i++)
-    {
-        Object *obj = buffer[r_offset][i];
-        if (obj != nullptr && obj != playerObject)
-        {
-            delete buffer[r_offset][i];
-            buffer[r_offset][i] = nullptr;
-        } else if (obj != nullptr && obj == playerObject)
-        {
-            buffer[r_offset][i] = nullptr;
-        }
-    }
-
     // Remove the last row in the matrix
     buffer.pop_back();
 
     // Add a new row to the beginning
-    buffer.push_front(vector<Object *>(c_len, nullptr));
+    buffer.push_front(vector<char>(c_len, NULL_SPRITE));
 
     // Update the Y coordinate for the player
     if (playerY <= rows() - 1)
@@ -66,16 +45,16 @@ void GameMatrix::advance()
         // Set the advanced to position to null
         if (rows() > 1 && playerY <= rows() - 2)
         {
-            update(playerY + 1, playerX, nullptr);
+            update(playerY + 1, playerX, NULL_SPRITE);
         }
 
         // Set the player back to where they were before
         // Environment moved 1 step, player effectively moved forward 1 step
-        update(playerY, playerX, playerObject);
+        update(playerY, playerX, PLAYER_SPRITE);
     }
 }
 
-void GameMatrix::updateTop(vector<Object *> &row)
+void GameMatrix::updateTop(vector<char> &row)
 {
     buffer.at(0).assign(row.begin(), row.end());
 }
@@ -84,13 +63,7 @@ void GameMatrix::initPlayerObject(int x, int y)
 {
     playerX = x;
     playerY = y;
-
-    if (playerObject == nullptr)
-    {
-        playerObject = new PlayerObject();
-    }
-
-    update(y, x, playerObject);
+    update(y, x, PLAYER_SPRITE);
 }
 
 void GameMatrix::updatePlayerPosition(int newX, int newY)
@@ -100,14 +73,14 @@ void GameMatrix::updatePlayerPosition(int newX, int newY)
         return;
     }
     // Move object ot new position
-    Object *obj = at(playerY, playerX);
+    char ch = at(playerY, playerX);
     // Only set to null if the object is a player object
-    if (obj != nullptr && obj == playerObject)
+    if (ch == PLAYER_SPRITE)
     {
-        update(playerY, playerX, nullptr);
+        update(playerY, playerX, NULL_SPRITE);
     }
 
-    update(newY, newX, playerObject);
+    update(newY, newX, PLAYER_SPRITE);
 
     // Update the cache
     playerY = newY;
@@ -116,23 +89,17 @@ void GameMatrix::updatePlayerPosition(int newX, int newY)
 
 string GameMatrix::serialize()
 {
-    return stringMap([](Object *object) { return object ? object->toID() : '0'; });
+    return stringMap([](char ch) { return ch; });
 }
 
 string GameMatrix::toString()
 {
-    return stringMap([](Object *object) { return object ? object->toChar() : ' '; });
+    return stringMap([](char ch) { return ch; });
 }
 
 void GameMatrix::loadFromStr(string str)
 {
     int row = 0, col = 0;
-
-    if (playerObject == nullptr)
-    {
-        cout << "No Object !!!!!!" << endl;
-        playerObject = new PlayerObject();
-    }
 
     // Clear the contents of the matrix
     // Be mindful of memory on the heap
@@ -145,37 +112,21 @@ void GameMatrix::loadFromStr(string str)
         {
             row++;
             col = 0;
-            continue;
-        }
-
-        switch (c)
+        } else
         {
-        case '1':
-            update(row, col, playerObject);
-            break;
-        case '2':
-            update(row, col, new CollisionObject());
-            break;
-        default:
-            break;
+            update(row, col, c);
+            col++;
         }
-
-        col++;
     }
 }
 
 void GameMatrix::clear()
 {
-    for (vector<Object *> &row : buffer)
+    for (vector<char> &row : buffer)
     {
         for (int i = 0; i < row.size(); i++)
         {
-            if (row[i] != nullptr && row[i] != playerObject)
-            {
-                delete row[i];
-            }
-
-            row[i] = nullptr;
+            row[i] = NULL_SPRITE;
         }
     }
 }
@@ -203,20 +154,20 @@ int GameMatrix::cols()
     return buffer.at(0).size();
 }
 
-vector<Object *> &GameMatrix::operator[](int index)
+vector<char> &GameMatrix::operator[](int index)
 {
     return buffer.at(index);
 }
 
-string GameMatrix::stringMap(std::function<const char(Object *)> func)
+string GameMatrix::stringMap(std::function<const char(char)> func)
 {
     std::stringstream stream;
 
-    for (vector<Object *> &row : buffer)
+    for (vector<char> &row : buffer)
     {
-        for (Object *o : row)
+        for (char c : row)
         {
-            stream << func(o);
+            stream << func(c);
         }
 
         stream << '\n';
@@ -225,13 +176,4 @@ string GameMatrix::stringMap(std::function<const char(Object *)> func)
     return stream.str();
 }
 
-GameMatrix::~GameMatrix()
-{
-    clear();
-
-    if (playerObject != nullptr)
-    {
-        delete playerObject;
-        playerObject = nullptr;
-    }
-}
+GameMatrix::~GameMatrix() {}
