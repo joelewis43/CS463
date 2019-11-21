@@ -267,8 +267,6 @@ void GameControllerClient::AwaitingPlayer()
 {
     bool PlayerJoined2 = false;
 
-    // ClientSocket.clearBuffer();
-
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Waiting for your partner..." << std::endl;
     std::cout << "Thank you for your patience" << std::endl;
@@ -302,8 +300,6 @@ void GameControllerClient::ControlSelection()
     std::cout << "Ready for Controls..." << std::endl;
 
     // Ask the server what controls you are assigned
-    //const char *msg = "? controls";
-    //ClientSocket.deliver(msg);
     char one = '1';
     char two = '2';
     std::string send = "send";
@@ -526,6 +522,7 @@ void GameControllerClient::UpdateGame(WINDOW *window)
     // Server say there was a collision
     if(GetCollisionOccur())
     {
+        std::cout << "BUG BUG" << std::endl;
         SetGameOver(true);
         return;
     }
@@ -548,7 +545,7 @@ void GameControllerClient::CheckCollisions()
 
     ClientSocket.receive(buffer);
 
-    if(strstr(buffer, "collision_true") == 0)
+    if(strcmp(buffer, "collision_true") == 0)
     {
         SetCollision(true);
     }

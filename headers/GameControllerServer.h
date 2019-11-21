@@ -27,7 +27,7 @@
 #include "gameEnvironment.h"
 #include "window.h"
 
-//enum DIRECTION {UP, DOWN, LEFT, RIGHT};
+enum DIRECTION {UP, DOWN, LEFT, RIGHT};
 
 struct ScoreOrganizer
 {
@@ -72,7 +72,7 @@ class GameControllerServer {
         void CountDownScreen();                                 // Displayed Before Game Starts
         void GameOverMenu();                                    // Displayed After Player Loses
         bool ServerConnection();                                // Checks for Server Connection
-        void CheckCollisions();                                 // Checks for Player/Object Collisions
+        void CheckCollisions(DIRECTION direction);              // Checks for Player/Object Collisions
         void CreateSpecialEvent();                              // Create Special Game Events
         void MovePlayer();                                      // Update Player Location
         void MoveObjects();                                     // Update Object Locations

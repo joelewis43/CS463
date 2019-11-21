@@ -143,7 +143,7 @@ void GameControllerServer::MainGameLoop()
         gameEnvironment.setInitialPlayerPosition(player1and2);
 
         // Begin Game
-        while(!GetGameOver())
+        while(GetGameOver() != true)
         {
             // Update Game
             UpdateGame(duration, timer);
@@ -532,36 +532,40 @@ void GameControllerServer::CountDownScreen()
 }
 
 // Checks for Player/Object Collisions
-void GameControllerServer::CheckCollisions() //DIRECTION direction
+void GameControllerServer::CheckCollisions(DIRECTION direction) //DIRECTION direction
 {
-    //int playerLocX = 0;
-    //int playerLocY = 0;
+    int playerLocX = 0;
+    int playerLocY = 0;
     char boardObject = NULL_SPRITE;
 
-    /*switch(direction)
+    switch(direction)
     {
         case UP:
-            playerLocY = GetPlayerObject().GetLocY() + 1;   // Next Player Location Y
-            playerLocX = GetPlayerObject().GetLocX();       // Player Location X
+            playerLocY = GetPlayer1and2().GetLocY() + 1;   // Next Player Location Y
+            playerLocX = GetPlayer1and2().GetLocX();       // Player Location X
             break;
         case DOWN:
-            playerLocY = GetPlayerObject().GetLocY() - 1;   // Next Player Location Y
-            playerLocX = GetPlayerObject().GetLocX();       // Player Location X
+            playerLocY = GetPlayer1and2().GetLocY() - 1;   // Next Player Location Y
+            playerLocX = GetPlayer1and2().GetLocX();       // Player Location X
             break;
         case LEFT:
-            playerLocY = GetPlayerObject().GetLocY();       // Player Location Y
-            playerLocX = GetPlayerObject().GetLocX() - 1;   // Next Player Location X
+            playerLocY = GetPlayer1and2().GetLocY();       // Player Location Y
+            playerLocX = GetPlayer1and2().GetLocX() - 1;   // Next Player Location X
             break;
         case RIGHT:
-            playerLocY = GetPlayerObject().GetLocY();       // Player Location Y
-            playerLocX = GetPlayerObject().GetLocX() + 1;   // Next Player Location X
+            playerLocY = GetPlayer1and2().GetLocY();       // Player Location Y
+            playerLocX = GetPlayer1and2().GetLocX() + 1;   // Next Player Location X
             break;
-    }*/
+    }
 
-    boardObject = board.at(GetPlayer1and2().GetLocY(), GetPlayer1and2().GetLocX()); // Board at Player Location
+    boardObject = gameEnvironment.getMatrix().at(playerLocY, playerLocX); // Board at Player Location
 
     if (boardObject == COLLISION_SPRITE)
     {
+        std::cout << "Collision Detected" << std::endl;
+        std::cout << "LocationY: " <<  playerLocY << std::endl;
+        std::cout << "LocationX: " <<  playerLocX << std::endl;
+        std::cout << "GameBoard: " <<  boardObject << std::endl;
         SetCollisionOccur(true);
     }
 }
@@ -646,9 +650,13 @@ void GameControllerServer::MovePlayer()
     switch(move_x)
     {
         case 1:
+            // Check Collisions
+            CheckCollisions(LEFT);
             player1and2.MoveLeft();
             break;
         case 2:
+            // Check Collisions
+            CheckCollisions(RIGHT);
             player1and2.MoveRight();
             break;
         default:
@@ -659,17 +667,18 @@ void GameControllerServer::MovePlayer()
     switch(move_y)
     {
         case 1:
+            // Check Collisions
+            CheckCollisions(UP);
             player1and2.MoveUp();
             break;
         case 2:
+            // Check Collisions
+            CheckCollisions(DOWN);
             player1and2.MoveDown();
             break;
         default:
             break;
     }
-
-    // Check Collisions
-    CheckCollisions();
 
     // Update Game State for Collision
     if(GetCollisionOccur())
