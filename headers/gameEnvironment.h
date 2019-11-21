@@ -107,6 +107,33 @@ public:
      **/
     string getMap();
 
+
+    /**
+     * Returns a reference to the internal game matrix
+     * 
+     * @returns - Game Matrix
+     **/
+    GameMatrix& getMatrix();
+
+    /**
+     * Gets an object from a cell in the matrix
+     * 
+     * @param row - Row in the matrix
+     * @param col - Column in the matrix
+     * 
+     * @returns - A character
+     **/
+    char at(int row, int col);
+
+    /**
+     * Updates an index in the matrix with the passed value
+     * 
+     * @param row - Row the item should added to
+     * @param col - Column the item should be added to
+     * @param ch - A character
+     **/
+    void update(int row, int col, char ch);
+
     /**
      * Updates the game board based on a blueprint based on
      * the contents of the encoded string

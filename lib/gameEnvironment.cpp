@@ -134,6 +134,21 @@ void GameEnvironment::updateGameMatrix(string data)
     matrix.loadFromStr(data);
 }
 
+GameMatrix& GameEnvironment::getMatrix()
+{
+    return matrix;
+}
+
+char GameEnvironment::at(int row, int col)
+{
+    return matrix.at(row, col);
+}
+
+void GameEnvironment::update(int row, int col, char ch)
+{
+    matrix.update(row, col, ch);
+}
+
 GameEnvironment::~GameEnvironment()
 {
     for (LevelBuilder *level : levels)
