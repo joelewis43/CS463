@@ -558,11 +558,11 @@ void GameControllerServer::CheckCollisions() //DIRECTION direction
             break;
     }*/
 
-    boardObject = board.at(GetPlayerObject().GetLocY(), GetPlayerObject().GetLocX()); // Board at Player Location
+    boardObject = board.at(GetPlayer1and2().GetLocY(), GetPlayer1and2().GetLocX()); // Board at Player Location
 
     if (boardObject == COLLISION_SPRITE)
     {
-        SetCollision(true);
+        SetCollisionOccur(true);
     }
 }
 
