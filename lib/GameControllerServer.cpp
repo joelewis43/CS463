@@ -556,6 +556,9 @@ void GameControllerServer::CheckCollisions(DIRECTION direction) //DIRECTION dire
             playerLocY = GetPlayer1and2().GetLocY();       // Player Location Y
             playerLocX = GetPlayer1and2().GetLocX() + 1;   // Next Player Location X
             break;
+        case NONE:
+            playerLocY = GetPlayer1and2().GetLocY() + 1;   // Next Player Location Y
+            playerLocX = GetPlayer1and2().GetLocX();       // Player Location X
     }
 
     boardObject = gameEnvironment.getMatrix().at(playerLocY, playerLocX); // Board at Player Location
@@ -660,6 +663,7 @@ void GameControllerServer::MovePlayer()
             player1and2.MoveRight();
             break;
         default:
+            CheckCollisions(NONE);
             break;
     }
 
@@ -677,6 +681,7 @@ void GameControllerServer::MovePlayer()
             player1and2.MoveDown();
             break;
         default:
+            CheckCollisions(NONE);
             break;
     }
 

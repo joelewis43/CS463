@@ -27,7 +27,7 @@
 #include "gameEnvironment.h"
 #include "window.h"
 
-enum DIRECTION {UP, DOWN, LEFT, RIGHT};
+enum DIRECTION {UP, DOWN, LEFT, RIGHT, NONE};
 
 struct ScoreOrganizer
 {
