@@ -3,7 +3,7 @@
 
 void AsteroidLevel::construct()
 {
-    int minHeight = 4, minWidth = 5, maxHeight = 10, maxWidth = 20;
+    int minHeight = 2, minWidth = 2, maxHeight = 5, maxWidth = 5;
     int numAsteroids = 12, incrementor = rows / screenHeight;
     // Frame container
     // Add Asteroids to the frame
@@ -16,7 +16,7 @@ void AsteroidLevel::construct()
         {
             int xc = 0, yc = 0;
             int height = randomInt(minHeight, maxHeight), width = randomInt(minWidth, maxWidth);
-            int xCoord = randomInt(0, cols), yCoord = randomInt(0, screenHeight);
+            int xCoord = randomInt(0, cols - width), yCoord = randomInt(0, screenHeight - height);
 
             for (int sy = yCoord; sy < screenHeight; sy++)
             {
