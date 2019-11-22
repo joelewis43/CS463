@@ -72,6 +72,8 @@ void GameControllerClient::MainGameLoop()
             std::this_thread::sleep_for(timespan);
         }
 
+        GameOverMenu();
+
         delwin(contentWindow);
         delwin(borderWindow);
     }
@@ -407,14 +409,10 @@ void GameControllerClient::CountDownScreen()
 // Displayed After Player Loses
 void GameControllerClient::GameOverMenu()
 {
-    // there should be a main loop constantly listening to the server
-    // when that listener observes the countdownscreen command
-    // it should call this function
-
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Game Over!" << std::endl;
-    std::cout << "Score: " << GetScore() << std::endl;
-    std::cout << "Play Game? (y/n)" << std::endl;
+    std::cout << "Your final score is:" << std::endl;
+    DisplayScore();
 }
 
 // Update Player Location
@@ -620,4 +618,26 @@ void GameControllerClient::SetCollision(bool CollisionBool)
     Collision = CollisionBool;
 }
 
-size_t GameControllerClient::GetScore() {}
+void GameControllerClient::DisplayScore()
+{
+    sleep(300);
+
+    // clear buffer of any old game data
+    ClientSocket.clearBuffer();
+
+    // Ask Server for score
+    const char *msg = "? score";
+    ClientSocket.deliver(msg);
+
+    // Wait for server to send leaderboard
+    char res[MAX_BYTES];
+    memset(res, '\0', MAX_BYTES);
+    ClientSocket.receiveBlock(res);
+
+    // Display Display the final score
+    std::cout << res << std::endl;
+
+    sleep(5);
+
+    // User Input to Return to Menu
+}

@@ -53,7 +53,7 @@ class GameControllerClient {
         void ServerConnection();                    // Checks for Server Connection
         void MovePlayer();                          // Update Player Location
         void UpdateGame(WINDOW *window);            // Update Game
-        size_t GetScore();
+        void DisplayScore();                        // Display the final score
         void CheckCollisions();                     // Checks if Server Sent Collision True
 
         // Getters

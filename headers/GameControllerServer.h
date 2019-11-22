@@ -66,6 +66,7 @@ class GameControllerServer {
         void SortLeaderBoard(std::vector<ScoreOrganizer>&);     // Sorts LeaderBoard
         void UpdateLeaderBoards();                              // Updates LeaderBoards
         void SaveScore(std::string, int);                       // Saves Current Game's Score
+        void SendScore();                                       // Send the clients their final score
         void NameMenu();                                        // Select Player Name
         void AwaitingPlayer();                                  // Await Player Server Connection
         void ControlSelection();                                // Player Selects Controls
@@ -78,8 +79,8 @@ class GameControllerServer {
         void MoveObjects();                                     // Update Object Locations
         void MoveEnvironment();                                 // Move Environment
         void UpdateEnvironment();                               // Sets New Environment
-        void UpdateGame(double, float);                                      // Update Game State
-        void UpdateScore(double, float);                                     // Update Game's Score
+        void UpdateGame(double, float);                         // Update Game State
+        void UpdateScore(double, float);                        // Update Game's Score
         void SendMap();                                         // Send Map to Client/Server
 
         // Getters

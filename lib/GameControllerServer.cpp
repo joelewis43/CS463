@@ -150,6 +150,8 @@ void GameControllerServer::MainGameLoop()
             std::chrono::duration<int, std::milli> timespan(150);
             std::this_thread::sleep_for(timespan);
         }
+
+        SendScore();
     }
 }
 
@@ -331,6 +333,59 @@ void GameControllerServer::UpdateScore(double duration, float timer)
     duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
     timer = floor(((duration / 60.0) / 60.0) * 10000);
     Score = Score + (int)timer + 1;
+}
+
+void GameControllerServer::SendScore()
+{
+
+    std::cout << "Game over" << std::endl;
+    std::cout << "Waiting for players to request score" << std::endl;
+
+    int player1Ready = 0;
+    int player2Ready = 0;
+
+    char buffer1[MAX_BYTES];
+    char buffer2[MAX_BYTES];
+    memset(buffer1, '\0', MAX_BYTES);
+    memset(buffer2, '\0', MAX_BYTES);
+
+    // Loop Until Both Players Indicate Their Names Are Set
+    while(1)
+    {
+        if(player1Ready == 0)
+        {
+            // Receive Client 1 Signal
+            ServerSocket.receive1(buffer1);
+
+            if(strstr(buffer1, "? score"))
+            {
+                std::cout << "Player 1 ready for score" << std::endl;
+                player1Ready = 1;
+            }
+        }
+
+        if(player2Ready == 0)
+        {
+            // Receive Client 1 Signal
+            ServerSocket.receive2(buffer2);
+
+            if(strstr(buffer2, "? score"))
+            {
+                std::cout << "Player 2 ready for score" << std::endl;
+                player2Ready = 1;
+            }
+        }
+
+        // break when both players are ready
+        if(player1Ready && player2Ready)
+            break;
+    }
+
+    // send score
+    std::string score = std::to_string(Score);
+    ServerSocket.deliver(score.c_str());
+
+    std::cout << "Final score sent" << std::endl;
 }
 
 // Select Player Name
