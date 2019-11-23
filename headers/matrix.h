@@ -10,8 +10,10 @@
 #include <algorithm>
 #include <iterator>
 #include <ncurses.h>
+#include <math.h>
 
 #include "object.h"
+#include "random.h"
 
 using std::cout;
 using std::endl;
@@ -51,6 +53,8 @@ private:
      *            from the matrix and each row delimited by \n characters
      **/
     string stringMap(std::function<const char(char)> func);
+
+    void bloom(int row, int col, int radius);
 
 public:
     /**
@@ -174,6 +178,14 @@ public:
      * @param window - A pointer to an ncurses window object
     **/
     void print(WINDOW *window);
+
+    /**
+     * Creates an explosion on the game board
+     * 
+     * @param row - the row the explosion originates from
+     * @param col - the column the explosion originates from
+     **/
+    void triggerExplosion(int row, int col);
 
     /**
      * Getter for the number of rows

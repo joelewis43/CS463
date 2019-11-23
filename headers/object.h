@@ -4,6 +4,7 @@
 #define NULL_SPRITE ' '
 #define PLAYER_SPRITE '^'
 #define COLLISION_SPRITE '#'
+#define EXPLOSION_SPRITE '*'
 
 class Object
 {

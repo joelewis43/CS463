@@ -104,10 +104,6 @@ void GameMatrix::loadFromStr(string str)
 {
     int row = 0, col = 0;
 
-    // Clear the contents of the matrix
-    // Be mindful of memory on the heap
-    clear();
-
     for (char c : str)
     {
         // Indicates new row
@@ -142,8 +138,43 @@ void GameMatrix::clearScreen()
 
 void GameMatrix::print(WINDOW *window)
 {
-    mvwprintw(window, 0, 0, toString().c_str());
+    const char *map = toString().c_str();
+    int row = 0, col = 0;
+    for (int i = 0; i < strlen(map); i++)
+    {
+        const char ch = map[i];
+        int clr = randomInt(0, 1) ? 1 : 3;
+
+        switch (ch)
+        {
+        case COLLISION_SPRITE:
+            wattron(window, COLOR_PAIR(1));
+            break;
+        case PLAYER_SPRITE:
+            wattron(window, COLOR_PAIR(2));
+            break;
+        case EXPLOSION_SPRITE:
+            wattron(window, COLOR_PAIR(clr));
+            break;
+        default:
+            wattron(window, COLOR_PAIR(1));
+            break;
+        }
+
+        mvwaddch(window, row, col++, ch);
+
+        if (ch == '\n')
+        {
+            row += 1;
+            col = 0;
+        }
+    }
     wrefresh(window);
+}
+
+void GameMatrix::triggerExplosion(int row, int col)
+{
+    bloom(row, col, 3);
 }
 
 int GameMatrix::rows()
@@ -176,6 +207,22 @@ string GameMatrix::stringMap(std::function<const char(char)> func)
     }
 
     return stream.str();
+}
+
+void GameMatrix::bloom(int c_row, int c_col, int radius)
+{
+    int cr = c_row - radius, cc = c_col - radius, ccr = c_row + radius, ccc = c_col + radius;
+
+    for (int y = cr; y <= ccr; y++)
+    {
+        for (int x = cc; x <= ccc; x++)
+        {
+            if ((pow(x - c_col, 2.0) + pow(y - c_row, 2.0)) <= pow(radius, 2.0))
+            {
+                update(y, x, EXPLOSION_SPRITE);
+            }
+        }
+    }
 }
 
 GameMatrix::~GameMatrix() {}
