@@ -31,14 +31,14 @@ Player::~Player()
 // Move Up
 void Player::MoveUp()
 {
-    int move = (GetLocY() + 1);
+    int move = (GetLocY() - 1);
     SetLocY(move);
 }
 
 // Move Down
 void Player::MoveDown()
 {
-    int move = (GetLocY() - 1);
+    int move = (GetLocY() + 1);
     SetLocY(move);
 }
 
