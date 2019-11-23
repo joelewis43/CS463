@@ -597,11 +597,11 @@ void GameControllerServer::CheckCollisions(DIRECTION direction) //DIRECTION dire
     switch(direction)
     {
         case UP:
-            playerLocY = GetPlayer1and2().GetLocY() + 1;   // Next Player Location Y
+            playerLocY = GetPlayer1and2().GetLocY() - 1;   // Next Player Location Y
             playerLocX = GetPlayer1and2().GetLocX();       // Player Location X
             break;
         case DOWN:
-            playerLocY = GetPlayer1and2().GetLocY() - 1;   // Next Player Location Y
+            playerLocY = GetPlayer1and2().GetLocY() + 1;   // Next Player Location Y
             playerLocX = GetPlayer1and2().GetLocX();       // Player Location X
             break;
         case LEFT:
@@ -613,7 +613,7 @@ void GameControllerServer::CheckCollisions(DIRECTION direction) //DIRECTION dire
             playerLocX = GetPlayer1and2().GetLocX() + 1;   // Next Player Location X
             break;
         case NONE:
-            playerLocY = GetPlayer1and2().GetLocY() + 1;   // Next Player Location Y
+            playerLocY = GetPlayer1and2().GetLocY() - 1;   // Next Player Location Y
             playerLocX = GetPlayer1and2().GetLocX();       // Player Location X
     }
 
