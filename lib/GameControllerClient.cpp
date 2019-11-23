@@ -453,6 +453,12 @@ void GameControllerClient::MovePlayer()
             }
             default:
             {
+                direction = "y";
+                moved = "0";
+                movement = direction + moved;
+
+                // Send to Server
+                ClientSocket.deliver(movement.c_str());
                 break;
             }
         }
@@ -485,6 +491,12 @@ void GameControllerClient::MovePlayer()
             }
             default:
             {
+                direction = "x";
+                moved = "0";
+                movement = direction + moved;
+
+                // Send to Server
+                ClientSocket.deliver(movement.c_str());
                 break;
             }
         }
@@ -520,7 +532,6 @@ void GameControllerClient::UpdateGame(WINDOW *window)
     // Server say there was a collision
     if(GetCollisionOccur())
     {
-        std::cout << "BUG BUG" << std::endl;
         SetGameOver(true);
         return;
     }

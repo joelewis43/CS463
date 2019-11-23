@@ -146,6 +146,7 @@ void GameControllerServer::MainGameLoop()
         while(GetGameOver() != true)
         {
             // Update Game
+            std::cout << "GAME LOOP" << std::endl;
             UpdateGame(duration, timer);
             std::chrono::duration<int, std::milli> timespan(150);
             std::this_thread::sleep_for(timespan);
@@ -647,52 +648,67 @@ void GameControllerServer::MovePlayer()
     memset(buffer1, '\0', MAX_BYTES);
     memset(buffer2, '\0', MAX_BYTES);
 
+    std::cout << "Movement Function" << std::endl;
+
     // Receive Data From Client
     ServerSocket.receive1(buffer1);
     ServerSocket.receive2(buffer2);
 
+    std::cout << "Buffer 1: " << buffer1 << std::endl;
+    std::cout << "Buffer 2: " << buffer2 << std::endl;
+
     // Update Player Location (X|Y) for Player 1
-    if(buffer1[0] == x)
+    if(buffer1[3] == x)
     {
-        for (int i = 1; i < MAX_BYTES; i++)
+        std::cout << "Player 1 - X-Axis Movement Detected." << std::endl;
+        /*for (int i = 3; i < MAX_BYTES; i++)
         {
             if(buffer1[i] == '\0')
             {
                 break;
             }
             s += buffer1[i];
-        }
-        move_x = stoi(s);
+        }*/
+        //move_x = stoi(s);
+        move_x = (int)buffer1[4] - 48;
+        std::cout << "Player 1 Move X: " << move_x << std::endl;
     }
-    else if (buffer1[0] == y)
+    else if (buffer1[3] == y)
     {
-        for (int i = 1; i < MAX_BYTES; i++)
+        std::cout << "Player 1 - Y-Axis Movement Detected." << std::endl;
+        /*for (int i = 1; i < MAX_BYTES; i++)
         {
             if(buffer1[i] == '\0')
             {
                 break;
             }
             s += buffer1[i];
-        }
-        move_y = stoi(s);
+        }*/
+        //move_y = stoi(s);
+        move_y = (int)buffer1[4] - 48;
+        std::cout << "Player 1 Move Y: " << move_x << std::endl;
     }
 
     // Update Player Location (X|Y) for Player 2
     s = "";
-    if(buffer2[0] == x)
+    if(buffer2[3] == x)
     {
-        for (int i = 1; i < MAX_BYTES; i++)
+        std::cout << "Player 2 - X-Axis Movement Detected." << std::endl;
+        /*for (int i = 1; i < MAX_BYTES; i++)
         {
             if(buffer2[i] == '\0')
             {
                 break;
             }
             s += buffer2[i];
-        }
-        move_x = stoi(s);
+        }*/
+        //move_x = stoi(s);
+        move_x = (int)buffer2[4] - 48;
+        std::cout << "Player 2 Move X: " << move_x << std::endl;
     }
-    else if (buffer2[0] == y)
+    else if (buffer2[3] == y)
     {
+        /*std::cout << "Player 2 - Y-Axis Movement Detected." << std::endl;
         for (int i = 1; i < MAX_BYTES; i++)
         {
             if(buffer2[i] == '\0')
@@ -700,24 +716,34 @@ void GameControllerServer::MovePlayer()
                 break;
             }
             s += buffer2[i];
-        }
-        move_y = stoi(s);
+        }*/
+        //move_y = stoi(s);
+        move_y = (int)buffer2[4] - 48;
+        std::cout << "Player 2 Move Y: " << move_x << std::endl;
     }
 
     // Movement Based On X-Axis Player
     switch(move_x)
     {
+        case 0:
+            // Check Collisions
+            std::cout << "No Movement - X Switch" << std::endl;
+            CheckCollisions(NONE);
+            break;
         case 1:
             // Check Collisions
+            std::cout << "X-Axis - Left" << std::endl;
             CheckCollisions(LEFT);
             player1and2.MoveLeft();
             break;
         case 2:
             // Check Collisions
+            std::cout << "X-Axis - Right" << std::endl;
             CheckCollisions(RIGHT);
             player1and2.MoveRight();
             break;
         default:
+            std::cout << "Default - No Movement - X Switch" << std::endl;
             CheckCollisions(NONE);
             break;
     }
@@ -725,17 +751,25 @@ void GameControllerServer::MovePlayer()
     // Movement Based On Y-Axis Player
     switch(move_y)
     {
+        case 0:
+            // Check Collisions
+            std::cout << "No Movement - Y Switch" << std::endl;
+            CheckCollisions(NONE);
+            break;
         case 1:
             // Check Collisions
+            std::cout << "Y-Axis - Up" << std::endl;
             CheckCollisions(UP);
             player1and2.MoveUp();
             break;
         case 2:
             // Check Collisions
+            std::cout << "Y-Axis - Down" << std::endl;
             CheckCollisions(DOWN);
             player1and2.MoveDown();
             break;
         default:
+            std::cout << "Default - No Movement - Y Switch" << std::endl;
             CheckCollisions(NONE);
             break;
     }
@@ -743,6 +777,7 @@ void GameControllerServer::MovePlayer()
     // Update Game State for Collision
     if(GetCollisionOccur())
     {
+        std::cout << "Collision Detected!" << std::endl;
         std::string message = "collision_true";
         ServerSocket.deliver(message.c_str());
         SetGameOver(true);
@@ -803,16 +838,26 @@ void GameControllerServer::SendMap()
 // Update Game State
 void GameControllerServer::UpdateGame(double duration, float timer)
 {
+    // Break for New Data
+    std::cout << std::endl;
+
+    int playerLocX = 0;
+    int playerLocY = 0;
+    std::cout << "Outside Connection Check - In Update Game" << std::endl;
     // Check Server Connection
     if(ServerSocket.getConnection())
     {
         // Print Screen
+        std::cout << "Connection Good - In Update Game" << std::endl;
 
         // Update Player
         MovePlayer();
 
-        // Clear Screen
-        std::cout << "\033[2J\033[1;1H";
+
+        playerLocY = GetPlayer1and2().GetLocY();
+        playerLocX = GetPlayer1and2().GetLocX();
+        std::cout << "LocationY: " <<  playerLocY << std::endl;
+        std::cout << "LocationX: " <<  playerLocX << std::endl;
 
         // Create Special Event
         // CreateSpecialEvent();
