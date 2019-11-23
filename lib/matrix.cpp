@@ -8,7 +8,7 @@ GameMatrix::GameMatrix()
 
 GameMatrix::GameMatrix(int rows, int cols)
 {
-    buffer = deque<vector<char>>(rows, vector<char>(cols));
+    buffer = deque<vector<char>>(rows, vector<char>(cols, NULL_SPRITE));
     playerX = playerY = 0;
 }
 
@@ -66,12 +66,15 @@ void GameMatrix::initPlayerObject(int x, int y)
     update(y, x, PLAYER_SPRITE);
 }
 
-void GameMatrix::updatePlayerPosition(int newX, int newY)
+void GameMatrix::updatePlayerPosition(int newY, int newX)
 {
-    if (newX > cols() - 1 || newY > rows() - 1)
+    if (newX >= cols() || newY >= rows())
     {
         return;
     }
+
+    newX = std::max(1, newX);
+    newY = std::max(1, newY);
     // Move object ot new position
     char ch = at(playerY, playerX);
     // Only set to null if the object is a player object
@@ -139,7 +142,6 @@ void GameMatrix::clearScreen()
 
 void GameMatrix::print(WINDOW *window)
 {
-    wclear(window);
     mvwprintw(window, 0, 0, toString().c_str());
     wrefresh(window);
 }
