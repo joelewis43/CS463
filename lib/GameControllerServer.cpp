@@ -14,7 +14,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerServer::GameControllerServer() : ServerSocket(6235), player1(), player2(), gameEnvironment(CONTENT_HEIGHT, CONTENT_WIDTH - 1, 1000)
+GameControllerServer::GameControllerServer() : ServerSocket(8212), player1(), player2(), gameEnvironment(CONTENT_HEIGHT, CONTENT_WIDTH - 1, 1000)
 {
     // Set Timer Settings Here?
 }
@@ -153,6 +153,8 @@ void GameControllerServer::MainGameLoop()
         }
 
         SendScore();
+        SaveScore(Score);
+        std::cout << "Score written!\n";
     }
 }
 
@@ -257,6 +259,8 @@ void GameControllerServer::UpdateLeaderBoards()
                 ScoreOrganizer newScoreSet;
                 getline(file, line);
                 std::istringstream ss(line);
+                std::string nullVal;
+
                 while (ss)
                 {
                     getline(ss, newScoreSet.name, '\t');
@@ -290,14 +294,14 @@ void GameControllerServer::UpdateLeaderBoards()
     {
         // put back in file
         std::string header = "Space Runner High Scores";
-        std::string tableHeader = "Name\tScore";
+        std::string tableHeader = "Name\t\tScore";
         fileRewrite << header << std::endl;
         fileRewrite << tableHeader << std::endl;
 
         //insert sorted scores
         for (int i = 0; i < updateScores.size(); i++)
         {
-            fileRewrite << updateScores[i].name << '\t' << updateScores[i].score << std::endl;
+            fileRewrite << updateScores[i].name << "\t" << updateScores[i].score << std::endl;
         }
     }
 
@@ -305,8 +309,10 @@ void GameControllerServer::UpdateLeaderBoards()
 }
 
 // Save Score
-void GameControllerServer::SaveScore(std::string playerName, int score)
+void GameControllerServer::SaveScore(int score)
 {
+    std::cout << "Writing score to leaderboard\n";
+
     std::string filePath = "./data/LeaderBoards.txt";
     std::ofstream file;
 
@@ -319,7 +325,7 @@ void GameControllerServer::SaveScore(std::string playerName, int score)
     else
     {
         // Enter Player Score
-        file << playerName << "\t" << score << std::endl;
+        file << player1and2.GetName() << "\t" << score << std::endl;
 
         file.close();
 
@@ -339,7 +345,6 @@ void GameControllerServer::UpdateScore(double duration, float timer)
 void GameControllerServer::SendScore()
 {
 
-    std::cout << "Game over" << std::endl;
     std::cout << "Waiting for players to request score" << std::endl;
 
     int player1Ready = 0;
@@ -386,7 +391,7 @@ void GameControllerServer::SendScore()
     std::string score = std::to_string(Score);
     ServerSocket.deliver(score.c_str());
 
-    std::cout << "Final score sent" << std::endl;
+    std::cout << "Score sent" << std::endl;
 }
 
 // Select Player Name
@@ -412,6 +417,8 @@ void GameControllerServer::NameMenu()
 
     int bytes = 0;
 
+    std::string nulVal;
+
     // Loop Until Both Players Indicate Their Names Are Set
     while(1)
     {
@@ -423,10 +430,17 @@ void GameControllerServer::NameMenu()
             if(strstr(buffer1, "! name"))
             {
                 std::cout << "Retrieving P1 Name..." << std::endl;
-                memset(buffer1, '\0', MAX_BYTES);
 
-                // Set Name
-                player_a = name1;
+                std::istringstream nameCommand1(buffer1);
+
+                while (nameCommand1)
+                {
+                    // Set Name
+                    getline(nameCommand1, nulVal, ' ');
+                    getline(nameCommand1, nulVal, ' ');
+                    getline(nameCommand1, player_a, ' ');
+                }
+
                 player1Ready = 1;
                 std::cout << "Player 1 Name Received." << std::endl;
             }
@@ -435,28 +449,35 @@ void GameControllerServer::NameMenu()
         if(player2Ready == 0)
         {
             // Receive Client 1 Signal
-            bytes = ServerSocket.receive2(buffer2);
-            if (bytes)
-                std::cout << buffer2 << std::endl;
-
+            ServerSocket.receive2(buffer2);
 
             if(strstr(buffer2, "! name"))
             {
                 std::cout << "Retrieving P2 Name..." << std::endl;
-                memset(buffer2, '\0', MAX_BYTES);
 
                 // Set Name
-                player_a = name2;
+                std::istringstream nameCommand2(buffer2);
+                
+                while (nameCommand2)
+                {
+                    // Set Name
+                    getline(nameCommand2, nulVal, ' ');
+                    getline(nameCommand2, nulVal, ' ');
+                    getline(nameCommand2, player_b, ' ');
+                }
+
                 player2Ready = 1;
                 std::cout << "Player 2 Name Received." << std::endl;
             }
         }
-        if(player1Ready && player2Ready )
+        if(player1Ready && player2Ready)
             break;
     }
 
     // Concatenate Names
-    std::string name = player_a + player_b;
+    std::string seperator = " | ";
+    std::string name = player_a + seperator + player_b;
+    
     player1.SetName(player_a);
     player2.SetName(player_b);
     player1and2.SetName(name);
@@ -816,6 +837,8 @@ void GameControllerServer::SendMap()
     memset(buffer1, '\0', 4);
     memset(buffer2, '\0', 4);
 
+    std::cout << "Sending score to clients" << std::endl;
+
     std::cout << "Sending Map Data to Clients" << std::endl;
 
     std::string serializedMap = gameEnvironment.getMap();
@@ -857,6 +880,9 @@ void GameControllerServer::UpdateGame(double duration, float timer)
 
         // Send Map to Client
         SendMap();
+
+        // Send current score to Client
+        SendScore();
 
         // Update Player
         MovePlayer();
