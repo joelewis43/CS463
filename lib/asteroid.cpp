@@ -7,7 +7,7 @@ void AsteroidLevel::construct()
     int numAsteroids = 12, incrementor = rows / screenHeight;
     // Frame container
     // Add Asteroids to the frame
-    deque<vector<char>> frame = deque<vector<char>>(screenHeight, vector<char>(cols));
+    deque<vector<char>> frame = deque<vector<char>>(screenHeight, vector<char>(cols, NULL_SPRITE));
 
     // Frame by Frame create the asteroids that will be used for the level
     for (int i = 0; i < rows; i += incrementor)
