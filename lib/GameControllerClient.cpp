@@ -165,7 +165,7 @@ void GameControllerClient::LeaderBoard()
     // Open File and View Leader Boards
     // Clear Screen
     std::cout << "\033[2J\033[1;1H";
-    std::cout << "Leader Board Function" << std::endl;
+    //std::cout << "Leader Board Function" << std::endl;
     usleep(500);
 
     // Ask Server for LeaderBoard
@@ -179,7 +179,7 @@ void GameControllerClient::LeaderBoard()
 
     // Display Leader Board
     std::cout << "\033[2J\033[1;1H";
-    std::cout << "\tLeaderboard" << std::endl;
+    //std::cout << "\tLeaderboard" << std::endl;
     std::cout << res << std::endl;
 
     sleep(5);
@@ -439,7 +439,7 @@ void GameControllerClient::MovePlayer()
             case KEY_UP:
             {
                 player.MoveUp();
-                direction = "y";
+                direction = "yy";
                 moved = "1";
                 movement = direction + moved;
 
@@ -450,7 +450,7 @@ void GameControllerClient::MovePlayer()
             case KEY_DOWN:
             {
                 player.MoveDown();
-                direction = "y";
+                direction = "yy";
                 moved = "2";
                 movement = direction + moved;
 
@@ -460,7 +460,7 @@ void GameControllerClient::MovePlayer()
             }
             default:
             {
-                direction = "y";
+                direction = "yy";
                 moved = "0";
                 movement = direction + moved;
 
@@ -477,7 +477,7 @@ void GameControllerClient::MovePlayer()
             case KEY_LEFT:
             {
                 player.MoveLeft();
-                direction = "x";
+                direction = "xx";
                 moved = "1";
                 movement = direction + moved;
 
@@ -488,7 +488,7 @@ void GameControllerClient::MovePlayer()
             case KEY_RIGHT:
             {
                 player.MoveRight();
-                direction = "x";
+                direction = "xx";
                 moved = "2";
                 movement = direction + moved;
 
@@ -498,7 +498,7 @@ void GameControllerClient::MovePlayer()
             }
             default:
             {
-                direction = "x";
+                direction = "xx";
                 moved = "0";
                 movement = direction + moved;
 

@@ -162,7 +162,7 @@ void GameControllerServer::LeaderBoard(int player)
     // Open File and View Leader Boards
     // Clear Screen
     std::cout << "\033[2J\033[1;1H";
-    std::cout << "Leader Board Function" << std::endl;
+    //std::cout << "Leader Board Function" << std::endl;
     sleep(2);
 
     std::string filePath = "./data/LeaderBoards.txt";
@@ -177,7 +177,7 @@ void GameControllerServer::LeaderBoard(int player)
     }
     else
     {
-        std::cout << "About to send LB" << std::endl;
+        std::cout << "About to send LeaderBoard" << std::endl;
         std::string file;
         std::string line = "";
         while (!fp.eof())
@@ -660,7 +660,7 @@ void GameControllerServer::MovePlayer()
     std::cout << "Buffer 2: " << buffer2 << std::endl;
 
     // Update Player Location (X|Y) for Player 1
-    if(buffer1[3] == x)
+    if(buffer1[0] == x)
     {
         std::cout << "Player 1 - X-Axis Movement Detected." << std::endl;
         /*for (int i = 3; i < MAX_BYTES; i++)
@@ -672,10 +672,10 @@ void GameControllerServer::MovePlayer()
             s += buffer1[i];
         }*/
         //move_x = stoi(s);
-        move_x = (int)buffer1[4] - 48;
+        move_x = (int)buffer1[1] - 48;
         std::cout << "Player 1 Move X: " << move_x << std::endl;
     }
-    else if (buffer1[3] == y)
+    else if (buffer1[0] == y)
     {
         std::cout << "Player 1 - Y-Axis Movement Detected." << std::endl;
         /*for (int i = 1; i < MAX_BYTES; i++)
@@ -687,13 +687,13 @@ void GameControllerServer::MovePlayer()
             s += buffer1[i];
         }*/
         //move_y = stoi(s);
-        move_y = (int)buffer1[4] - 48;
+        move_y = (int)buffer1[1] - 48;
         std::cout << "Player 1 Move Y: " << move_x << std::endl;
     }
 
     // Update Player Location (X|Y) for Player 2
     s = "";
-    if(buffer2[3] == x)
+    if(buffer2[0] == x)
     {
         std::cout << "Player 2 - X-Axis Movement Detected." << std::endl;
         /*for (int i = 1; i < MAX_BYTES; i++)
@@ -705,10 +705,10 @@ void GameControllerServer::MovePlayer()
             s += buffer2[i];
         }*/
         //move_x = stoi(s);
-        move_x = (int)buffer2[4] - 48;
+        move_x = (int)buffer2[1] - 48;
         std::cout << "Player 2 Move X: " << move_x << std::endl;
     }
-    else if (buffer2[3] == y)
+    else if (buffer2[0] == y)
     {
         /*std::cout << "Player 2 - Y-Axis Movement Detected." << std::endl;
         for (int i = 1; i < MAX_BYTES; i++)
@@ -720,7 +720,7 @@ void GameControllerServer::MovePlayer()
             s += buffer2[i];
         }*/
         //move_y = stoi(s);
-        move_y = (int)buffer2[4] - 48;
+        move_y = (int)buffer2[1] - 48;
         std::cout << "Player 2 Move Y: " << move_x << std::endl;
     }
 
