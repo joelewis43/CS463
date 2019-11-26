@@ -11,6 +11,7 @@
 #include <iterator>
 #include <ncurses.h>
 #include <math.h>
+#include <string.h>
 
 #include "object.h"
 #include "random.h"
