@@ -13,6 +13,9 @@
 #include <math.h>
 #include <string.h>
 
+#include <stdio.h>
+#include <string.h>
+
 #include "object.h"
 #include "random.h"
 

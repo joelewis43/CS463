@@ -65,7 +65,7 @@ class GameControllerServer {
         void LeaderBoard(int);                                  // LeaderBoard Menu
         void SortLeaderBoard(std::vector<ScoreOrganizer>&);     // Sorts LeaderBoard
         void UpdateLeaderBoards();                              // Updates LeaderBoards
-        void SaveScore(std::string, int);                       // Saves Current Game's Score
+        void SaveScore(int);                       // Saves Current Game's Score
         void SendScore();                                       // Send the clients their final score
         void NameMenu();                                        // Select Player Name
         void AwaitingPlayer();                                  // Await Player Server Connection
