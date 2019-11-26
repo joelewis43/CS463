@@ -581,7 +581,7 @@ void GameControllerServer::CountDownScreen()
     std::cout << "Sending Countdown Code" << std::endl;
     const char* msg = "countdown";
     std::string message = "countdown";
-    ServerSocket.deliver(message.c_str());
+    // ServerSocket.deliver(message.c_str());
     sleep(3);
     //// OR
     ///// Have countdown screen in Tevin's game env
@@ -626,6 +626,8 @@ void GameControllerServer::CheckCollisions(DIRECTION direction) //DIRECTION dire
         std::cout << "LocationX: " <<  playerLocX << std::endl;
         std::cout << "GameBoard: " <<  boardObject << std::endl;
         SetCollisionOccur(true);
+        // Make an explosion on the board to show a collision
+        gameEnvironment.triggerExplosion(player1and2.GetLocY(), player1and2.GetLocX());
     }
 }
 
@@ -847,8 +849,14 @@ void GameControllerServer::UpdateGame(double duration, float timer)
     // Check Server Connection
     if(ServerSocket.getConnection())
     {
+        // Clear Screen
+        std::cout << "\033[2J\033[1;1H";
+
         // Print Screen
         std::cout << "Connection Good - In Update Game" << std::endl;
+
+        // Send Map to Client
+        SendMap();
 
         // Update Player
         MovePlayer();
@@ -877,9 +885,6 @@ void GameControllerServer::UpdateGame(double duration, float timer)
 
         // Update Score
         UpdateScore(duration, timer);
-
-        // Send Map to Client
-        SendMap();
     }
 }
 

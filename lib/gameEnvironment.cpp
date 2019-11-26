@@ -149,6 +149,11 @@ void GameEnvironment::update(int row, int col, char ch)
     matrix.update(row, col, ch);
 }
 
+void GameEnvironment::triggerExplosion(int row, int col)
+{
+    matrix.triggerExplosion(row, col);
+}
+
 GameEnvironment::~GameEnvironment()
 {
     for (LevelBuilder *level : levels)

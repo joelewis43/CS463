@@ -143,6 +143,14 @@ public:
     void updateGameMatrix(string data);
 
     /**
+     * Creates an explosion on the game board
+     * 
+     * @param row - the row the explosion originates from
+     * @param col - the column the explosion originates from
+     **/
+    void triggerExplosion(int row, int col);
+
+    /**
      * Destructor for the Environment object
      **/
     ~GameEnvironment();
