@@ -14,7 +14,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 6235), board(CONTENT_HEIGHT, CONTENT_WIDTH - 1)
+GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 8212), board(CONTENT_HEIGHT, CONTENT_WIDTH - 1)
 {
 }
 
@@ -420,6 +420,8 @@ void GameControllerClient::GameOverMenu()
     std::cout << "Game Over!" << std::endl;
     std::cout << "Your final score is:" << std::endl;
     DisplayScore();
+    std::cout << "Thanks for playing!\n";
+    sleep(2);
 }
 
 // Update Player Location
@@ -522,15 +524,11 @@ void GameControllerClient::UpdateGame(WINDOW *window)
     // Check Server Connection
     ServerConnection();
 
-    // Receive Data From Server (blocking)
+    // Receive Data From Server
     bytes = ClientSocket.receive(buffer, GAMEBOARD_BUFSIZE);
 
     ClientSocket.deliver(ack.c_str());
-
-    /* 
-        USE bytes TO DETERMINE IF UPDATE IS NEEDED
-    */
-
+    
     board.loadFromStr(std::string(buffer));
 
     // Check if Collision Occurred
@@ -545,6 +543,27 @@ void GameControllerClient::UpdateGame(WINDOW *window)
 
     // Print Screen
     board.print(window);
+
+
+
+    // clear buffer of any old game data
+    ClientSocket.clearBuffer();
+
+    // Ask Server for score
+    const char *msg = "? score";
+    ClientSocket.deliver(msg);
+
+    // Wait for server to send score
+    char scoreBuff[MAX_BYTES];
+    memset(scoreBuff, '\0', MAX_BYTES);
+    ClientSocket.receive(scoreBuff);
+
+    // Display Display the final score
+    std::cout << "SCORE: " << scoreBuff << std::endl;
+
+
+
+
 
     // Movement Selection (handles sending move to server)
     MovePlayer();
@@ -638,7 +657,7 @@ void GameControllerClient::SetCollision(bool CollisionBool)
 
 void GameControllerClient::DisplayScore()
 {
-    sleep(300);
+    usleep(300);
 
     // clear buffer of any old game data
     ClientSocket.clearBuffer();
@@ -655,7 +674,7 @@ void GameControllerClient::DisplayScore()
     // Display Display the final score
     std::cout << res << std::endl;
 
-    sleep(5);
+    sleep(3);
 
     // User Input to Return to Menu
 }
