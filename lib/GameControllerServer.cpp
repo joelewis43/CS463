@@ -636,6 +636,20 @@ void GameControllerServer::CheckCollisions(DIRECTION direction) //DIRECTION dire
         // Make an explosion on the board to show a collision
         gameEnvironment.triggerExplosion(player1and2.GetLocY(), player1and2.GetLocX());
     }
+
+    // Check Gameboard Boundaries
+    if(playerLocX == 196 ||
+       playerLocX == 0 ||
+       playerLocY > 30 ||
+       playerLocY == 0)
+    {
+        std::cout << "Edge of Gameboard Detected - Block Movement" << std::endl;
+        std::cout << "LocationY: " <<  playerLocY << std::endl;
+        std::cout << "LocationX: " <<  playerLocX << std::endl;
+        std::cout << "GameBoard: " <<  boardObject << std::endl;
+        Edge = true;
+    }
+
 }
 
 // Create Special Game Events
@@ -670,30 +684,12 @@ void GameControllerServer::MovePlayer()
     if(buffer1[0] == x)
     {
         std::cout << "Player 1 - X-Axis Movement Detected." << std::endl;
-        /*for (int i = 3; i < MAX_BYTES; i++)
-        {
-            if(buffer1[i] == '\0')
-            {
-                break;
-            }
-            s += buffer1[i];
-        }*/
-        //move_x = stoi(s);
         move_x = (int)buffer1[1] - 48;
         std::cout << "Player 1 Move X: " << move_x << std::endl;
     }
     else if (buffer1[0] == y)
     {
         std::cout << "Player 1 - Y-Axis Movement Detected." << std::endl;
-        /*for (int i = 1; i < MAX_BYTES; i++)
-        {
-            if(buffer1[i] == '\0')
-            {
-                break;
-            }
-            s += buffer1[i];
-        }*/
-        //move_y = stoi(s);
         move_y = (int)buffer1[1] - 48;
         std::cout << "Player 1 Move Y: " << move_x << std::endl;
     }
@@ -703,30 +699,11 @@ void GameControllerServer::MovePlayer()
     if(buffer2[0] == x)
     {
         std::cout << "Player 2 - X-Axis Movement Detected." << std::endl;
-        /*for (int i = 1; i < MAX_BYTES; i++)
-        {
-            if(buffer2[i] == '\0')
-            {
-                break;
-            }
-            s += buffer2[i];
-        }*/
-        //move_x = stoi(s);
         move_x = (int)buffer2[1] - 48;
         std::cout << "Player 2 Move X: " << move_x << std::endl;
     }
     else if (buffer2[0] == y)
     {
-        /*std::cout << "Player 2 - Y-Axis Movement Detected." << std::endl;
-        for (int i = 1; i < MAX_BYTES; i++)
-        {
-            if(buffer2[i] == '\0')
-            {
-                break;
-            }
-            s += buffer2[i];
-        }*/
-        //move_y = stoi(s);
         move_y = (int)buffer2[1] - 48;
         std::cout << "Player 2 Move Y: " << move_x << std::endl;
     }
@@ -743,13 +720,27 @@ void GameControllerServer::MovePlayer()
             // Check Collisions
             std::cout << "X-Axis - Left" << std::endl;
             CheckCollisions(LEFT);
-            player1and2.MoveLeft();
+            if(Edge == true)
+            {
+                Edge = false;
+            }
+            else
+            {
+                player1and2.MoveLeft();
+            }
             break;
         case 2:
             // Check Collisions
             std::cout << "X-Axis - Right" << std::endl;
             CheckCollisions(RIGHT);
-            player1and2.MoveRight();
+            if(Edge == true)
+            {
+                Edge = false;
+            }
+            else
+            {
+                player1and2.MoveRight();
+            }
             break;
         default:
             std::cout << "Default - No Movement - X Switch" << std::endl;
@@ -769,13 +760,27 @@ void GameControllerServer::MovePlayer()
             // Check Collisions
             std::cout << "Y-Axis - Up" << std::endl;
             CheckCollisions(UP);
-            player1and2.MoveUp();
+            if(Edge == true)
+            {
+                Edge = false;
+            }
+            else
+            {
+                player1and2.MoveUp();
+            }
             break;
         case 2:
             // Check Collisions
             std::cout << "Y-Axis - Down" << std::endl;
             CheckCollisions(DOWN);
-            player1and2.MoveDown();
+            if(Edge == true)
+            {
+                Edge = false;
+            }
+            else
+            {
+                player1and2.MoveDown();
+            }
             break;
         default:
             std::cout << "Default - No Movement - Y Switch" << std::endl;

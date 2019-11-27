@@ -48,6 +48,7 @@ class GameControllerServer {
         bool    GameOver = false;                               // GameOver?
         bool    QuitGame = false;                               // player Quit?
         bool    Collision = false;                              // Collision Occurred
+        bool    Edge = false;                                   // Check for Edge of Gameboard
         serverSocket ServerSocket;                              // Server Socket
     protected:
     public:
