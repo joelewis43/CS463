@@ -204,6 +204,7 @@ void GameControllerServer::LeaderBoard(int player)
 // Sort Leader Board
 void GameControllerServer::SortLeaderBoard(std::vector<ScoreOrganizer> &updateScores)
 {
+    std::cout << "Sorting Leader Board" << std::endl;
     int i, key, j;
     std::string keyName = "";
     for (i = 1; i < updateScores.size(); i++)
@@ -325,6 +326,7 @@ void GameControllerServer::SaveScore(std::string playerName, int score)
         std:cout << "Saving Player's Score" << std::endl;
         std::cout << "Player: " << playerName <<std::endl;
         std::cout << "Score: " << score << std::endl;
+
         // Enter Player Score
         file << playerName << "\t" << score << std::endl;
 
@@ -427,15 +429,17 @@ void GameControllerServer::NameMenu()
             // Receive Client 1 Signal
             ServerSocket.receive1(buffer1);
 
-            if(strstr(buffer1, "! name"))
+            if(strcmp(buffer1, "! name") == 0)
             {
                 std::cout << "Retrieving P1 Name..." << std::endl;
                 memset(buffer1, '\0', MAX_BYTES);
+                ServerSocket.receive1(name1);
 
                 // Set Name
                 player_a = name1;
                 player1Ready = 1;
                 std::cout << "Player 1 Name Received." << std::endl;
+                std::cout << "Player 1 Name: " << player_a << std::endl;
             }
         }
 
@@ -447,15 +451,17 @@ void GameControllerServer::NameMenu()
                 std::cout << buffer2 << std::endl;
 
 
-            if(strstr(buffer2, "! name"))
+            if(strcmp(buffer2, "! name") == 0)
             {
                 std::cout << "Retrieving P2 Name..." << std::endl;
                 memset(buffer2, '\0', MAX_BYTES);
+                ServerSocket.receive2(name2);
 
                 // Set Name
-                player_a = name2;
+                player_b = name2;
                 player2Ready = 1;
                 std::cout << "Player 2 Name Received." << std::endl;
+                std::cout << "Player 2 Name: " << player_b << std::endl;
             }
         }
         if(player1Ready && player2Ready )
@@ -468,6 +474,7 @@ void GameControllerServer::NameMenu()
     player2.SetName(player_b);
     player1and2.SetName(name);
 
+    std::cout << "Player Name: " << player1and2.GetName() << std::endl;
     std::cout << "Player Names Set." << std::endl;
 }
 

@@ -215,8 +215,11 @@ void GameControllerClient::NameMenu()
                 player.SetName(name);
 
                 // Tell Server the Name is Coming
-                std::string msg = "! name " + name;
+                std::string msg = "! name";
                 ClientSocket.deliver(msg.c_str());
+
+                // Tell it to Server
+                ClientSocket.deliver(name.c_str());
                 break;
             }
             else
@@ -379,28 +382,6 @@ void GameControllerClient::CountDownScreen()
     // it should call this function
     char buffer[MAX_BYTES];
     memset(buffer, '\0', MAX_BYTES);
-
-    /*std::cout << "Count Down Screen" << std::endl;
-
-    while (1)
-    {
-        ClientSocket.receive(buffer);
-
-        if(strcmp(buffer, "countdown") == 1)
-        {
-            std::cout << "\033[2J\033[1;1H";
-            std::cout << "Game Starting in..." << std::endl;
-
-            std::cout << "\33[2K\r3" << std::flush;
-            sleep(1);
-            std::cout << "\33[2K\r2" << std::flush;
-            sleep(1);
-            std::cout << "\33[2K\r1" << std::flush;
-            sleep(1);
-            std::cout << "\033[2J\033[1;1H";
-            break;
-        }
-    }*/
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Game Starting in..." << std::endl;
 
