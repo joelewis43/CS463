@@ -3,9 +3,10 @@
 
 #include <vector>
 #include <deque>
+#include <string>
 #include "object.h"
-#include <iostream>
 
+using std::string;
 using std::deque;
 using std::vector;
 
@@ -41,6 +42,13 @@ public:
      * in the level container
      **/
     virtual void construct() = 0;
+
+    /**
+     * Returns the name of the level
+     * 
+     * @returns - name of the level
+     **/
+    virtual string name() = 0;
 
     /**
      * Returns the next available row of the level

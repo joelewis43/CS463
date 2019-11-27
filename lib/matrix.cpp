@@ -14,16 +14,36 @@ GameMatrix::GameMatrix(int rows, int cols)
 
 char GameMatrix::at(int row, int col)
 {
+    // Bound check the minimum
+    if (row < 0)
+    {
+        row = 0;
+    }
+    if (col < 0)
+    {
+        col = 0;
+    }
+    // Bound check the maximum
+    row = std::min(row, rows() - 1);
+    col = std::min(col, cols() - 1);
+
     return buffer.at(row).at(col);
 }
 
 void GameMatrix::update(int row, int col, char ch)
 {
-    // Free memory for objects that are being overwritten
-    if (row >= rows() || col >= cols())
+    // Bound check the minimum
+    if (row < 0)
     {
-        return;
+        row = 0;
     }
+    if (col < 0)
+    {
+        col = 0;
+    }
+    // Bound check the maximum
+    row = std::min(row, rows() - 1);
+    col = std::min(col, cols() - 1);
 
     buffer[row][col] = ch;
 }
@@ -54,6 +74,26 @@ void GameMatrix::advance()
     }
 }
 
+pair<int, int> GameMatrix::getPlayerCoord()
+{
+    int row = 0, col = 0;
+
+    for (int r = 0; r < rows(); r++)
+    {
+        for (int c = 0; c < cols(); c++)
+        {
+            if (at(r, c) == PLAYER_SPRITE)
+            {
+                row = r;
+                col = c;
+                break;
+            }
+        }
+    }
+
+    return make_pair(row, col);
+}
+
 void GameMatrix::updateTop(vector<char> &row)
 {
     buffer.at(0).assign(row.begin(), row.end());
@@ -68,13 +108,18 @@ void GameMatrix::initPlayerObject(int x, int y)
 
 void GameMatrix::updatePlayerPosition(int newY, int newX)
 {
-    if (newX >= cols() || newY >= rows())
+    // Bound check the minimum
+    if (newY < 0)
     {
-        return;
+        newY = 0;
     }
-
-    newX = std::max(1, newX);
-    newY = std::max(1, newY);
+    if (newX < 0)
+    {
+        newX = 0;
+    }
+    // Bound check the maximum
+    newY = std::min(newY, rows() - 1);
+    newX = std::min(newX, cols() - 1);
     // Move object ot new position
     char ch = at(playerY, playerX);
     // Only set to null if the object is a player object
@@ -136,57 +181,63 @@ void GameMatrix::clearScreen()
     cout << "\x1B[2J\x1B[H";
 }
 
-void GameMatrix::print(WINDOW *window, std::string score)
+void GameMatrix::print(WINDOW *window, string score, string level)
 {
-    const char *map = toString().c_str();
-    int row = 0, col = 0;
     char ch;
+    const char *map = toString().c_str();
+    int row = 1, col = 0, clr = 0;
+    bool cityLevel = level.find("Skyscraper") != string::npos;
+
 
     // print the header info
     std::string scoreString = "Current score: ";
-    for (int i = 0; i < strlen(scoreString.c_str()); i++)
-    {
-        ch = scoreString[i];
-        mvwaddch(window, row, col++, ch);
-    }
-    // print current score
-    for (int i = 8; i < strlen(score.c_str()); i++)
-    {
-        ch = score[i];
-        mvwaddch(window, row, col++, ch);
-    }
-    row += 1;
-    col = 0;
+    scoreString.append(score);
+    scoreString.append(cols() - scoreString.size() - level.size(), NULL_SPRITE);
+    scoreString.append(level);
 
-
+    mvwprintw(window, 0, 0, scoreString.c_str());
 
     for (int i = 0; i < strlen(map); i++)
     {
         ch = map[i];
-        int clr = randomInt(0, 1) ? 1 : 3;
 
         switch (ch)
         {
         case COLLISION_SPRITE:
-            wattron(window, COLOR_PAIR(1));
+            if (cityLevel)
+            {
+                clr = randomInt(0, 9);
+                clr = clr <= 3 ? 2 : 1;
+
+                wattron(window, COLOR_PAIR(clr));
+                mvwaddch(window, row, col++, ch);
+            } 
+            else
+            {
+                wattron(window, COLOR_PAIR(1));
+                mvwaddch(window, row, col++, ch);
+            }
             break;
         case PLAYER_SPRITE:
             wattron(window, COLOR_PAIR(2));
+            mvwaddch(window, row, col++, ch);
             break;
         case EXPLOSION_SPRITE:
+            clr = randomInt(0, 1) ? 1 : 3;
             wattron(window, COLOR_PAIR(clr));
+            mvwaddch(window, row, col++, ch);
+            break;
+        case '\n':
+            wattron(window, COLOR_PAIR(1));
+            mvwaddch(window, row, col++, ch);
+
+            row += 1;
+            col = 0;
             break;
         default:
             wattron(window, COLOR_PAIR(1));
+            mvwaddch(window, row, col++, NULL_SPRITE);
             break;
-        }
-
-        mvwaddch(window, row, col++, ch);
-
-        if (ch == '\n')
-        {
-            row += 1;
-            col = 0;
         }
     }
     wrefresh(window);

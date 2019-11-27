@@ -409,7 +409,7 @@ void GameControllerServer::SendScore()
     std::string score = std::to_string(Score);
     ServerSocket.deliver(score.c_str());
 
-    std::cout << "Score sent" << std::endl;
+    std::cout << "Score sent " << score << std::endl;
 }
 
 // Select Player Name
@@ -708,8 +708,14 @@ void GameControllerServer::MovePlayer()
     std::cout << "Movement Function" << std::endl;
 
     // Receive Data From Client
-    ServerSocket.receive1(buffer1);
-    ServerSocket.receive2(buffer2);
+    while(!strlen(buffer1))
+    {
+        ServerSocket.receive1(buffer1);
+    }
+    while(!strlen(buffer2))
+    {
+        ServerSocket.receive2(buffer2);
+    }
 
     std::cout << "MOVEMENT Buffer 1: " << buffer1 << std::endl;
     std::cout << "MOVEMENT Buffer 2: " << buffer2 << std::endl;
@@ -831,6 +837,10 @@ void GameControllerServer::MovePlayer()
         usleep(300);    // ensure the client has time to read this buffer
         ServerSocket.deliver(message.c_str());
         SetGameOver(true);
+    } else {
+        std::string message = "collision_false";
+        usleep(300);    // ensure the client has time to read this buffer
+        ServerSocket.deliver(message.c_str());
     }
 
     // Update Map
@@ -857,34 +867,105 @@ void GameControllerServer::UpdateEnvironment()
 // Send Map to Client/Server
 void GameControllerServer::SendMap()
 {
-    std::string ack = "ack";
-    char buffer1[4];
-    char buffer2[4];
+    std::cout << "Waiting for players to request map" << std::endl;
 
-    memset(buffer1, '\0', 4);
-    memset(buffer2, '\0', 4);
+    int player1Ready = 0;
+    int player2Ready = 0;
 
-    std::cout << "Sending score to clients" << std::endl;
+    char buffer1[MAX_BYTES];
+    char buffer2[MAX_BYTES];
+    memset(buffer1, '\0', MAX_BYTES);
+    memset(buffer2, '\0', MAX_BYTES);
 
-    std::cout << "Sending Map Data to Clients" << std::endl;
+    // Loop Until Both Players Indicate They Are Ready
+    while(1)
+    {
+        if(player1Ready == 0)
+        {
+            // Receive Client 1 Signal
+            ServerSocket.receive1(buffer1);
 
-    std::string serializedMap = gameEnvironment.getMap();
+            if(strstr(buffer1, "? map"))
+            {
+                std::cout << "Player 1 ready for map" << std::endl;
+                player1Ready = 1;
+            }
+        }
 
-    ServerSocket.deliver(serializedMap.c_str());
+        if(player2Ready == 0)
+        {
+            // Receive Client 1 Signal
+            ServerSocket.receive2(buffer2);
 
-    std::cout << "Map Data Sent to Clients" << std::endl;
+            if(strstr(buffer2, "? map"))
+            {
+                std::cout << "Player 2 ready for map" << std::endl;
+                player2Ready = 1;
+            }
+        }
 
-    // ServerSocket.receive1(buffer1, 4);
-    // ServerSocket.receive2(buffer2, 4);
+        // break when both players are ready
+        if(player1Ready && player2Ready)
+            break;
+    }
 
-    // if (strcmp(ack.c_str(), buffer1) == 0)
-    // {
-    //     std::cout << "Client 1 Acknowledged Receipt of Data" << std::endl;
-    // }
-    // if (strcmp(ack.c_str(), buffer2) == 0)
-    // {
-    //     std::cout << "Client 2 Acknowledged Receipt of Data" << std::endl;
-    // }
+    // Send Map
+    std::string map = gameEnvironment.getMap();
+    ServerSocket.deliver(map.c_str());
+
+    std::cout << "Map Sent to Clients" << std::endl;
+}
+
+// Send Level Info to Client/Server
+void GameControllerServer::SendLevel()
+{
+    std::cout << "Waiting for players to request Level Info" << std::endl;
+
+    int player1Ready = 0;
+    int player2Ready = 0;
+
+    char buffer1[MAX_BYTES];
+    char buffer2[MAX_BYTES];
+    memset(buffer1, '\0', MAX_BYTES);
+    memset(buffer2, '\0', MAX_BYTES);
+
+    // Loop Until Both Players Indicate They Are Ready
+    while(1)
+    {
+        if(player1Ready == 0)
+        {
+            // Receive Client 1 Signal
+            ServerSocket.receive1(buffer1);
+
+            if(strstr(buffer1, "? level"))
+            {
+                std::cout << "Player 1 ready for Level Info" << std::endl;
+                player1Ready = 1;
+            }
+        }
+
+        if(player2Ready == 0)
+        {
+            // Receive Client 1 Signal
+            ServerSocket.receive2(buffer2);
+
+            if(strstr(buffer2, "? level"))
+            {
+                std::cout << "Player 2 ready for Level Info" << std::endl;
+                player2Ready = 1;
+            }
+        }
+
+        // break when both players are ready
+        if(player1Ready && player2Ready)
+            break;
+    }
+
+    // Send Map
+    std::string name = gameEnvironment.currentLevelName();
+    ServerSocket.deliver(name.c_str());
+
+    std::cout << "Level Infor Sent to Clients" << std::endl;
 }
 
 // Update Game State
@@ -909,12 +990,14 @@ void GameControllerServer::UpdateGame(double duration, float timer)
         // Send Map to Client
         SendMap();
 
-        // Update Player
-        MovePlayer();
-
         // Send current score to Client
         SendScore();
 
+        // Send Level Infor to Clients
+        SendLevel();
+
+        // Update Player
+        MovePlayer();
 
         playerLocY = GetPlayer1and2().GetLocY();
         playerLocX = GetPlayer1and2().GetLocX();

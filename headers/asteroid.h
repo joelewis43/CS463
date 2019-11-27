@@ -18,11 +18,22 @@ public:
   AsteroidLevel(int rows, int cols, int screenHeight) : LevelBuilder(rows, cols, screenHeight)
   {
   };
+
   /**
    * Constructs the entire level and stores the level
    * in the level container
    **/
   void construct();
+
+  /**
+   * Returns the name of the level
+   * 
+   * @returns - name of the level
+   **/
+  string name()
+  {
+      return "Asteroid Field";
+  }
 
   /**
    * Returns the next available row of the level

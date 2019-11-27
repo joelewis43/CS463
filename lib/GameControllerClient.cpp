@@ -595,21 +595,50 @@ void GameControllerClient::MovePlayer()
 //
 void GameControllerClient::UpdateGame(WINDOW *window)
 {
-    std::string ack = "ack";
-    char buffer[GAMEBOARD_BUFSIZE];
-    size_t bytes = 0;
+    char scoreBuffer[MAX_BYTES];
+    char levelBuffer[MAX_BYTES];
+    char mapBuffer[GAMEBOARD_BUFSIZE];
 
-    memset(buffer, '\0', GAMEBOARD_BUFSIZE);
+    memset(scoreBuffer, '\0', MAX_BYTES);
+    memset(levelBuffer, '\0', MAX_BYTES);
+    memset(mapBuffer, '\0', GAMEBOARD_BUFSIZE);
 
     // Check Server Connection
     ServerConnection();
 
     // Receive Data From Server
-    bytes = ClientSocket.receive(buffer, GAMEBOARD_BUFSIZE);
+    ClientSocket.deliver("? map");
+    while (!strlen(mapBuffer))
+    {
+        ClientSocket.receive(mapBuffer, GAMEBOARD_BUFSIZE);
+    }
 
-    // ClientSocket.deliver(ack.c_str());
-    
-    board.loadFromStr(std::string(buffer));
+    std::string map = std::string(mapBuffer);
+
+    // Get the score from the server
+    ClientSocket.deliver("? score");
+    while (!strlen(scoreBuffer))
+    {
+        ClientSocket.receive(scoreBuffer);
+    }
+
+    std::string score = std::string(scoreBuffer);
+
+    // Get Level Infor from Server
+    ClientSocket.deliver("? level");
+    while (!strlen(levelBuffer))
+    {
+        ClientSocket.receive(levelBuffer);
+    }
+
+    std::string level = std::string(levelBuffer);
+
+    // Print Screen
+    board.loadFromStr(map);
+    board.print(window, score, level);
+
+    // Movement Selection (handles sending move to server)
+    MovePlayer();
 
     // Check if Collision Occurred
     CheckCollisions();
@@ -617,23 +646,20 @@ void GameControllerClient::UpdateGame(WINDOW *window)
     // Server say there was a collision
     if(GetCollisionOccur())
     {
+        pair<int, int> coord = board.getPlayerCoord();
+
+        board.triggerExplosion(coord.first, coord.second);
+
+        for (int i = 0; i < 30; i++)
+        {
+            board.print(window, score, level);
+            usleep(150);
+        }
+
         SetGameOver(true);
         std::cout << "GAME IS OVER\n";
         return;
     }
-
-    // Get the score from the server
-    ClientSocket.clearBuffer();
-    ClientSocket.deliver("? score");
-    char scoreBuff[MAX_BYTES] = {'\0'};
-    ClientSocket.receive(scoreBuff);
-    ClientSocket.clearBuffer();
-
-    // Print Screen
-    board.print(window, scoreBuff);
-
-    // Movement Selection (handles sending move to server)
-    MovePlayer();
 
     // Check Server Connection
     ServerConnection();
@@ -645,7 +671,10 @@ void GameControllerClient::CheckCollisions()
     char buffer[MAX_BYTES];
     memset(buffer, '\0', MAX_BYTES);
 
-    ClientSocket.receive(buffer);
+    while (!strlen(buffer))
+    {
+        ClientSocket.receive(buffer);
+    }
 
     if(strstr(buffer, "collision_true"))
     {
