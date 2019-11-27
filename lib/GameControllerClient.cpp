@@ -638,7 +638,7 @@ void GameControllerClient::SetCollision(bool CollisionBool)
 
 void GameControllerClient::DisplayScore()
 {
-    sleep(300);
+    sleep(3);
 
     // clear buffer of any old game data
     ClientSocket.clearBuffer();

@@ -153,6 +153,7 @@ void GameControllerServer::MainGameLoop()
         }
 
         SendScore();
+        SaveScore(player1and2.GetName(), Score);
     }
 }
 
@@ -266,6 +267,9 @@ void GameControllerServer::UpdateLeaderBoards()
                 if (newScoreSet.name != "" && newScoreSet.scoreToBeFormatted != "")
                 {
                     newScoreSet.score = std::stoi(newScoreSet.scoreToBeFormatted);
+                    std::cout << "Updating LeaderBoards" << std::endl;
+                    std::cout << "Player: " << newScoreSet.name <<std::endl;
+                    std::cout << "Score: " << newScoreSet.score << std::endl;
                     updateScores.push_back(newScoreSet);
                 }
             }
@@ -318,6 +322,9 @@ void GameControllerServer::SaveScore(std::string playerName, int score)
     }
     else
     {
+        std:cout << "Saving Player's Score" << std::endl;
+        std::cout << "Player: " << playerName <<std::endl;
+        std::cout << "Score: " << score << std::endl;
         // Enter Player Score
         file << playerName << "\t" << score << std::endl;
 
