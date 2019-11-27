@@ -14,7 +14,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 8212), board(CONTENT_HEIGHT, CONTENT_WIDTH - 1)
+GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 9523), board(CONTENT_HEIGHT, CONTENT_WIDTH - 1)
 {
 }
 
@@ -524,7 +524,7 @@ void GameControllerClient::MovePlayer()
             case KEY_UP:
             {
                 player.MoveUp();
-                direction = "yy";
+                direction = "y";
                 moved = "1";
                 movement = direction + moved;
 
@@ -535,7 +535,7 @@ void GameControllerClient::MovePlayer()
             case KEY_DOWN:
             {
                 player.MoveDown();
-                direction = "yy";
+                direction = "y";
                 moved = "2";
                 movement = direction + moved;
 
@@ -545,7 +545,7 @@ void GameControllerClient::MovePlayer()
             }
             default:
             {
-                direction = "yy";
+                direction = "y";
                 moved = "0";
                 movement = direction + moved;
 
@@ -562,7 +562,7 @@ void GameControllerClient::MovePlayer()
             case KEY_LEFT:
             {
                 player.MoveLeft();
-                direction = "xx";
+                direction = "x";
                 moved = "1";
                 movement = direction + moved;
 
@@ -573,7 +573,7 @@ void GameControllerClient::MovePlayer()
             case KEY_RIGHT:
             {
                 player.MoveRight();
-                direction = "xx";
+                direction = "x";
                 moved = "2";
                 movement = direction + moved;
 
@@ -583,7 +583,7 @@ void GameControllerClient::MovePlayer()
             }
             default:
             {
-                direction = "xx";
+                direction = "x";
                 moved = "0";
                 movement = direction + moved;
 
@@ -621,32 +621,19 @@ void GameControllerClient::UpdateGame(WINDOW *window)
     if(GetCollisionOccur())
     {
         SetGameOver(true);
+        std::cout << "GAME IS OVER\n";
         return;
     }
 
-    // Print Screen
-    board.print(window);
-
-
-
-    // clear buffer of any old game data
+    // Get the score from the server
+    ClientSocket.clearBuffer();
+    ClientSocket.deliver("? score");
+    char scoreBuff[MAX_BYTES] = {'\0'};
+    ClientSocket.receive(scoreBuff);
     ClientSocket.clearBuffer();
 
-    // Ask Server for score
-    const char *msg = "? score";
-    ClientSocket.deliver(msg);
-
-    // Wait for server to send score
-    char scoreBuff[MAX_BYTES];
-    memset(scoreBuff, '\0', MAX_BYTES);
-    ClientSocket.receive(scoreBuff);
-
-    // Display Display the final score
-    std::cout << "SCORE: " << scoreBuff << std::endl;
-
-
-
-
+    // Print Screen
+    board.print(window, scoreBuff);
 
     // Movement Selection (handles sending move to server)
     MovePlayer();
@@ -663,8 +650,9 @@ void GameControllerClient::CheckCollisions()
 
     ClientSocket.receive(buffer);
 
-    if(strcmp(buffer, "collision_true") == 0)
+    if(strstr(buffer, "collision_true") == 0)
     {
+        std::cout << "COLLISION DETECTED\n";
         SetCollision(true);
     }
 

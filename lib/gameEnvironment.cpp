@@ -120,7 +120,7 @@ void GameEnvironment::updatePlayerPosition(Player &player)
 
 void GameEnvironment::print()
 {
-    matrix.print(window);
+    matrix.print(window, "SHOULD NEVER CALL THIS FUNCTION");
 }
 
 string GameEnvironment::getMap()

@@ -14,7 +14,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerServer::GameControllerServer() : ServerSocket(8212), player1(), player2(), gameEnvironment(CONTENT_HEIGHT, CONTENT_WIDTH - 1, 1000)
+GameControllerServer::GameControllerServer() : ServerSocket(9523), player1(), player2(), gameEnvironment(CONTENT_HEIGHT, CONTENT_WIDTH - 1, 1000)
 {
     // Set Timer Settings Here?
 }
@@ -457,11 +457,8 @@ void GameControllerServer::NameMenu()
             {
                 //sleep(1);
                 std::cout << "Retrieving P1 Name..." << std::endl;
-<<<<<<< HEAD
-=======
                 memset(buffer1, '\0', MAX_BYTES);
                 ServerSocket.receive1(name1);
->>>>>>> 3583995d6f44ec6fd208359a2906a223fba0263c
 
                 std::istringstream nameCommand1(buffer1);
 
@@ -481,21 +478,15 @@ void GameControllerServer::NameMenu()
 
         if(player2Ready == 0)
         {
-<<<<<<< HEAD
-            // Receive Client 1 Signal
-            ServerSocket.receive2(buffer2);
-=======
             // Receive Client 2 Signal
             bytes2 = ServerSocket.receive2(buffer2);
             if (bytes2)
                 std::cout << "Client 2 Received Buffer: " << buffer2 << std::endl;
->>>>>>> 3583995d6f44ec6fd208359a2906a223fba0263c
 
             if(strcmp(buffer2, "! name") == 0)
             {
                 //sleep(1);
                 std::cout << "Retrieving P2 Name..." << std::endl;
-<<<<<<< HEAD
 
                 // Set Name
                 std::istringstream nameCommand2(buffer2);
@@ -508,23 +499,12 @@ void GameControllerServer::NameMenu()
                     getline(nameCommand2, player_b, ' ');
                 }
 
-=======
-                memset(buffer2, '\0', MAX_BYTES);
-                ServerSocket.receive2(name2);
-
-                // Set Name
-                player_b = name2;
->>>>>>> 3583995d6f44ec6fd208359a2906a223fba0263c
                 player2Ready = 1;
                 std::cout << "Player 2 Name Received." << std::endl;
                 std::cout << "Player 2 Name: " << player_b << std::endl;
             }
         }
-<<<<<<< HEAD
         if(player1Ready && player2Ready)
-=======
-        if(player1Ready == 1 && player2Ready == 1)
->>>>>>> 3583995d6f44ec6fd208359a2906a223fba0263c
             break;
     }
 
@@ -744,8 +724,8 @@ void GameControllerServer::MovePlayer()
     ServerSocket.receive1(buffer1);
     ServerSocket.receive2(buffer2);
 
-    std::cout << "Buffer 1: " << buffer1 << std::endl;
-    std::cout << "Buffer 2: " << buffer2 << std::endl;
+    std::cout << "MOVEMENT Buffer 1: " << buffer1 << std::endl;
+    std::cout << "MOVEMENT Buffer 2: " << buffer2 << std::endl;
 
     // Update Player Location (X|Y) for Player 1
     if(buffer1[0] == x)
@@ -927,6 +907,7 @@ void GameControllerServer::UpdateGame(double duration, float timer)
     int playerLocX = 0;
     int playerLocY = 0;
     std::cout << "Outside Connection Check - In Update Game" << std::endl;
+    
     // Check Server Connection
     if(ServerSocket.getConnection())
     {

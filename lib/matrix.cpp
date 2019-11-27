@@ -136,13 +136,33 @@ void GameMatrix::clearScreen()
     cout << "\x1B[2J\x1B[H";
 }
 
-void GameMatrix::print(WINDOW *window)
+void GameMatrix::print(WINDOW *window, std::string score)
 {
     const char *map = toString().c_str();
     int row = 0, col = 0;
+    char ch;
+
+    // print the header info
+    std::string scoreString = "Current score: ";
+    for (int i = 0; i < strlen(scoreString.c_str()); i++)
+    {
+        ch = scoreString[i];
+        mvwaddch(window, row, col++, ch);
+    }
+    // print current score
+    for (int i = 8; i < strlen(score.c_str()); i++)
+    {
+        ch = score[i];
+        mvwaddch(window, row, col++, ch);
+    }
+    row += 1;
+    col = 0;
+
+
+
     for (int i = 0; i < strlen(map); i++)
     {
-        const char ch = map[i];
+        ch = map[i];
         int clr = randomInt(0, 1) ? 1 : 3;
 
         switch (ch)
