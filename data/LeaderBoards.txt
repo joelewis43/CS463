@@ -1,6 +1,10 @@
 Space Runner High Scores
-Name            Score
-jake | joe	    3966
+Name		Score
+jake | joe	4447
+jake | joe	3966
+joe | jake	3686
 susie | jacob	3312
-jake | joe	    2937
-jacob | JOE	    1512
+jake | joe	2937
+jake | joe	2278
+jake | joe	2220
+jacob | JOE	1512

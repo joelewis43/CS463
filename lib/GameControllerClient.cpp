@@ -14,7 +14,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 9523), board(CONTENT_HEIGHT, CONTENT_WIDTH - 1)
+GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 8542), board(CONTENT_HEIGHT, CONTENT_WIDTH - 1)
 {
 }
 
@@ -74,7 +74,7 @@ void GameControllerClient::MainGameLoop()
             while(GetGameOver() != true && GetServerConnection() == true)
             {
                 UpdateGame(contentWindow);
-                std::chrono::duration<int, std::milli> timespan(150);
+                std::chrono::duration<int, std::milli> timespan(85);
                 std::this_thread::sleep_for(timespan);
             }
 
@@ -124,7 +124,7 @@ void GameControllerClient::MainMenu()
     // Clear Screen
     std::cout << "\033[2J\033[1;1H";
     int selection = -1;
-    char *msg = "! pReady";
+    std::string msg = "! pReady";
 
     while(selection == -1)
     {
@@ -146,7 +146,7 @@ void GameControllerClient::MainMenu()
                 case 1:
                     // Play Game - Set Name
                     // Tell Server Player is Ready to Play
-                    ClientSocket.deliver(msg);
+                    ClientSocket.deliver(msg.c_str());
                     AwaitingPlayer();
                     NameMenu();
                     AwaitingPlayer();   // Listening to Server / Tell Server Client is Ready
@@ -186,8 +186,8 @@ void GameControllerClient::MainMenu()
 void GameControllerClient::ReplayMenu(bool &replay)
 {
     int selection = -1;
-    char *msg1 = "! yes_replay";
-    char *msg2 = "! no_replay";
+    std::string msg1 = "! yes_replay";
+    std::string msg2 = "! no_replay";
 
     while(selection == -1)
     {
@@ -205,11 +205,11 @@ void GameControllerClient::ReplayMenu(bool &replay)
             {
                 case 1:
                     replay = true;
-                    ClientSocket.deliver(msg1);
+                    ClientSocket.deliver(msg1.c_str());
                     break;
                 case 2:
                     replay = false;
-                    ClientSocket.deliver(msg2);
+                    ClientSocket.deliver(msg2.c_str());
                     break;
                 default:
                     std::cout << "Something Went Wrong..." << std::endl;
@@ -314,14 +314,11 @@ void GameControllerClient::NameMenu()
                 // Set Name in Player Object
                 player.SetName(name);
 
-                // Tell Server the Name is Coming
-                std::string msg = "! name";
+                // Tell Server the Name
+                std::string msg = "! name ";
+                msg += name.c_str();
                 ClientSocket.deliver(msg.c_str());
 
-                //sleep(1);
-
-                // Tell it to Server
-                ClientSocket.deliver(name.c_str());
                 break;
             }
             else
@@ -610,7 +607,7 @@ void GameControllerClient::UpdateGame(WINDOW *window)
     // Receive Data From Server
     bytes = ClientSocket.receive(buffer, GAMEBOARD_BUFSIZE);
 
-    ClientSocket.deliver(ack.c_str());
+    // ClientSocket.deliver(ack.c_str());
     
     board.loadFromStr(std::string(buffer));
 
@@ -650,9 +647,8 @@ void GameControllerClient::CheckCollisions()
 
     ClientSocket.receive(buffer);
 
-    if(strstr(buffer, "collision_true") == 0)
+    if(strstr(buffer, "collision_true"))
     {
-        std::cout << "COLLISION DETECTED\n";
         SetCollision(true);
     }
 
@@ -734,8 +730,8 @@ void GameControllerClient::DisplayScore()
     ClientSocket.clearBuffer();
 
     // Ask Server for score
-    const char *msg = "? score";
-    ClientSocket.deliver(msg);
+    std::string msg = "? score";
+    ClientSocket.deliver(msg.c_str());
 
     // Wait for server to send leaderboard
     char res[MAX_BYTES];

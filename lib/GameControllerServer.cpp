@@ -14,7 +14,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerServer::GameControllerServer() : ServerSocket(9523), player1(), player2(), gameEnvironment(CONTENT_HEIGHT, CONTENT_WIDTH - 1, 1000)
+GameControllerServer::GameControllerServer() : ServerSocket(8542), player1(), player2(), gameEnvironment(CONTENT_HEIGHT, CONTENT_WIDTH - 1, 1000)
 {
     // Set Timer Settings Here?
 }
@@ -148,7 +148,7 @@ void GameControllerServer::MainGameLoop()
             // Update Game
             std::cout << "GAME LOOP" << std::endl;
             UpdateGame(duration, timer);
-            std::chrono::duration<int, std::milli> timespan(150);
+            std::chrono::duration<int, std::milli> timespan(85);
             std::this_thread::sleep_for(timespan);
         }
 
@@ -284,9 +284,6 @@ void GameControllerServer::UpdateLeaderBoards()
                 if (newScoreSet.name != "" && newScoreSet.scoreToBeFormatted != "")
                 {
                     newScoreSet.score = std::stoi(newScoreSet.scoreToBeFormatted);
-                    std::cout << "Updating LeaderBoards" << std::endl;
-                    std::cout << "Player: " << newScoreSet.name <<std::endl;
-                    std::cout << "Score: " << newScoreSet.score << std::endl;
                     updateScores.push_back(newScoreSet);
                 }
             }
@@ -342,7 +339,7 @@ void GameControllerServer::SaveScore(int score)
     else
     {
         std:cout << "Saving Player's Score" << std::endl;
-        std::cout << "Player: " << playerName <<std::endl;
+        std::cout << "Player: " << player1and2.GetName() <<std::endl;
         std::cout << "Score: " << score << std::endl;
 
         // Enter Player Score
@@ -430,7 +427,6 @@ void GameControllerServer::NameMenu()
     int NameSetCounter = 0;
     int player1Ready = 0;
     int player2Ready = 0;
-
     char buffer1[MAX_BYTES];
     char buffer2[MAX_BYTES];
     memset(buffer1, '\0', MAX_BYTES);
@@ -444,7 +440,7 @@ void GameControllerServer::NameMenu()
     std::string nulVal;
 
     // Loop Until Both Players Indicate Their Names Are Set
-    while(1)
+    while(!player1Ready || !player1Ready)
     {
         if(player1Ready == 0)
         {
@@ -453,13 +449,9 @@ void GameControllerServer::NameMenu()
             if (bytes1)
                 std::cout << "Client 1 Received Buffer: " << buffer1 << std::endl;
 
-            if(strcmp(buffer1, "! name") == 0)
+            if(strstr(buffer1, "! name"))
             {
-                //sleep(1);
                 std::cout << "Retrieving P1 Name..." << std::endl;
-                memset(buffer1, '\0', MAX_BYTES);
-                ServerSocket.receive1(name1);
-
                 std::istringstream nameCommand1(buffer1);
 
                 while (nameCommand1)
@@ -483,12 +475,9 @@ void GameControllerServer::NameMenu()
             if (bytes2)
                 std::cout << "Client 2 Received Buffer: " << buffer2 << std::endl;
 
-            if(strcmp(buffer2, "! name") == 0)
+            if(strstr(buffer2, "! name"))
             {
-                //sleep(1);
                 std::cout << "Retrieving P2 Name..." << std::endl;
-
-                // Set Name
                 std::istringstream nameCommand2(buffer2);
                 
                 while (nameCommand2)
@@ -504,8 +493,6 @@ void GameControllerServer::NameMenu()
                 std::cout << "Player 2 Name: " << player_b << std::endl;
             }
         }
-        if(player1Ready && player2Ready)
-            break;
     }
 
     // Concatenate Names
@@ -839,7 +826,9 @@ void GameControllerServer::MovePlayer()
     if(GetCollisionOccur())
     {
         std::cout << "Collision Detected!" << std::endl;
+
         std::string message = "collision_true";
+        usleep(300);    // ensure the client has time to read this buffer
         ServerSocket.deliver(message.c_str());
         SetGameOver(true);
     }
@@ -885,17 +874,17 @@ void GameControllerServer::SendMap()
 
     std::cout << "Map Data Sent to Clients" << std::endl;
 
-    ServerSocket.receive1(buffer1, 4);
-    ServerSocket.receive2(buffer2, 4);
+    // ServerSocket.receive1(buffer1, 4);
+    // ServerSocket.receive2(buffer2, 4);
 
-    if (strcmp(ack.c_str(), buffer1) == 0)
-    {
-        std::cout << "Client 1 Acknowledged Receipt of Data" << std::endl;
-    }
-    if (strcmp(ack.c_str(), buffer2) == 0)
-    {
-        std::cout << "Client 2 Acknowledged Receipt of Data" << std::endl;
-    }
+    // if (strcmp(ack.c_str(), buffer1) == 0)
+    // {
+    //     std::cout << "Client 1 Acknowledged Receipt of Data" << std::endl;
+    // }
+    // if (strcmp(ack.c_str(), buffer2) == 0)
+    // {
+    //     std::cout << "Client 2 Acknowledged Receipt of Data" << std::endl;
+    // }
 }
 
 // Update Game State
@@ -920,11 +909,11 @@ void GameControllerServer::UpdateGame(double duration, float timer)
         // Send Map to Client
         SendMap();
 
-        // Send current score to Client
-        SendScore();
-
         // Update Player
         MovePlayer();
+
+        // Send current score to Client
+        SendScore();
 
 
         playerLocY = GetPlayer1and2().GetLocY();
@@ -1017,12 +1006,12 @@ bool GameControllerServer::ReplayCheck()
 
     std::cout << "Delivering Replay Message to Clients" << std::endl;
     if (player1Replay == true && player2Replay == true) {
-        char *reply = "setReplayTrue";
-        ServerSocket.deliver(reply);
+        std::string reply = "setReplayTrue";
+        ServerSocket.deliver(reply.c_str());
         return true;
     } else {
-        char *reply = "setReplayFalse";
-        ServerSocket.deliver(reply);
+        std::string reply = "setReplayFalse";
+        ServerSocket.deliver(reply.c_str());
         return false;
     }
 }
