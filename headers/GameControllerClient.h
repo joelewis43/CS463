@@ -55,6 +55,7 @@ class GameControllerClient {
         void UpdateGame(WINDOW *window);            // Update Game
         void DisplayScore();                        // Display the final score
         void CheckCollisions();                     // Checks if Server Sent Collision True
+        void ReplayMenu(bool&);                          // Replay Menu
 
         // Getters
         //std::string getPlayerName();

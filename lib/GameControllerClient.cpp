@@ -41,56 +41,77 @@ void GameControllerClient::MainGameLoop()
     // If Connection Is Made
     ServerConnection();
 
-    // Menus
-    MainMenu();
+    bool replay = true;
 
-    // Display Game Count Down
-    //CountDownScreen();
-
-    if(GetQuitGame() == false)
+    while(replay == true)
     {
-        // Initialize ncurses
-        initscr();
+        // Menus
+        MainMenu();
 
-        WINDOW *borderWindow = createBorderWindow();
-        WINDOW *contentWindow = createContentWindow(borderWindow);
-
-        // Settings
-        noecho();
-        // cbreak(void);
-
-        // Set Arrow Keys to Non-Blocking
-        keypad(stdscr, TRUE);
-        timeout(1);
-        nodelay(stdscr, TRUE);
-
-        start_color();
-
-        init_pair(1, COLOR_WHITE, COLOR_BLACK);
-        init_pair(2, COLOR_YELLOW, COLOR_BLACK);
-        init_pair(3, COLOR_RED, COLOR_BLACK);
-
-        // Begin Game
-        while(GetGameOver() != true && GetServerConnection() == true)
+        if(GetQuitGame() == false)
         {
-            UpdateGame(contentWindow);
-            std::chrono::duration<int, std::milli> timespan(150);
-            std::this_thread::sleep_for(timespan);
+            // Initialize ncurses
+            initscr();
+
+            WINDOW *borderWindow = createBorderWindow();
+            WINDOW *contentWindow = createContentWindow(borderWindow);
+
+            // Settings
+            noecho();
+
+            // Set Arrow Keys to Non-Blocking
+            keypad(stdscr, TRUE);
+            timeout(1);
+            nodelay(stdscr, TRUE);
+
+            start_color();
+
+            init_pair(1, COLOR_WHITE, COLOR_BLACK);
+            init_pair(2, COLOR_YELLOW, COLOR_BLACK);
+            init_pair(3, COLOR_RED, COLOR_BLACK);
+
+            // Begin Game
+            while(GetGameOver() != true && GetServerConnection() == true)
+            {
+                UpdateGame(contentWindow);
+                std::chrono::duration<int, std::milli> timespan(150);
+                std::this_thread::sleep_for(timespan);
+            }
+
+            GameOverMenu();
+
+            delwin(contentWindow);
+            delwin(borderWindow);
+
+            // Quit
+            // Clear Screen
+            std::cout << "\033[2J\033[1;1H";
+            endwin();
+            keypad(stdscr, FALSE);
+            timeout(1);
+            nodelay(stdscr, FALSE);
+
+            // Would you Like to Play Again?
+            ReplayMenu(replay);
+
+            if(replay != true)
+            {
+                std::cout << "A Replay Could Not Be Established" << std::endl;
+                std::cout << "Thanks for playing!" << std::endl;
+                sleep(1);
+                break;
+            }
+            sleep(1);
         }
-
-        GameOverMenu();
-
-        delwin(contentWindow);
-        delwin(borderWindow);
-    }
-    else
-    {
-        // Quit
-        // Clear Screen
-        std::cout << "\033[2J\033[1;1H";
-        std::cout << "Thanks for playing!" << std::endl;
-        endwin();
-        sleep(1);
+        else
+        {
+            // Quit
+            // Clear Screen
+            std::cout << "\033[2J\033[1;1H";
+            endwin();
+            std::cout << "Thanks for playing!" << std::endl;
+            sleep(1);
+        }
     }
 
     std::cout << "I've made a huge mistake" << std::endl;
@@ -100,6 +121,8 @@ void GameControllerClient::MainGameLoop()
 // Main Menu
 void GameControllerClient::MainMenu()
 {
+    // Clear Screen
+    std::cout << "\033[2J\033[1;1H";
     int selection = -1;
     char *msg = "! pReady";
 
@@ -155,6 +178,83 @@ void GameControllerClient::MainMenu()
             // Clear Screen and Let Menu Appear Again
             std::cout << "\033[2J\033[1;1H";
             selection = -1;
+        }
+    }
+}
+
+// Replay Menu
+void GameControllerClient::ReplayMenu(bool &replay)
+{
+    int selection = -1;
+    char *msg1 = "! yes_replay";
+    char *msg2 = "! no_replay";
+
+    while(selection == -1)
+    {
+        std::cout << "1. Replay" << std::endl;
+        std::cout << "2. Exit Game" << std::endl;
+        std::cout << std::endl;
+        std::cout << "*Enter your menu selection and press Enter" << std::endl;
+        std::cout << std::endl;
+        std::cout << "Selection: ";
+        std::cin >> selection;
+
+        if(selection > 0 && selection < 3)
+        {
+            switch(selection)
+            {
+                case 1:
+                    replay = true;
+                    ClientSocket.deliver(msg1);
+                    break;
+                case 2:
+                    replay = false;
+                    ClientSocket.deliver(msg2);
+                    break;
+                default:
+                    std::cout << "Something Went Wrong..." << std::endl;
+                    break;
+            }
+        }
+        else
+        {
+            std::cout << std::endl;
+            std::cout << "Please Select 1 or 2." << std::endl;
+            selection = -1;
+        }
+    }
+
+    char buffer[MAX_BYTES];
+    memset(buffer, '\0', MAX_BYTES);
+    // Server Response
+    ClientSocket.receive(buffer);
+    int counter = 0;
+    int bytes = 0;
+    while(1)
+    {
+        bytes = ClientSocket.receive(buffer);
+        if (bytes)
+            std::cout << "Message from Server: " << buffer << std::endl;
+
+        if(strcmp(buffer, "setReplayTrue") == 0)
+        {
+            replay = true;
+            SetGameOver(false);
+            counter++;
+        }
+        else if(strcmp(buffer, "setReplayFalse") == 0)
+        {
+            replay = false;
+            SetGameOver(true);
+            counter++;
+        }
+        if(counter > 0)
+        {
+            break;
+        }
+        else
+        {
+            memset(buffer, '\0', MAX_BYTES);
         }
     }
 }
@@ -215,8 +315,13 @@ void GameControllerClient::NameMenu()
                 player.SetName(name);
 
                 // Tell Server the Name is Coming
-                std::string msg = "! name " + name;
+                std::string msg = "! name";
                 ClientSocket.deliver(msg.c_str());
+
+                //sleep(1);
+
+                // Tell it to Server
+                ClientSocket.deliver(name.c_str());
                 break;
             }
             else
@@ -379,28 +484,6 @@ void GameControllerClient::CountDownScreen()
     // it should call this function
     char buffer[MAX_BYTES];
     memset(buffer, '\0', MAX_BYTES);
-
-    /*std::cout << "Count Down Screen" << std::endl;
-
-    while (1)
-    {
-        ClientSocket.receive(buffer);
-
-        if(strcmp(buffer, "countdown") == 1)
-        {
-            std::cout << "\033[2J\033[1;1H";
-            std::cout << "Game Starting in..." << std::endl;
-
-            std::cout << "\33[2K\r3" << std::flush;
-            sleep(1);
-            std::cout << "\33[2K\r2" << std::flush;
-            sleep(1);
-            std::cout << "\33[2K\r1" << std::flush;
-            sleep(1);
-            std::cout << "\033[2J\033[1;1H";
-            break;
-        }
-    }*/
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Game Starting in..." << std::endl;
 
