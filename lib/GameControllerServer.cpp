@@ -152,8 +152,21 @@ void GameControllerServer::MainGameLoop()
             std::this_thread::sleep_for(timespan);
         }
 
+        // Send Score and Save it
         SendScore();
         SaveScore(player1and2.GetName(), Score);
+
+        // Reset Values
+        SetGameOver(false);
+        duration = 0.0;
+        timer = 0.0;
+
+        // Play Again?
+        if(ReplayCheck() == false)
+        {
+            std::cout << "At least one player chose to quit - Game/Server Ending" << std::endl;
+            break;
+        }
     }
 }
 
@@ -419,7 +432,10 @@ void GameControllerServer::NameMenu()
     memset(buffer1, '\0', MAX_BYTES);
     memset(buffer2, '\0', MAX_BYTES);
 
-    int bytes = 0;
+    int bytes1 = 0;
+    int bytes2 = 0;
+
+    std::cout << "Receiving Names from Clients" << std::endl;
 
     // Loop Until Both Players Indicate Their Names Are Set
     while(1)
@@ -427,10 +443,13 @@ void GameControllerServer::NameMenu()
         if(player1Ready == 0)
         {
             // Receive Client 1 Signal
-            ServerSocket.receive1(buffer1);
+            bytes1 = ServerSocket.receive1(buffer1);
+            if (bytes1)
+                std::cout << "Client 1 Received Buffer: " << buffer1 << std::endl;
 
             if(strcmp(buffer1, "! name") == 0)
             {
+                //sleep(1);
                 std::cout << "Retrieving P1 Name..." << std::endl;
                 memset(buffer1, '\0', MAX_BYTES);
                 ServerSocket.receive1(name1);
@@ -445,14 +464,14 @@ void GameControllerServer::NameMenu()
 
         if(player2Ready == 0)
         {
-            // Receive Client 1 Signal
-            bytes = ServerSocket.receive2(buffer2);
-            if (bytes)
-                std::cout << buffer2 << std::endl;
-
+            // Receive Client 2 Signal
+            bytes2 = ServerSocket.receive2(buffer2);
+            if (bytes2)
+                std::cout << "Client 2 Received Buffer: " << buffer2 << std::endl;
 
             if(strcmp(buffer2, "! name") == 0)
             {
+                //sleep(1);
                 std::cout << "Retrieving P2 Name..." << std::endl;
                 memset(buffer2, '\0', MAX_BYTES);
                 ServerSocket.receive2(name2);
@@ -464,7 +483,7 @@ void GameControllerServer::NameMenu()
                 std::cout << "Player 2 Name: " << player_b << std::endl;
             }
         }
-        if(player1Ready && player2Ready )
+        if(player1Ready == 1 && player2Ready == 1)
             break;
     }
 
@@ -517,7 +536,7 @@ void GameControllerServer::ControlSelection()
         if(strcmp( buffer1, "send") == 0)
         {
             sendCounter++;
-            std::cout << "player 1 ready\n";
+            std::cout << "Player 1 Ready\n";
             memset(buffer1, '\0', MAX_BYTES);
         }
 
@@ -525,7 +544,7 @@ void GameControllerServer::ControlSelection()
         if(strcmp( buffer2, "send") == 0)
         {
             sendCounter++;
-            std::cout << "player 2 ready\n";
+            std::cout << "Player 2 Ready\n";
             memset(buffer2, '\0', MAX_BYTES);
         }
     }
@@ -597,8 +616,6 @@ void GameControllerServer::CountDownScreen()
     std::string message = "countdown";
     // ServerSocket.deliver(message.c_str());
     sleep(3);
-    //// OR
-    ///// Have countdown screen in Tevin's game env
 }
 
 // Checks for Player/Object Collisions
@@ -904,6 +921,80 @@ void GameControllerServer::UpdateGame(double duration, float timer)
 
         // Update Score
         UpdateScore(duration, timer);
+    }
+}
+
+// Replay Check
+bool GameControllerServer::ReplayCheck()
+{
+    bool player1Replay = false;
+    bool player2Replay = false;
+    bool replayP1 = false;
+    bool replayP2 = false;
+    char buffer1[MAX_BYTES];
+    char buffer2[MAX_BYTES];
+    memset(buffer1, '\0', MAX_BYTES);
+    memset(buffer2, '\0', MAX_BYTES);
+
+    std::cout << "Replay Function - Check" << std::endl;
+
+    while(1)
+    {
+        if(!replayP1)
+        {
+            // Receive Data From Client
+            ServerSocket.receive1(buffer1);
+
+            // Check Client Responses
+            if (strcmp(buffer1, "! yes_replay") == 0) {
+                std::cout << "Player 1 Agrees to Replay" << std::endl;
+                player1Replay = true;
+                replayP1 = true;
+            }
+            else if (strcmp(buffer1, "! no_replay") == 0) {
+                std::cout << "Player 1 Disagrees to Replay" << std::endl;
+                replayP1 = true;
+            }
+            else
+            {
+                memset(buffer1, '\0', MAX_BYTES);
+            }
+        }
+
+        if(!replayP2)
+        {
+            // Receive Data From Client
+            ServerSocket.receive2(buffer2);
+
+            // Check Client Responses
+            if (strcmp(buffer2, "! yes_replay") == 0) {
+                std::cout << "Player 2 Agrees to Replay" << std::endl;
+                player2Replay = true;
+                replayP2 = true;
+            }
+            else if (strcmp(buffer2, "! no_replay") == 0) {
+                std::cout << "Player 2 Disagrees to Replay" << std::endl;
+                replayP2 = true;
+            }
+            else
+            {
+                memset(buffer2, '\0', MAX_BYTES);
+            }
+        }
+
+        if(replayP1 == true && replayP2 == true)
+            break;
+    }
+
+    std::cout << "Delivering Replay Message to Clients" << std::endl;
+    if (player1Replay == true && player2Replay == true) {
+        char *reply = "setReplayTrue";
+        ServerSocket.deliver(reply);
+        return true;
+    } else {
+        char *reply = "setReplayFalse";
+        ServerSocket.deliver(reply);
+        return false;
     }
 }
 
