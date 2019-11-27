@@ -180,8 +180,9 @@ public:
      * window
      * 
      * @param window - A pointer to an ncurses window object
+     * @param score - A string that contains the current score
     **/
-    void print(WINDOW *window);
+    void print(WINDOW *window, std::string score);
 
     /**
      * Creates an explosion on the game board

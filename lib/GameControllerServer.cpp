@@ -14,7 +14,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerServer::GameControllerServer() : ServerSocket(8212), player1(), player2(), gameEnvironment(CONTENT_HEIGHT, CONTENT_WIDTH - 1, 1000)
+GameControllerServer::GameControllerServer() : ServerSocket(9523), player1(), player2(), gameEnvironment(CONTENT_HEIGHT, CONTENT_WIDTH - 1, 1000)
 {
     // Set Timer Settings Here?
 }
@@ -677,8 +677,8 @@ void GameControllerServer::MovePlayer()
     ServerSocket.receive1(buffer1);
     ServerSocket.receive2(buffer2);
 
-    std::cout << "Buffer 1: " << buffer1 << std::endl;
-    std::cout << "Buffer 2: " << buffer2 << std::endl;
+    std::cout << "MOVEMENT Buffer 1: " << buffer1 << std::endl;
+    std::cout << "MOVEMENT Buffer 2: " << buffer2 << std::endl;
 
     // Update Player Location (X|Y) for Player 1
     if(buffer1[0] == x)
@@ -869,6 +869,7 @@ void GameControllerServer::UpdateGame(double duration, float timer)
     int playerLocX = 0;
     int playerLocY = 0;
     std::cout << "Outside Connection Check - In Update Game" << std::endl;
+    
     // Check Server Connection
     if(ServerSocket.getConnection())
     {
