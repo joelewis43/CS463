@@ -1,10 +1,28 @@
 Space Runner High Scores
 Name		Score
+AAA | 	4666
+AAA | 	4518
 jake | joe	4447
+AAA | 	4421
+AAA | 	4063
 jake | joe	3966
 joe | jake	3686
+AAA | 	3564
 susie | jacob	3312
 jake | joe	2937
+AAA | 	2831
+AAA | 	2572
 jake | joe	2278
 jake | joe	2220
+AAA | 	1986
 jacob | JOE	1512
+AAA | 	1470
+AAA | 	1153
+AAA | 	994
+AAA | 	923
+AAA | 	874
+AAA | 	847
+AAA | 	826
+AAA | 	754
+AAA | 	610
+AAA | 	495

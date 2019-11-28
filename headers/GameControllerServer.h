@@ -83,6 +83,7 @@ class GameControllerServer {
         void UpdateGame(double, float);                         // Update Game State
         void UpdateScore(double, float);                        // Update Game's Score
         void SendMap();                                         // Send Map to Client/Server
+        void SendLevel();                                       // Send Level Info to Client/Server
         bool ReplayCheck();                                     // Game Replay?
 
         // Getters

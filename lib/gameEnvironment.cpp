@@ -4,33 +4,11 @@ GameEnvironment::GameEnvironment()
 {
 }
 
-GameEnvironment::GameEnvironment(WINDOW *window, int levelRows)
-{
-    int height = 0, width = 0;
-    this->levelIndex = 0;
-    this->levelRows = levelRows;
-    this->window = window;
-
-    getmaxyx(window, height, width);
-    height = height - 2, width = width - 3;
-    matrix = GameMatrix(height, width);
-
-    AsteroidLevel *asteroidLevel = new AsteroidLevel(levelRows, width, height);
-    CityLevel *cityLevel = new CityLevel(levelRows, width, height);
-
-    levels.push_back(asteroidLevel);
-    levels.push_back(cityLevel);
-
-    for (LevelBuilder *level : levels)
-    {
-        level->construct();
-    }
-}
-
 GameEnvironment::GameEnvironment(int rows, int cols, int levelRows)
 {
     int height = rows, width = cols;
     this->levelIndex = 0;
+    this->transitionRows = 0;
     this->levelRows = levelRows;
     this->window = nullptr;
 
@@ -39,8 +17,9 @@ GameEnvironment::GameEnvironment(int rows, int cols, int levelRows)
     AsteroidLevel *asteroidLevel = new AsteroidLevel(levelRows, width, height);
     CityLevel *cityLevel = new CityLevel(levelRows, width, height);
 
-    levels.push_back(asteroidLevel);
     levels.push_back(cityLevel);
+
+    levels.push_back(asteroidLevel);
 
     for (LevelBuilder *level : levels)
     {
@@ -50,26 +29,37 @@ GameEnvironment::GameEnvironment(int rows, int cols, int levelRows)
 
 void GameEnvironment::seed()
 {
+    vector<char> newRow = nextRow();
+    matrix.updateTop(newRow);
+}
+
+vector<char> GameEnvironment::nextRow()
+{
     LevelBuilder *level = currentLevel();
+    vector<char> emptyRow = vector<char>(matrix.cols(), NULL_SPRITE);
     // If there's no more content available, nothing can be seeded
     if (level == nullptr || (!levelAvailable() && !level->rowAvailable()))
     {
-        return;
+        return emptyRow;
     }
     // Advance to the next level, if the current level is complete
-    if (!currentLevel()->rowAvailable())
+    if (!level->rowAvailable() && !transitionRows)
     {
+        transitionRows = matrix.rows();
         nextLevel();
     }
-
-    // TODO: Implement method for transition (break or respite)
-    // for player in between levels
-
-    if (currentLevel()->rowAvailable())
+    if (transitionRows)
     {
-        vector<char> newRow = currentLevel()->nextRow();
-        matrix.updateTop(newRow);
+        transitionRows -= 1;
+        return emptyRow;
     }
+    if (level->rowAvailable())
+    {
+        transitionRows = 0;
+        return level->nextRow();
+    }
+
+    return emptyRow;
 }
 
 void GameEnvironment::advance(Player &player)
@@ -108,6 +98,18 @@ LevelBuilder *GameEnvironment::currentLevel()
     return levels.at(levelIndex);
 }
 
+string GameEnvironment::currentLevelName()
+{
+    LevelBuilder *level = currentLevel();
+
+    if (!level)
+    {
+        return "";
+    }
+
+    return level->name();
+}
+
 void GameEnvironment::setInitialPlayerPosition(Player &player)
 {
     matrix.initPlayerObject(player.GetLocX(), player.GetLocY());
@@ -116,11 +118,6 @@ void GameEnvironment::setInitialPlayerPosition(Player &player)
 void GameEnvironment::updatePlayerPosition(Player &player)
 {
     matrix.updatePlayerPosition(player.GetLocY(), player.GetLocX());
-}
-
-void GameEnvironment::print()
-{
-    matrix.print(window, "SHOULD NEVER CALL THIS FUNCTION");
 }
 
 string GameEnvironment::getMap()

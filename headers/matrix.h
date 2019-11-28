@@ -12,6 +12,7 @@
 #include <ncurses.h>
 #include <math.h>
 #include <string.h>
+#include <utility>
 
 #include <stdio.h>
 #include <string.h>
@@ -19,11 +20,13 @@
 #include "object.h"
 #include "random.h"
 
+using std::pair;
 using std::cout;
 using std::endl;
 using std::deque;
 using std::string;
 using std::vector;
+using std::make_pair;
 
 class GameMatrix
 {
@@ -32,7 +35,6 @@ private:
     int playerX;
     // Cache Player's Y coordinate
     int playerY;
-
     /**
      * Underlying matrix container
      * 
@@ -117,6 +119,13 @@ public:
     void advance();
 
     /**
+     * Returns the coordinates of the player's character
+     * 
+     * @returns - the x and y coordinates of the player character
+     **/
+    pair<int, int> getPlayerCoord();
+
+    /**
      * Updates the top row of the matrix with the contents of the
      * passed vector
      * 
@@ -182,7 +191,7 @@ public:
      * @param window - A pointer to an ncurses window object
      * @param score - A string that contains the current score
     **/
-    void print(WINDOW *window, std::string score);
+    void print(WINDOW *window, string score, string level);
 
     /**
      * Creates an explosion on the game board

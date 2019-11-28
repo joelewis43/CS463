@@ -26,6 +26,16 @@ public:
   void construct();
 
   /**
+   * Returns the name of the level
+   * 
+   * @returns - name of the level
+   **/
+  string name()
+  {
+    return "Stellar Skyscraper";
+  }
+
+  /**
    * Returns the new direction of the directional skew
    * based on the passed skew
    * 

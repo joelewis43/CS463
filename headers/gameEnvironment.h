@@ -15,6 +15,9 @@ private:
     int levelIndex;
     // Number of rows each level should have
     int levelRows;
+    // Number of null rows to add to the game matrix
+    // during a level transition
+    int transitionRows;
     // Matrix used for storing game objects
     GameMatrix matrix;
     // List of levels used to change the game matrix
@@ -27,19 +30,18 @@ private:
      **/
     void seed();
 
+    /**
+     * Gets the next available row from the current level
+     * 
+     * @returns - a vector of chars
+     **/
+    vector<char> nextRow();
+
 public:
     /**
      * Constructor for an Environment
      **/
     GameEnvironment();
-
-    /**
-     * Constructor for an Environment
-     * 
-     * @param window - A pointer to an ncurses window
-     * @param levelRows - Number of rows each level should have
-     **/
-    GameEnvironment(WINDOW *window, int levelRows);
 
     /**
      * Constructor for an Environment
@@ -80,6 +82,13 @@ public:
     LevelBuilder *currentLevel();
 
     /**
+     * Returns the name of the current level
+     * 
+     * @returns - name of the current level
+     **/
+    string currentLevelName();
+
+    /**
      * Sets the player's initial position on the game board
      * 
      * @param player - A reference to a player object
@@ -92,12 +101,6 @@ public:
      * @param player - A reference to a player object
      **/
     void updatePlayerPosition(Player &player);
-
-    /**
-     * Prints the contents of the GameMatrix ot the ncurses
-     * window
-     **/
-    void print();
 
     /**
      * Returns the contents of the game board as a string
