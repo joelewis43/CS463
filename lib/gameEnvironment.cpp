@@ -62,6 +62,18 @@ vector<char> GameEnvironment::nextRow()
     return emptyRow;
 }
 
+void GameEnvironment::reset()
+{
+    matrix.clear();
+
+    for (LevelBuilder *level : levels)
+    {
+        level->reconstruct();
+    }
+
+    levelIndex = 0;
+}
+
 void GameEnvironment::advance(Player &player)
 {
     // Advance all rows in the matrix forward by 1
@@ -131,7 +143,7 @@ void GameEnvironment::updateGameMatrix(string data)
     matrix.loadFromStr(data);
 }
 
-GameMatrix& GameEnvironment::getMatrix()
+GameMatrix &GameEnvironment::getMatrix()
 {
     return matrix;
 }

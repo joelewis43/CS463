@@ -6,8 +6,8 @@
 #include <string>
 #include "object.h"
 
-using std::string;
 using std::deque;
+using std::string;
 using std::vector;
 
 class LevelBuilder
@@ -42,6 +42,12 @@ public:
      * in the level container
      **/
     virtual void construct() = 0;
+
+    /**
+     * Re-Constructs the entire level and stores the level
+     * in the level container
+     **/
+    virtual void reconstruct() = 0;
 
     /**
      * Returns the name of the level

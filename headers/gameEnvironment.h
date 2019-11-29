@@ -53,6 +53,11 @@ public:
     GameEnvironment(int rows, int cols, int levelRows);
 
     /**
+     * Resets the game leveles and board
+     **/
+    void reset();
+
+    /**
      * Advances the game forward one step by moving all rows of the
      * game matrix down one row and adding the next available row for
      * a level to the top row of the game matrix.
@@ -110,13 +115,12 @@ public:
      **/
     string getMap();
 
-
     /**
      * Returns a reference to the internal game matrix
      * 
      * @returns - Game Matrix
      **/
-    GameMatrix& getMatrix();
+    GameMatrix &getMatrix();
 
     /**
      * Gets an object from a cell in the matrix

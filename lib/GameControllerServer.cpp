@@ -22,8 +22,6 @@ GameControllerServer::GameControllerServer() : ServerSocket(8542), player1(), pl
 // Destructor
 GameControllerServer::~GameControllerServer()
 {
-
-
 }
 
 ////////////////////////////////
@@ -50,7 +48,7 @@ void GameControllerServer::MainGameLoop()
     std::cout << "Waiting for clients ..." << std::endl;
     ServerSocket.waitForClients();
 
-    while(1)
+    while (1)
     {
         // Clients in Menu
         int ReadyPlayer1 = 0; // good movie
@@ -65,7 +63,7 @@ void GameControllerServer::MainGameLoop()
         int bytes2 = 0;
 
         // Loop Until Both Players Indicate They Are Ready to Play
-        while(!ReadyPlayer1 || !ReadyPlayer2)
+        while (!ReadyPlayer1 || !ReadyPlayer2)
         {
 
             // read from socket 1 if play is not yet ready
@@ -74,16 +72,17 @@ void GameControllerServer::MainGameLoop()
                 // Receive Client 1 Signal
                 bytes1 = ServerSocket.receive1(buffer1);
 
-                if (bytes1) {
+                if (bytes1)
+                {
                     std::cout << buffer1 << std::endl;
                 }
 
-                if(strstr( buffer1, "? leaderboard"))
+                if (strstr(buffer1, "? leaderboard"))
                 {
                     LeaderBoard(1);
                     memset(buffer1, '\0', MAX_BYTES);
                 }
-                else if(strstr( buffer1, "! pReady"))
+                else if (strstr(buffer1, "! pReady"))
                 {
                     std::cout << "Player 1 Ready ..." << std::endl;
                     ReadyPlayer1 = 1;
@@ -96,16 +95,17 @@ void GameControllerServer::MainGameLoop()
                 // Receive Client 2 Signal
                 bytes2 = ServerSocket.receive2(buffer2);
 
-                if (bytes2) {
+                if (bytes2)
+                {
                     std::cout << buffer2 << std::endl;
                 }
 
-                if(strstr( buffer2, "? leaderboard"))
+                if (strstr(buffer2, "? leaderboard"))
                 {
                     LeaderBoard(2);
                     memset(buffer2, '\0', MAX_BYTES);
                 }
-                else if(strstr( buffer2, "! pReady"))
+                else if (strstr(buffer2, "! pReady"))
                 {
                     std::cout << "Player 2 Ready ..." << std::endl;
                     ReadyPlayer2 = 1;
@@ -143,7 +143,7 @@ void GameControllerServer::MainGameLoop()
         gameEnvironment.setInitialPlayerPosition(player1and2);
 
         // Begin Game
-        while(GetGameOver() != true)
+        while (GetGameOver() != true)
         {
             // Update Game
             std::cout << "GAME LOOP" << std::endl;
@@ -161,9 +161,11 @@ void GameControllerServer::MainGameLoop()
         SetGameOver(false);
         duration = 0.0;
         timer = 0.0;
+        // Reset the Game Levels and Board
+        gameEnvironment.reset();
 
         // Play Again?
-        if(ReplayCheck() == false)
+        if (ReplayCheck() == false)
         {
             std::cout << "At least one player chose to quit - Game/Server Ending" << std::endl;
             break;
@@ -204,7 +206,7 @@ void GameControllerServer::LeaderBoard(int player)
         }
         fp.close();
 
-        if(player == 1)
+        if (player == 1)
         {
             ServerSocket.deliver1(file.c_str());
         }
@@ -338,8 +340,9 @@ void GameControllerServer::SaveScore(int score)
     }
     else
     {
-        std:cout << "Saving Player's Score" << std::endl;
-        std::cout << "Player: " << player1and2.GetName() <<std::endl;
+    std:
+        cout << "Saving Player's Score" << std::endl;
+        std::cout << "Player: " << player1and2.GetName() << std::endl;
         std::cout << "Score: " << score << std::endl;
 
         // Enter Player Score
@@ -374,26 +377,26 @@ void GameControllerServer::SendScore()
     memset(buffer2, '\0', MAX_BYTES);
 
     // Loop Until Both Players Indicate Their Names Are Set
-    while(1)
+    while (1)
     {
-        if(player1Ready == 0)
+        if (player1Ready == 0)
         {
             // Receive Client 1 Signal
             ServerSocket.receive1(buffer1);
 
-            if(strstr(buffer1, "? score"))
+            if (strstr(buffer1, "? score"))
             {
                 std::cout << "Player 1 ready for score" << std::endl;
                 player1Ready = 1;
             }
         }
 
-        if(player2Ready == 0)
+        if (player2Ready == 0)
         {
             // Receive Client 1 Signal
             ServerSocket.receive2(buffer2);
 
-            if(strstr(buffer2, "? score"))
+            if (strstr(buffer2, "? score"))
             {
                 std::cout << "Player 2 ready for score" << std::endl;
                 player2Ready = 1;
@@ -401,7 +404,7 @@ void GameControllerServer::SendScore()
         }
 
         // break when both players are ready
-        if(player1Ready && player2Ready)
+        if (player1Ready && player2Ready)
             break;
     }
 
@@ -440,16 +443,16 @@ void GameControllerServer::NameMenu()
     std::string nulVal;
 
     // Loop Until Both Players Indicate Their Names Are Set
-    while(!player1Ready && !player1Ready)
+    while (!player1Ready && !player1Ready)
     {
-        if(player1Ready == 0)
+        if (player1Ready == 0)
         {
             // Receive Client 1 Signal
             bytes1 = ServerSocket.receive1(buffer1);
             if (bytes1)
                 std::cout << "Client 1 Received Buffer: " << buffer1 << std::endl;
 
-            if(strstr(buffer1, "! name"))
+            if (strstr(buffer1, "! name"))
             {
                 std::cout << "Retrieving P1 Name..." << std::endl;
                 std::istringstream nameCommand1(buffer1);
@@ -468,18 +471,18 @@ void GameControllerServer::NameMenu()
             }
         }
 
-        if(player2Ready == 0)
+        if (player2Ready == 0)
         {
             // Receive Client 2 Signal
             bytes2 = ServerSocket.receive2(buffer2);
             if (bytes2)
                 std::cout << "Client 2 Received Buffer: " << buffer2 << std::endl;
 
-            if(strstr(buffer2, "! name"))
+            if (strstr(buffer2, "! name"))
             {
                 std::cout << "Retrieving P2 Name..." << std::endl;
                 std::istringstream nameCommand2(buffer2);
-                
+
                 while (nameCommand2)
                 {
                     // Set Name
@@ -498,7 +501,7 @@ void GameControllerServer::NameMenu()
     // Concatenate Names
     std::string seperator = " | ";
     std::string name = player_a + seperator + player_b;
-    
+
     player1.SetName(player_a);
     player2.SetName(player_b);
     player1and2.SetName(name);
@@ -511,7 +514,7 @@ void GameControllerServer::NameMenu()
 void GameControllerServer::AwaitingPlayer()
 {
     // Deliver message that both clients have connected
-    const char* msg = "Matchmaking Completed!";
+    const char *msg = "Matchmaking Completed!";
     ServerSocket.deliver(msg);
     sleep(1);
 }
@@ -528,11 +531,10 @@ void GameControllerServer::ControlSelection()
     // 2 = Left/Right
 
     std::cout << "Sending Controls to Players" << std::endl;
-    
-    // send controls command to let client know it 
-    const char* msg = "controls";
-    ServerSocket.deliver(msg);
 
+    // send controls command to let client know it
+    const char *msg = "controls";
+    ServerSocket.deliver(msg);
 
     char buffer1[MAX_BYTES];
     char buffer2[MAX_BYTES];
@@ -540,10 +542,10 @@ void GameControllerServer::ControlSelection()
     memset(buffer2, '\0', MAX_BYTES);
     int sendCounter = 0;
     int bytes = 0;
-    while(sendCounter != 2)
+    while (sendCounter != 2)
     {
         ServerSocket.receive1(buffer1);
-        if(strcmp( buffer1, "send") == 0)
+        if (strcmp(buffer1, "send") == 0)
         {
             sendCounter++;
             std::cout << "Player 1 Ready\n";
@@ -551,7 +553,7 @@ void GameControllerServer::ControlSelection()
         }
 
         ServerSocket.receive2(buffer2);
-        if(strcmp( buffer2, "send") == 0)
+        if (strcmp(buffer2, "send") == 0)
         {
             sendCounter++;
             std::cout << "Player 2 Ready\n";
@@ -560,7 +562,7 @@ void GameControllerServer::ControlSelection()
     }
 
     std::cout << "Delivering Controls" << std::endl;
-    if(player1Controls == 1)
+    if (player1Controls == 1)
     {
         std::string control1 = "1";
         ServerSocket.deliver1(control1.c_str());
@@ -570,7 +572,7 @@ void GameControllerServer::ControlSelection()
 
         player2Controls = 2;
     }
-    else if(player1Controls == 2)
+    else if (player1Controls == 2)
     {
         std::string control1 = "2";
         ServerSocket.deliver1(control1.c_str());
@@ -590,12 +592,12 @@ void GameControllerServer::ControlSelection()
     memset(buf2, '\0', MAX_BYTES);
 
     // Loop Until Both Players Indicate They Are Ready to Play
-    while(ReadyCounter != 2)
+    while (ReadyCounter != 2)
     {
         // Receive Client 1 Signal
         ServerSocket.receive1(buf1);
 
-        if(strcmp( buf1, "ready") == 0)
+        if (strcmp(buf1, "ready") == 0)
         {
             std::cout << "Player 1 Ready ..." << std::endl;
             ReadyCounter++;
@@ -605,7 +607,7 @@ void GameControllerServer::ControlSelection()
         // Receive Client 2 Signal
         ServerSocket.receive2(buf2);
 
-        if(strcmp( buf2, "ready") == 0)
+        if (strcmp(buf2, "ready") == 0)
         {
             std::cout << "Player 2 Ready ..." << std::endl;
             ReadyCounter++;
@@ -622,7 +624,7 @@ void GameControllerServer::CountDownScreen()
     // Tell Clients to start countdowns
     sleep(1);
     std::cout << "Sending Countdown Code" << std::endl;
-    const char* msg = "countdown";
+    const char *msg = "countdown";
     std::string message = "countdown";
     // ServerSocket.deliver(message.c_str());
     sleep(3);
@@ -635,27 +637,27 @@ void GameControllerServer::CheckCollisions(DIRECTION direction) //DIRECTION dire
     int playerLocY = 0;
     char boardObject = NULL_SPRITE;
 
-    switch(direction)
+    switch (direction)
     {
-        case UP:
-            playerLocY = GetPlayer1and2().GetLocY() - 1;   // Next Player Location Y
-            playerLocX = GetPlayer1and2().GetLocX();       // Player Location X
-            break;
-        case DOWN:
-            playerLocY = GetPlayer1and2().GetLocY() + 1;   // Next Player Location Y
-            playerLocX = GetPlayer1and2().GetLocX();       // Player Location X
-            break;
-        case LEFT:
-            playerLocY = GetPlayer1and2().GetLocY();       // Player Location Y
-            playerLocX = GetPlayer1and2().GetLocX() - 1;   // Next Player Location X
-            break;
-        case RIGHT:
-            playerLocY = GetPlayer1and2().GetLocY();       // Player Location Y
-            playerLocX = GetPlayer1and2().GetLocX() + 1;   // Next Player Location X
-            break;
-        case NONE:
-            playerLocY = GetPlayer1and2().GetLocY() - 1;   // Next Player Location Y
-            playerLocX = GetPlayer1and2().GetLocX();       // Player Location X
+    case UP:
+        playerLocY = GetPlayer1and2().GetLocY() - 1; // Next Player Location Y
+        playerLocX = GetPlayer1and2().GetLocX();     // Player Location X
+        break;
+    case DOWN:
+        playerLocY = GetPlayer1and2().GetLocY() + 1; // Next Player Location Y
+        playerLocX = GetPlayer1and2().GetLocX();     // Player Location X
+        break;
+    case LEFT:
+        playerLocY = GetPlayer1and2().GetLocY();     // Player Location Y
+        playerLocX = GetPlayer1and2().GetLocX() - 1; // Next Player Location X
+        break;
+    case RIGHT:
+        playerLocY = GetPlayer1and2().GetLocY();     // Player Location Y
+        playerLocX = GetPlayer1and2().GetLocX() + 1; // Next Player Location X
+        break;
+    case NONE:
+        playerLocY = GetPlayer1and2().GetLocY() - 1; // Next Player Location Y
+        playerLocX = GetPlayer1and2().GetLocX();     // Player Location X
     }
 
     boardObject = gameEnvironment.getMatrix().at(playerLocY, playerLocX); // Board at Player Location
@@ -663,33 +665,31 @@ void GameControllerServer::CheckCollisions(DIRECTION direction) //DIRECTION dire
     if (boardObject == COLLISION_SPRITE)
     {
         std::cout << "Collision Detected" << std::endl;
-        std::cout << "LocationY: " <<  playerLocY << std::endl;
-        std::cout << "LocationX: " <<  playerLocX << std::endl;
-        std::cout << "GameBoard: " <<  boardObject << std::endl;
+        std::cout << "LocationY: " << playerLocY << std::endl;
+        std::cout << "LocationX: " << playerLocX << std::endl;
+        std::cout << "GameBoard: " << boardObject << std::endl;
         SetCollisionOccur(true);
         // Make an explosion on the board to show a collision
         gameEnvironment.triggerExplosion(player1and2.GetLocY(), player1and2.GetLocX());
     }
 
     // Check Gameboard Boundaries
-    if(playerLocX == 196 ||
-       playerLocX == 0 ||
-       playerLocY > 30 ||
-       playerLocY == 0)
+    if (playerLocX == 196 ||
+        playerLocX == 0 ||
+        playerLocY > 30 ||
+        playerLocY == 0)
     {
         std::cout << "Edge of Gameboard Detected - Block Movement" << std::endl;
-        std::cout << "LocationY: " <<  playerLocY << std::endl;
-        std::cout << "LocationX: " <<  playerLocX << std::endl;
-        std::cout << "GameBoard: " <<  boardObject << std::endl;
+        std::cout << "LocationY: " << playerLocY << std::endl;
+        std::cout << "LocationX: " << playerLocX << std::endl;
+        std::cout << "GameBoard: " << boardObject << std::endl;
         Edge = true;
     }
-
 }
 
 // Create Special Game Events
 void GameControllerServer::CreateSpecialEvent()
 {
-
 }
 
 // Update Player Location
@@ -708,11 +708,11 @@ void GameControllerServer::MovePlayer()
     std::cout << "Movement Function" << std::endl;
 
     // Receive Data From Client
-    while(!strlen(buffer1))
+    while (!strlen(buffer1))
     {
         ServerSocket.receive1(buffer1);
     }
-    while(!strlen(buffer2))
+    while (!strlen(buffer2))
     {
         ServerSocket.receive2(buffer2);
     }
@@ -721,7 +721,7 @@ void GameControllerServer::MovePlayer()
     std::cout << "MOVEMENT Buffer 2: " << buffer2 << std::endl;
 
     // Update Player Location (X|Y) for Player 1
-    if(buffer1[0] == x)
+    if (buffer1[0] == x)
     {
         std::cout << "Player 1 - X-Axis Movement Detected." << std::endl;
         move_x = (int)buffer1[1] - 48;
@@ -736,7 +736,7 @@ void GameControllerServer::MovePlayer()
 
     // Update Player Location (X|Y) for Player 2
     s = "";
-    if(buffer2[0] == x)
+    if (buffer2[0] == x)
     {
         std::cout << "Player 2 - X-Axis Movement Detected." << std::endl;
         move_x = (int)buffer2[1] - 48;
@@ -749,97 +749,99 @@ void GameControllerServer::MovePlayer()
     }
 
     // Movement Based On X-Axis Player
-    switch(move_x)
+    switch (move_x)
     {
-        case 0:
-            // Check Collisions
-            std::cout << "No Movement - X Switch" << std::endl;
-            CheckCollisions(NONE);
-            break;
-        case 1:
-            // Check Collisions
-            std::cout << "X-Axis - Left" << std::endl;
-            CheckCollisions(LEFT);
-            if(Edge == true)
-            {
-                Edge = false;
-            }
-            else
-            {
-                player1and2.MoveLeft();
-            }
-            break;
-        case 2:
-            // Check Collisions
-            std::cout << "X-Axis - Right" << std::endl;
-            CheckCollisions(RIGHT);
-            if(Edge == true)
-            {
-                Edge = false;
-            }
-            else
-            {
-                player1and2.MoveRight();
-            }
-            break;
-        default:
-            std::cout << "Default - No Movement - X Switch" << std::endl;
-            CheckCollisions(NONE);
-            break;
+    case 0:
+        // Check Collisions
+        std::cout << "No Movement - X Switch" << std::endl;
+        CheckCollisions(NONE);
+        break;
+    case 1:
+        // Check Collisions
+        std::cout << "X-Axis - Left" << std::endl;
+        CheckCollisions(LEFT);
+        if (Edge == true)
+        {
+            Edge = false;
+        }
+        else
+        {
+            player1and2.MoveLeft();
+        }
+        break;
+    case 2:
+        // Check Collisions
+        std::cout << "X-Axis - Right" << std::endl;
+        CheckCollisions(RIGHT);
+        if (Edge == true)
+        {
+            Edge = false;
+        }
+        else
+        {
+            player1and2.MoveRight();
+        }
+        break;
+    default:
+        std::cout << "Default - No Movement - X Switch" << std::endl;
+        CheckCollisions(NONE);
+        break;
     }
 
     // Movement Based On Y-Axis Player
-    switch(move_y)
+    switch (move_y)
     {
-        case 0:
-            // Check Collisions
-            std::cout << "No Movement - Y Switch" << std::endl;
-            CheckCollisions(NONE);
-            break;
-        case 1:
-            // Check Collisions
-            std::cout << "Y-Axis - Up" << std::endl;
-            CheckCollisions(UP);
-            if(Edge == true)
-            {
-                Edge = false;
-            }
-            else
-            {
-                player1and2.MoveUp();
-            }
-            break;
-        case 2:
-            // Check Collisions
-            std::cout << "Y-Axis - Down" << std::endl;
-            CheckCollisions(DOWN);
-            if(Edge == true)
-            {
-                Edge = false;
-            }
-            else
-            {
-                player1and2.MoveDown();
-            }
-            break;
-        default:
-            std::cout << "Default - No Movement - Y Switch" << std::endl;
-            CheckCollisions(NONE);
-            break;
+    case 0:
+        // Check Collisions
+        std::cout << "No Movement - Y Switch" << std::endl;
+        CheckCollisions(NONE);
+        break;
+    case 1:
+        // Check Collisions
+        std::cout << "Y-Axis - Up" << std::endl;
+        CheckCollisions(UP);
+        if (Edge == true)
+        {
+            Edge = false;
+        }
+        else
+        {
+            player1and2.MoveUp();
+        }
+        break;
+    case 2:
+        // Check Collisions
+        std::cout << "Y-Axis - Down" << std::endl;
+        CheckCollisions(DOWN);
+        if (Edge == true)
+        {
+            Edge = false;
+        }
+        else
+        {
+            player1and2.MoveDown();
+        }
+        break;
+    default:
+        std::cout << "Default - No Movement - Y Switch" << std::endl;
+        CheckCollisions(NONE);
+        break;
     }
 
     // Update Game State for Collision
-    if(GetCollisionOccur())
+    if (GetCollisionOccur())
     {
         std::cout << "Collision Detected!" << std::endl;
 
         std::string message = "collision_true";
-        usleep(300);    // ensure the client has time to read this buffer
+        usleep(300); // ensure the client has time to read this buffer
         ServerSocket.deliver(message.c_str());
         SetGameOver(true);
-    } else {
+    }
+    else
+    {
         std::string message = "collision_false";
-        usleep(300);    // ensure the client has time to read this buffer
+        usleep(300); // ensure the client has time to read this buffer
         ServerSocket.deliver(message.c_str());
     }
 
@@ -861,7 +863,6 @@ void GameControllerServer::MoveEnvironment()
 // Sets New Environment
 void GameControllerServer::UpdateEnvironment()
 {
-
 }
 
 // Send Map to Client/Server
@@ -878,26 +879,26 @@ void GameControllerServer::SendMap()
     memset(buffer2, '\0', MAX_BYTES);
 
     // Loop Until Both Players Indicate They Are Ready
-    while(1)
+    while (1)
     {
-        if(player1Ready == 0)
+        if (player1Ready == 0)
         {
             // Receive Client 1 Signal
             ServerSocket.receive1(buffer1);
 
-            if(strstr(buffer1, "? map"))
+            if (strstr(buffer1, "? map"))
             {
                 std::cout << "Player 1 ready for map" << std::endl;
                 player1Ready = 1;
             }
         }
 
-        if(player2Ready == 0)
+        if (player2Ready == 0)
         {
             // Receive Client 1 Signal
             ServerSocket.receive2(buffer2);
 
-            if(strstr(buffer2, "? map"))
+            if (strstr(buffer2, "? map"))
             {
                 std::cout << "Player 2 ready for map" << std::endl;
                 player2Ready = 1;
@@ -905,7 +906,7 @@ void GameControllerServer::SendMap()
         }
 
         // break when both players are ready
-        if(player1Ready && player2Ready)
+        if (player1Ready && player2Ready)
             break;
     }
 
@@ -930,26 +931,26 @@ void GameControllerServer::SendLevel()
     memset(buffer2, '\0', MAX_BYTES);
 
     // Loop Until Both Players Indicate They Are Ready
-    while(1)
+    while (1)
     {
-        if(player1Ready == 0)
+        if (player1Ready == 0)
         {
             // Receive Client 1 Signal
             ServerSocket.receive1(buffer1);
 
-            if(strstr(buffer1, "? level"))
+            if (strstr(buffer1, "? level"))
             {
                 std::cout << "Player 1 ready for Level Info" << std::endl;
                 player1Ready = 1;
             }
         }
 
-        if(player2Ready == 0)
+        if (player2Ready == 0)
         {
             // Receive Client 1 Signal
             ServerSocket.receive2(buffer2);
 
-            if(strstr(buffer2, "? level"))
+            if (strstr(buffer2, "? level"))
             {
                 std::cout << "Player 2 ready for Level Info" << std::endl;
                 player2Ready = 1;
@@ -957,7 +958,7 @@ void GameControllerServer::SendLevel()
         }
 
         // break when both players are ready
-        if(player1Ready && player2Ready)
+        if (player1Ready && player2Ready)
             break;
     }
 
@@ -977,9 +978,9 @@ void GameControllerServer::UpdateGame(double duration, float timer)
     int playerLocX = 0;
     int playerLocY = 0;
     std::cout << "Outside Connection Check - In Update Game" << std::endl;
-    
+
     // Check Server Connection
-    if(ServerSocket.getConnection())
+    if (ServerSocket.getConnection())
     {
         // Clear Screen
         std::cout << "\033[2J\033[1;1H";
@@ -1001,8 +1002,8 @@ void GameControllerServer::UpdateGame(double duration, float timer)
 
         playerLocY = GetPlayer1and2().GetLocY();
         playerLocX = GetPlayer1and2().GetLocX();
-        std::cout << "LocationY: " <<  playerLocY << std::endl;
-        std::cout << "LocationX: " <<  playerLocX << std::endl;
+        std::cout << "LocationY: " << playerLocY << std::endl;
+        std::cout << "LocationX: " << playerLocX << std::endl;
 
         // Create Special Event
         // CreateSpecialEvent();
@@ -1039,20 +1040,22 @@ bool GameControllerServer::ReplayCheck()
 
     std::cout << "Replay Function - Check" << std::endl;
 
-    while(1)
+    while (1)
     {
-        if(!replayP1)
+        if (!replayP1)
         {
             // Receive Data From Client
             ServerSocket.receive1(buffer1);
 
             // Check Client Responses
-            if (strcmp(buffer1, "! yes_replay") == 0) {
+            if (strcmp(buffer1, "! yes_replay") == 0)
+            {
                 std::cout << "Player 1 Agrees to Replay" << std::endl;
                 player1Replay = true;
                 replayP1 = true;
             }
-            else if (strcmp(buffer1, "! no_replay") == 0) {
+            else if (strcmp(buffer1, "! no_replay") == 0)
+            {
                 std::cout << "Player 1 Disagrees to Replay" << std::endl;
                 replayP1 = true;
             }
@@ -1062,18 +1065,20 @@ bool GameControllerServer::ReplayCheck()
             }
         }
 
-        if(!replayP2)
+        if (!replayP2)
         {
             // Receive Data From Client
             ServerSocket.receive2(buffer2);
 
             // Check Client Responses
-            if (strcmp(buffer2, "! yes_replay") == 0) {
+            if (strcmp(buffer2, "! yes_replay") == 0)
+            {
                 std::cout << "Player 2 Agrees to Replay" << std::endl;
                 player2Replay = true;
                 replayP2 = true;
             }
-            else if (strcmp(buffer2, "! no_replay") == 0) {
+            else if (strcmp(buffer2, "! no_replay") == 0)
+            {
                 std::cout << "Player 2 Disagrees to Replay" << std::endl;
                 replayP2 = true;
             }
@@ -1083,16 +1088,19 @@ bool GameControllerServer::ReplayCheck()
             }
         }
 
-        if(replayP1 == true && replayP2 == true)
+        if (replayP1 == true && replayP2 == true)
             break;
     }
 
     std::cout << "Delivering Replay Message to Clients" << std::endl;
-    if (player1Replay == true && player2Replay == true) {
+    if (player1Replay == true && player2Replay == true)
+    {
         std::string reply = "setReplayTrue";
         ServerSocket.deliver(reply.c_str());
         return true;
-    } else {
+    }
+    else
+    {
         std::string reply = "setReplayFalse";
         ServerSocket.deliver(reply.c_str());
         return false;
