@@ -114,7 +114,7 @@ void GameControllerClient::MainGameLoop()
         }
     }
 
-    std::cout << "I've made a huge mistake" << std::endl;
+    //std::cout << "I've made a huge mistake" << std::endl;
     endwin();
 }
 
@@ -128,6 +128,9 @@ void GameControllerClient::MainMenu()
 
     while(selection == -1)
     {
+        std::cin.clear();
+        //std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+        fflush(stdin);
         std::cout << "SpaceRunner" << std::endl;
         std::cout << std::endl;
         std::cout << "1. Play" << std::endl;
@@ -191,6 +194,9 @@ void GameControllerClient::ReplayMenu(bool &replay)
 
     while(selection == -1)
     {
+        //std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+        std::cin.clear();
+        fflush(stdin);
         std::cout << "1. Replay" << std::endl;
         std::cout << "2. Exit Game" << std::endl;
         std::cout << std::endl;

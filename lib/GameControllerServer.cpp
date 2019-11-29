@@ -440,7 +440,7 @@ void GameControllerServer::NameMenu()
     std::string nulVal;
 
     // Loop Until Both Players Indicate Their Names Are Set
-    while(!player1Ready || !player1Ready)
+    while(!player1Ready && !player1Ready)
     {
         if(player1Ready == 0)
         {
