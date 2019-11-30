@@ -94,7 +94,12 @@ void GameControllerClient::MainGameLoop()
             // Would you Like to Play Again?
             ReplayMenu(replay);
 
-            if (replay != true)
+            if (replay)
+            {
+                SetCollision(false);
+                SetGameOver(false);
+            }
+            else
             {
                 std::cout << "A Replay Could Not Be Established" << std::endl;
                 std::cout << "Thanks for playing!" << std::endl;
@@ -428,7 +433,7 @@ void GameControllerClient::ControlSelection()
         if (ClientSocket.receive(buff))
             std::cout << "DEBUG: " << buff << std::endl;
 
-        if (strstr(buff, "controls") == 0)
+        if (strstr(buff, "controls"))
         {
             std::cout << "Beginning Control Reception..." << std::endl;
             ClientSocket.deliver(send.c_str());
@@ -488,6 +493,12 @@ void GameControllerClient::CountDownScreen()
     // it should call this function
     char buffer[MAX_BYTES];
     memset(buffer, '\0', MAX_BYTES);
+
+    while (!strstr(buffer, "countdown"))
+    {
+        ClientSocket.receive(buffer);
+    }
+
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Game Starting in..." << std::endl;
 

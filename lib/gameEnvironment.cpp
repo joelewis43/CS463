@@ -17,9 +17,8 @@ GameEnvironment::GameEnvironment(int rows, int cols, int levelRows)
     AsteroidLevel *asteroidLevel = new AsteroidLevel(levelRows, width, height);
     CityLevel *cityLevel = new CityLevel(levelRows, width, height);
 
-    levels.push_back(cityLevel);
-
     levels.push_back(asteroidLevel);
+    levels.push_back(cityLevel);
 
     for (LevelBuilder *level : levels)
     {
@@ -72,6 +71,7 @@ void GameEnvironment::reset()
     }
 
     levelIndex = 0;
+    transitionRows = 0;
 }
 
 void GameEnvironment::advance(Player &player)
