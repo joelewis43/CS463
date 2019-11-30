@@ -103,13 +103,7 @@ public:
    **/
     void clear()
     {
-        for (vector<char> &row : level)
-        {
-            for (int i = 0; i < row.size(); i++)
-            {
-                row[i] = NULL_SPRITE;
-            }
-        }
+        level.clear();
     }
 
     /**

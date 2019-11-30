@@ -158,11 +158,9 @@ void GameControllerServer::MainGameLoop()
         std::cout << "Score written!\n";
 
         // Reset Values
-        SetGameOver(false);
         duration = 0.0;
         timer = 0.0;
-        // Reset the Game Levels and Board
-        gameEnvironment.reset();
+        Reset();
 
         // Play Again?
         if (ReplayCheck() == false)
@@ -499,7 +497,7 @@ void GameControllerServer::NameMenu()
             }
         }
 
-        if(player1Ready == 1 && player2Ready == 1)
+        if (player1Ready == 1 && player2Ready == 1)
         {
             go = 1;
         }
@@ -549,10 +547,11 @@ void GameControllerServer::ControlSelection()
     memset(buffer2, '\0', MAX_BYTES);
     int sendCounter = 0;
     int bytes = 0;
-    while (sendCounter != 2)
+
+    while (sendCounter < 2)
     {
         ServerSocket.receive1(buffer1);
-        if (strcmp(buffer1, "send") == 0)
+        if (strcmp(buffer1, "send"))
         {
             sendCounter++;
             std::cout << "Player 1 Ready\n";
@@ -560,7 +559,7 @@ void GameControllerServer::ControlSelection()
         }
 
         ServerSocket.receive2(buffer2);
-        if (strcmp(buffer2, "send") == 0)
+        if (strcmp(buffer2, "send"))
         {
             sendCounter++;
             std::cout << "Player 2 Ready\n";
@@ -604,7 +603,7 @@ void GameControllerServer::ControlSelection()
         // Receive Client 1 Signal
         ServerSocket.receive1(buf1);
 
-        if (strcmp(buf1, "ready") == 0)
+        if (strcmp(buf1, "ready"))
         {
             std::cout << "Player 1 Ready ..." << std::endl;
             ReadyCounter++;
@@ -614,7 +613,7 @@ void GameControllerServer::ControlSelection()
         // Receive Client 2 Signal
         ServerSocket.receive2(buf2);
 
-        if (strcmp(buf2, "ready") == 0)
+        if (strcmp(buf2, "ready"))
         {
             std::cout << "Player 2 Ready ..." << std::endl;
             ReadyCounter++;
@@ -629,12 +628,11 @@ void GameControllerServer::ControlSelection()
 void GameControllerServer::CountDownScreen()
 {
     // Tell Clients to start countdowns
-    sleep(1);
+    // sleep(1);
     std::cout << "Sending Countdown Code" << std::endl;
     const char *msg = "countdown";
-    std::string message = "countdown";
-    // ServerSocket.deliver(message.c_str());
-    sleep(3);
+    ServerSocket.deliver(msg);
+    // sleep(3);
 }
 
 // Checks for Player/Object Collisions
@@ -676,8 +674,6 @@ void GameControllerServer::CheckCollisions(DIRECTION direction) //DIRECTION dire
         std::cout << "LocationX: " << playerLocX << std::endl;
         std::cout << "GameBoard: " << boardObject << std::endl;
         SetCollisionOccur(true);
-        // Make an explosion on the board to show a collision
-        gameEnvironment.triggerExplosion(player1and2.GetLocY(), player1and2.GetLocX());
     }
 
     // Check Gameboard Boundaries
@@ -1112,6 +1108,16 @@ bool GameControllerServer::ReplayCheck()
         ServerSocket.deliver(reply.c_str());
         return false;
     }
+}
+
+void GameControllerServer::Reset()
+{
+    SetGameOver(false);
+    // Reset the Game Levels and Board
+    gameEnvironment.reset();
+    SetCollisionOccur(false);
+    Edge = false;
+    Score = 0;
 }
 
 ////////////////////////////////
