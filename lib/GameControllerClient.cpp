@@ -43,12 +43,12 @@ void GameControllerClient::MainGameLoop()
 
     bool replay = true;
 
-    while(replay == true)
+    while (replay == true)
     {
         // Menus
         MainMenu();
 
-        if(GetQuitGame() == false)
+        if (GetQuitGame() == false)
         {
             // Initialize ncurses
             initscr();
@@ -71,7 +71,7 @@ void GameControllerClient::MainGameLoop()
             init_pair(3, COLOR_RED, COLOR_BLACK);
 
             // Begin Game
-            while(GetGameOver() != true && GetServerConnection() == true)
+            while (GetGameOver() != true && GetServerConnection() == true)
             {
                 UpdateGame(contentWindow);
                 std::chrono::duration<int, std::milli> timespan(85);
@@ -94,7 +94,7 @@ void GameControllerClient::MainGameLoop()
             // Would you Like to Play Again?
             ReplayMenu(replay);
 
-            if(replay != true)
+            if (replay != true)
             {
                 std::cout << "A Replay Could Not Be Established" << std::endl;
                 std::cout << "Thanks for playing!" << std::endl;
@@ -113,9 +113,6 @@ void GameControllerClient::MainGameLoop()
             sleep(1);
         }
     }
-
-    //std::cout << "I've made a huge mistake" << std::endl;
-    endwin();
 }
 
 // Main Menu
@@ -126,7 +123,7 @@ void GameControllerClient::MainMenu()
     int selection = -1;
     std::string msg = "! pReady";
 
-    while(selection == -1)
+    while (selection == -1)
     {
         std::cin.clear();
         //std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
@@ -142,31 +139,31 @@ void GameControllerClient::MainMenu()
         std::cout << "Selection: ";
         std::cin >> selection;
 
-        if(selection > 0 && selection < 4)
+        if (selection > 0 && selection < 4)
         {
-            switch(selection)
+            switch (selection)
             {
-                case 1:
-                    // Play Game - Set Name
-                    // Tell Server Player is Ready to Play
-                    ClientSocket.deliver(msg.c_str());
-                    AwaitingPlayer();
-                    NameMenu();
-                    AwaitingPlayer();   // Listening to Server / Tell Server Client is Ready
-                    ControlSelection();
-                    CountDownScreen();
-                    break;
-                case 2:
-                    // Leader Boards
-                    LeaderBoard();
-                    break;
-                case 3:
-                    // Quit Game
-                    SetQuitGame(true);
-                    break;
-                default:
-                    std::cout << "Something Went Wrong..." << std::endl;
-                    break;
+            case 1:
+                // Play Game - Set Name
+                // Tell Server Player is Ready to Play
+                ClientSocket.deliver(msg.c_str());
+                AwaitingPlayer();
+                NameMenu();
+                AwaitingPlayer(); // Listening to Server / Tell Server Client is Ready
+                ControlSelection();
+                CountDownScreen();
+                break;
+            case 2:
+                // Leader Boards
+                LeaderBoard();
+                break;
+            case 3:
+                // Quit Game
+                SetQuitGame(true);
+                break;
+            default:
+                std::cout << "Something Went Wrong..." << std::endl;
+                break;
             }
         }
         else
@@ -192,7 +189,7 @@ void GameControllerClient::ReplayMenu(bool &replay)
     std::string msg1 = "! yes_replay";
     std::string msg2 = "! no_replay";
 
-    while(selection == -1)
+    while (selection == -1)
     {
         //std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
         std::cin.clear();
@@ -205,21 +202,21 @@ void GameControllerClient::ReplayMenu(bool &replay)
         std::cout << "Selection: ";
         std::cin >> selection;
 
-        if(selection > 0 && selection < 3)
+        if (selection > 0 && selection < 3)
         {
-            switch(selection)
+            switch (selection)
             {
-                case 1:
-                    replay = true;
-                    ClientSocket.deliver(msg1.c_str());
-                    break;
-                case 2:
-                    replay = false;
-                    ClientSocket.deliver(msg2.c_str());
-                    break;
-                default:
-                    std::cout << "Something Went Wrong..." << std::endl;
-                    break;
+            case 1:
+                replay = true;
+                ClientSocket.deliver(msg1.c_str());
+                break;
+            case 2:
+                replay = false;
+                ClientSocket.deliver(msg2.c_str());
+                break;
+            default:
+                std::cout << "Something Went Wrong..." << std::endl;
+                break;
             }
         }
         else
@@ -236,25 +233,25 @@ void GameControllerClient::ReplayMenu(bool &replay)
     ClientSocket.receive(buffer);
     int counter = 0;
     int bytes = 0;
-    while(1)
+    while (1)
     {
         bytes = ClientSocket.receive(buffer);
         if (bytes)
             std::cout << "Message from Server: " << buffer << std::endl;
 
-        if(strcmp(buffer, "setReplayTrue") == 0)
+        if (strcmp(buffer, "setReplayTrue") == 0)
         {
             replay = true;
             SetGameOver(false);
             counter++;
         }
-        else if(strcmp(buffer, "setReplayFalse") == 0)
+        else if (strcmp(buffer, "setReplayFalse") == 0)
         {
             replay = false;
             SetGameOver(true);
             counter++;
         }
-        if(counter > 0)
+        if (counter > 0)
         {
             break;
         }
@@ -298,13 +295,13 @@ void GameControllerClient::NameMenu()
 {
     std::string name = "";
 
-    while(1)
+    while (1)
     {
         // Clear Screen
         std::cout << "\033[2J\033[1;1H";
 
         // check if name exists
-        if(player.GetName() == "")
+        if (player.GetName() == "")
         {
             // Display Menu to Enter Name
             std::cout << "Enter Your Name" << std::endl;
@@ -315,7 +312,7 @@ void GameControllerClient::NameMenu()
             std::cout << "Name: ";
             std::cin >> name;
 
-            if(name.size() >= 3 && name.size() <= 5)
+            if (name.size() >= 3 && name.size() <= 5)
             {
                 // Set Name in Player Object
                 player.SetName(name);
@@ -345,7 +342,7 @@ void GameControllerClient::NameMenu()
             std::cout << "Name: ";
             std::cin >> name;
 
-            if(name.size() >= 3 && name.size() <= 5)
+            if (name.size() >= 3 && name.size() <= 5)
             {
                 // Set Name in Player Object
                 player.SetName(name);
@@ -371,10 +368,12 @@ void GameControllerClient::NameMenu()
 void GameControllerClient::ServerConnection()
 {
     // Check Server Connection Is Not Interrupted
-    if(ClientSocket.getConnection())
+    if (ClientSocket.getConnection())
     {
         SetServerConnection(true);
-    } else {
+    }
+    else
+    {
         SetServerConnection(false);
     }
 }
@@ -391,14 +390,14 @@ void GameControllerClient::AwaitingPlayer()
     char buffer[MAX_BYTES];
     memset(buffer, '\0', MAX_BYTES);
 
-    while(PlayerJoined2 != true)
+    while (PlayerJoined2 != true)
     {
 
         int bytes = ClientSocket.receive(buffer);
         if (bytes)
             std::cout << buffer << std::endl;
 
-        if(strstr(buffer, "Matchmaking Completed!"))
+        if (strstr(buffer, "Matchmaking Completed!"))
         {
             PlayerJoined2 = true;
         }
@@ -423,13 +422,13 @@ void GameControllerClient::ControlSelection()
 
     char buff[MAX_BYTES];
     memset(buff, '\0', MAX_BYTES);
-    
-    while(1)
+
+    while (1)
     {
         if (ClientSocket.receive(buff))
             std::cout << "DEBUG: " << buff << std::endl;
 
-        if(strstr(buff, "controls") == 0)
+        if (strstr(buff, "controls") == 0)
         {
             std::cout << "Beginning Control Reception..." << std::endl;
             ClientSocket.deliver(send.c_str());
@@ -446,12 +445,12 @@ void GameControllerClient::ControlSelection()
         std::cout << buffer << std::endl;
 
         // Logic to Determine Player Controls
-        if(buffer[0] == one)
+        if (buffer[0] == one)
         {
             ControlType = 1;
             break;
         }
-        else if(buffer[0] == two)
+        else if (buffer[0] == two)
         {
             ControlType = 2;
             break;
@@ -464,13 +463,15 @@ void GameControllerClient::ControlSelection()
 
     // Display controls
     std::cout << "\033[2J\033[1;1H";
-    if(ControlType == 1)
+    if (ControlType == 1)
     {
-        std::cout << player.GetName() <<"'s controls are:" << " Up/Down" << std::endl;
+        std::cout << player.GetName() << "'s controls are:"
+                  << " Up/Down" << std::endl;
     }
     else if (ControlType == 2)
     {
-        std::cout << player.GetName() <<"'s controls are:" << " Left/Right" << std::endl;
+        std::cout << player.GetName() << "'s controls are:"
+                  << " Left/Right" << std::endl;
     }
 
     std::string ready = "ready";
@@ -520,80 +521,80 @@ void GameControllerClient::MovePlayer()
     std::string moved = "";
     std::string movement = "";
 
-    if(ControlType == 1)
+    if (ControlType == 1)
     {
-        switch(keyboard_input)
+        switch (keyboard_input)
         {
-            case KEY_UP:
-            {
-                player.MoveUp();
-                direction = "y";
-                moved = "1";
-                movement = direction + moved;
+        case KEY_UP:
+        {
+            player.MoveUp();
+            direction = "y";
+            moved = "1";
+            movement = direction + moved;
 
-                // Send to Server
-                ClientSocket.deliver(movement.c_str());
-                break;
-            }
-            case KEY_DOWN:
-            {
-                player.MoveDown();
-                direction = "y";
-                moved = "2";
-                movement = direction + moved;
+            // Send to Server
+            ClientSocket.deliver(movement.c_str());
+            break;
+        }
+        case KEY_DOWN:
+        {
+            player.MoveDown();
+            direction = "y";
+            moved = "2";
+            movement = direction + moved;
 
-                // Send to Server
-                ClientSocket.deliver(movement.c_str());
-                break;
-            }
-            default:
-            {
-                direction = "y";
-                moved = "0";
-                movement = direction + moved;
+            // Send to Server
+            ClientSocket.deliver(movement.c_str());
+            break;
+        }
+        default:
+        {
+            direction = "y";
+            moved = "0";
+            movement = direction + moved;
 
-                // Send to Server
-                ClientSocket.deliver(movement.c_str());
-                break;
-            }
+            // Send to Server
+            ClientSocket.deliver(movement.c_str());
+            break;
+        }
         }
     }
     else if (ControlType == 2)
     {
-        switch(keyboard_input)
+        switch (keyboard_input)
         {
-            case KEY_LEFT:
-            {
-                player.MoveLeft();
-                direction = "x";
-                moved = "1";
-                movement = direction + moved;
+        case KEY_LEFT:
+        {
+            player.MoveLeft();
+            direction = "x";
+            moved = "1";
+            movement = direction + moved;
 
-                // Send to Server
-                ClientSocket.deliver(movement.c_str());
-                break;
-            }
-            case KEY_RIGHT:
-            {
-                player.MoveRight();
-                direction = "x";
-                moved = "2";
-                movement = direction + moved;
+            // Send to Server
+            ClientSocket.deliver(movement.c_str());
+            break;
+        }
+        case KEY_RIGHT:
+        {
+            player.MoveRight();
+            direction = "x";
+            moved = "2";
+            movement = direction + moved;
 
-                // Send to Server
-                ClientSocket.deliver(movement.c_str());
-                break;
-            }
-            default:
-            {
-                direction = "x";
-                moved = "0";
-                movement = direction + moved;
+            // Send to Server
+            ClientSocket.deliver(movement.c_str());
+            break;
+        }
+        default:
+        {
+            direction = "x";
+            moved = "0";
+            movement = direction + moved;
 
-                // Send to Server
-                ClientSocket.deliver(movement.c_str());
-                break;
-            }
+            // Send to Server
+            ClientSocket.deliver(movement.c_str());
+            break;
+        }
         }
     }
 }
@@ -650,7 +651,7 @@ void GameControllerClient::UpdateGame(WINDOW *window)
     CheckCollisions();
 
     // Server say there was a collision
-    if(GetCollisionOccur())
+    if (GetCollisionOccur())
     {
         pair<int, int> coord = board.getPlayerCoord();
 
@@ -682,13 +683,11 @@ void GameControllerClient::CheckCollisions()
         ClientSocket.receive(buffer);
     }
 
-    if(strstr(buffer, "collision_true"))
+    if (strstr(buffer, "collision_true"))
     {
         SetCollision(true);
     }
-
 }
-
 
 ////////////////////////////////
 ///                          ///
@@ -731,7 +730,6 @@ bool GameControllerClient::GetCollisionOccur()
 ///         Setters          ///
 ///                          ///
 ////////////////////////////////
-
 
 // Set GameQuit bool
 void GameControllerClient::SetQuitGame(bool QuitGameSet)
