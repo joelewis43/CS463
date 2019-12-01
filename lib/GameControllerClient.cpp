@@ -352,12 +352,10 @@ void GameControllerClient::NameMenu()
                 // Set Name in Player Object
                 player.SetName(name);
 
-                // Tell Server the Name is Coming
-                const char *msg = "! name";
-                ClientSocket.deliver(msg);
-
-                // Tell it to Server
-                ClientSocket.deliver(name.c_str());
+                // Tell Server the Name
+                std::string msg = "! name ";
+                msg += name.c_str();
+                ClientSocket.deliver(msg.c_str());
                 break;
             }
             else

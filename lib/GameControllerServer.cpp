@@ -506,11 +506,14 @@ void GameControllerServer::NameMenu()
     // Concatenate Names
     std::string seperator = " | ";
     std::string name = player_a + seperator + player_b;
+    std::cout << "Concatenated Names: " << name << std::endl;
 
     player1.SetName(player_a);
     player2.SetName(player_b);
+    player1and2.SetName("");
     player1and2.SetName(name);
 
+    std::cout << "Setting Name in Server..." << std::endl;
     std::cout << "Player Name: " << player1and2.GetName() << std::endl;
     std::cout << "Player Names Set." << std::endl;
 }

@@ -3,8 +3,13 @@ Name		Score
 jake | joe	38896
 JML | JJL	35887
 jake | joe	19775
+ | 	18451
 jake | joe	16952
+hhh | ppp	9260
+ | 	7515
+eee | qqq	6171
  | 	5280
+abc | def	4230
 joe | jake	2496
 jake | joe	1974
 aaa | bbb	1748
