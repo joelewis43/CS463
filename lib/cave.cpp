@@ -30,6 +30,10 @@ void CaveLevel::construct()
     playerLeft = center - playerSpace / 2;
     playerRight = center + playerSpace / 2;
 
+    // Boundary checking for Left and Right
+    playerLeft = std::max(0.0, playerLeft); // Respect 0 Minimum
+    playerRight = std::min(static_cast<double>(cols - 1), playerRight); // Respect cols - 1 Maximum
+
     // remove collision sprites from player space
     for (int j = playerLeft; j <= playerRight; j++)
     {
