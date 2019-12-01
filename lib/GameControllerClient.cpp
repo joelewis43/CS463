@@ -130,8 +130,14 @@ void GameControllerClient::MainMenu()
 
     while (selection == -1)
     {
+        std::cout << "\033[2J\033[1;1H";
+        while(std::cin.fail())
+        {
+            std::cin.clear();
+            std::cin.ignore();
+        }
         std::cin.clear();
-        //std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+        std::cin.sync();
         fflush(stdin);
         std::cout << "SpaceRunner" << std::endl;
         std::cout << std::endl;
@@ -144,38 +150,51 @@ void GameControllerClient::MainMenu()
         std::cout << "Selection: ";
         std::cin >> selection;
 
-        if (selection > 0 && selection < 4)
+        if(!std::cin.fail())
         {
-            switch (selection)
+            if (selection > 0 && selection < 4)
             {
-            case 1:
-                // Play Game - Set Name
-                // Tell Server Player is Ready to Play
-                ClientSocket.deliver(msg.c_str());
-                AwaitingPlayer();
-                NameMenu();
-                AwaitingPlayer(); // Listening to Server / Tell Server Client is Ready
-                ControlSelection();
-                CountDownScreen();
-                break;
-            case 2:
-                // Leader Boards
-                LeaderBoard();
-                break;
-            case 3:
-                // Quit Game
-                SetQuitGame(true);
-                break;
-            default:
-                std::cout << "Something Went Wrong..." << std::endl;
-                break;
+                switch (selection)
+                {
+                    case 1:
+                        // Play Game - Set Name
+                        // Tell Server Player is Ready to Play
+                        ClientSocket.deliver(msg.c_str());
+                        AwaitingPlayer();
+                        NameMenu();
+                        AwaitingPlayer(); // Listening to Server / Tell Server Client is Ready
+                        ControlSelection();
+                        CountDownScreen();
+                        break;
+                    case 2:
+                        // Leader Boards
+                        LeaderBoard();
+                        break;
+                    case 3:
+                        // Quit Game
+                        SetQuitGame(true);
+                        break;
+                    default:
+                        std::cout << "Something Went Wrong..." << std::endl;
+                        break;
+                }
+            }
+            else
+            {
+                std::cout << std::endl;
+                std::cout << "Please Select 1, 2, or 3." << std::endl;
+                selection = -1;
+                sleep(1);
             }
         }
         else
         {
+            selection = -1;
             std::cout << std::endl;
             std::cout << "Please Select 1, 2, or 3." << std::endl;
             selection = -1;
+            sleep(1);
+
         }
 
         if (selection == 2)
@@ -196,38 +215,56 @@ void GameControllerClient::ReplayMenu(bool &replay)
 
     while (selection == -1)
     {
-        //std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+        std::cout << "\033[2J\033[1;1H";
+        while(std::cin.fail())
+        {
+            std::cin.clear();
+            std::cin.ignore();
+        }
+
         std::cin.clear();
+        std::cin.sync();
         fflush(stdin);
         std::cout << "1. Replay" << std::endl;
         std::cout << "2. Exit Game" << std::endl;
+        std::cout << std::endl;
+        std::cout << "*If there are any gameplay artifacts present in the buffer, " << std::endl;
+        std::cout << "please press enter to clear them away.*" << std::endl;
         std::cout << std::endl;
         std::cout << "*Enter your menu selection and press Enter" << std::endl;
         std::cout << std::endl;
         std::cout << "Selection: ";
         std::cin >> selection;
 
-        if (selection > 0 && selection < 3)
+        if(!std::cin.fail())
         {
-            switch (selection)
+            if (selection > 0 && selection < 3)
             {
-            case 1:
-                replay = true;
-                ClientSocket.deliver(msg1.c_str());
-                break;
-            case 2:
-                replay = false;
-                ClientSocket.deliver(msg2.c_str());
-                break;
-            default:
-                std::cout << "Something Went Wrong..." << std::endl;
-                break;
+                switch (selection)
+                {
+                    case 1:
+                        replay = true;
+                        ClientSocket.deliver(msg1.c_str());
+                        break;
+                    case 2:
+                        replay = false;
+                        ClientSocket.deliver(msg2.c_str());
+                        break;
+                    default:
+                        std::cout << "Something Went Wrong..." << std::endl;
+                        break;
+                }
+            }
+            else
+            {
+                std::cout << std::endl;
+                std::cout << "Please Select 1 or 2." << std::endl;
+                sleep(1);
+                selection = -1;
             }
         }
         else
         {
-            std::cout << std::endl;
-            std::cout << "Please Select 1 or 2." << std::endl;
             selection = -1;
         }
     }

@@ -1,5 +1,6 @@
 Space Runner High Scores
 Name		Score
+dev | joe	61240
 jake | joe	38896
 JML | JJL	35887
 jake | joe	19775
@@ -7,9 +8,14 @@ jake | joe	19775
 jake | joe	16952
 hhh | ppp	9260
  | 	7515
+abc | deg	7224
+joe | dev	7112
 eee | qqq	6171
+dev | ana	5633
  | 	5280
 abc | def	4230
+dev | joe	3867
 joe | jake	2496
 jake | joe	1974
+aaa | bbb	1861
 aaa | bbb	1748
