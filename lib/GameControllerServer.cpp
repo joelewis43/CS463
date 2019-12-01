@@ -592,6 +592,7 @@ void GameControllerServer::ControlSelection()
     // Clients in Menu
     int ready1 = 0;
     int ready2 = 0;
+    int go = 0;
 
     char buf1[MAX_BYTES];
     char buf2[MAX_BYTES];
@@ -599,7 +600,7 @@ void GameControllerServer::ControlSelection()
     memset(buf2, '\0', MAX_BYTES);
 
     // Loop Until Both Players Indicate They Are Ready to Play
-    while (!ready1 && !ready2)
+    while (go == 0)
     {
         // Receive Client 1 Signal
         ServerSocket.receive1(buf1);
@@ -617,8 +618,13 @@ void GameControllerServer::ControlSelection()
         if (strcmp(buf2, "ready"))
         {
             std::cout << "Player 2 Ready ..." << std::endl;
-            ready1 = 2;
+            ready2 = 1;
             memset(buf2, '\0', MAX_BYTES);
+        }
+
+        if (ready1 == 1 && ready2 == 1)
+        {
+            go = 1;
         }
     }
 
