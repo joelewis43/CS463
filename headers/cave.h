@@ -4,6 +4,7 @@
 #include "builder.h"
 #include "object.h"
 #include "random.h"
+#include <algorithm>
 #include <iostream>
 
 class CaveLevel : public LevelBuilder
