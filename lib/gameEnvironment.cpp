@@ -15,8 +15,8 @@ GameEnvironment::GameEnvironment(int rows, int cols, int levelRows)
     matrix = GameMatrix(height, width);
 
     AsteroidLevel *asteroidLevel = new AsteroidLevel(levelRows, width, height);
-    CityLevel *cityLevel = new CityLevel(levelRows, width, height);
     CaveLevel *caveLevel = new CaveLevel(levelRows, width, height);
+    CityLevel *cityLevel = new CityLevel(levelRows, width, height);
     
     levels.push_back(caveLevel);
     levels.push_back(cityLevel);
