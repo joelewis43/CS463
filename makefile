@@ -33,14 +33,17 @@ clientSocket.o: lib/clientSocket.cpp headers/clientSocket.h
 	g++ -c -g -std=c++0x lib/clientSocket.cpp
 
 
-gameboard.o: matrix.o asteroid.o city.o gameEnvironment.o random.o window.o
-	ld -r matrix.o asteroid.o city.o gameEnvironment.o random.o window.o -o gameboard.o
+gameboard.o: matrix.o asteroid.o city.o cave.o gameEnvironment.o random.o window.o
+	ld -r matrix.o asteroid.o city.o cave.o gameEnvironment.o random.o window.o -o gameboard.o
 
 asteroid.o: headers/asteroid.h lib/asteroid.cpp
 	g++ -c -g -std=c++0x lib/asteroid.cpp
 
 city.o: headers/city.h lib/city.cpp
 	g++ -c -g -std=c++0x lib/city.cpp
+
+cave.o: headers/cave.h lib/cave.cpp
+	g++ -c -g -std=c++0x lib/cave.cpp
 
 gameEnvironment.o: headers/gameEnvironment.h lib/gameEnvironment.cpp
 	g++ -c -g -std=c++0x lib/gameEnvironment.cpp

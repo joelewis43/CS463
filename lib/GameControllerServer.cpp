@@ -14,7 +14,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerServer::GameControllerServer() : ServerSocket(8542), player1(), player2(), gameEnvironment(CONTENT_HEIGHT, CONTENT_WIDTH - 1, 1000)
+GameControllerServer::GameControllerServer() : ServerSocket(7523), player1(), player2(), gameEnvironment(CONTENT_HEIGHT, CONTENT_WIDTH - 1, 1000)
 {
     // Set Timer Settings Here?
 }

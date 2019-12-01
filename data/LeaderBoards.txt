@@ -1,50 +1,5 @@
 Space Runner High Scores
 Name		Score
- | 	5280
-ggg | 	4734
-AAA | 	4666
-AAA | 	4518
-joe | dev	4510
-jake | joe	4447
-AAA | 	4421
- | 	4363
-AAA | 	4063
-jake | joe	3966
-joe | jake	3686
-AAA | 	3564
-susie | jacob	3312
-mmm | www	3038
-jake | joe	2937
-AAA | 	2831
-AAA | BBB	2589
-AAA | 	2572
-jake | joe	2278
-jake | joe	2220
- | 	2092
-ddd | 	2060
-AAA | BBB	1998
-AAA | 	1986
-AAA | BBB	1904
-jjj | 	1895
-jjj | lll	1709
-AAA | BBB	1697
-jjj | deva	1664
-AAA | BBB	1648
-jacob | JOE	1512
-dev | 	1485
-AAA | 	1470
-joe | dev	1289
-AAA | BBB	1201
-fff | 	1198
-AAA | 	1153
-dev | joe	1092
-AAA | 	994
-AAA | 	923
-AAA | BBB	895
-AAA | 	874
-AAA | 	847
-AAA | 	826
-AAA | BBB	824
-AAA | 	754
-AAA | 	610
-AAA | 	495
+jake | joe	38896
+jake | joe	19775
+jake | joe	16952

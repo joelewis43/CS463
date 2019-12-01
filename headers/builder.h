@@ -15,11 +15,14 @@ class LevelBuilder
 protected:
     // Number of rows to generate
     int rows;
+
     // The width or number of columns that the
     // level should have per row of the level
     int cols;
+
     // Height of the terminal window
     int screenHeight;
+    
     // Matrix containing the objects of the level
     deque<vector<char>> level;
 

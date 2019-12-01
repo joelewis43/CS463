@@ -5,6 +5,7 @@
 #include "builder.h"
 #include "city.h"
 #include "asteroid.h"
+#include "cave.h"
 #include "Player.h"
 #include <ncurses.h>
 

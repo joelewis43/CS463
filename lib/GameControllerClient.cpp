@@ -14,7 +14,7 @@
 ////////////////////////////////
 
 // Constructor
-GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 8542), board(CONTENT_HEIGHT, CONTENT_WIDTH - 1)
+GameControllerClient::GameControllerClient() : ClientSocket("127.0.0.1", 7523), board(CONTENT_HEIGHT, CONTENT_WIDTH - 1)
 {
 }
 
