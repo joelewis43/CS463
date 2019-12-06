@@ -4,7 +4,7 @@
 void AsteroidLevel::construct()
 {
     int minHeight = 2, minWidth = 2, maxHeight = 5, maxWidth = 5;
-    int numAsteroids = 12, incrementor = screenHeight;
+    int numAsteroids = 8, incrementor = screenHeight;
     // Frame container
     // Add Asteroids to the frame
     deque<vector<char>> frame = deque<vector<char>>(screenHeight, vector<char>(cols, NULL_SPRITE));
@@ -50,7 +50,7 @@ void AsteroidLevel::construct()
         }
 
         // Increase difficulty by increasing the number of asteroids per frame
-        numAsteroids += 4;
+        numAsteroids += 2;
     }
 }
 
