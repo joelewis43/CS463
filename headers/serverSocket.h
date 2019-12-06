@@ -93,6 +93,11 @@ class serverSocket {
         void closeClient2();
 
         /**
+         * Closes both client sockets and the server socket
+         **/
+        void closeAll();
+
+        /**
          * Listens to socket waiting for two clients to connect.
          * Blocks until both client sockets open.
          * Initializes client sockets in non-blocking mode

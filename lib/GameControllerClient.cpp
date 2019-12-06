@@ -74,7 +74,7 @@ void GameControllerClient::MainGameLoop()
             while (GetGameOver() != true && GetServerConnection() == true)
             {
                 UpdateGame(contentWindow);
-                std::chrono::duration<int, std::milli> timespan(85);
+                std::chrono::duration<int, std::milli> timespan(95);
                 std::this_thread::sleep_for(timespan);
             }
 

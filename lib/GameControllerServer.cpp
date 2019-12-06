@@ -148,7 +148,7 @@ void GameControllerServer::MainGameLoop()
             // Update Game
             std::cout << "GAME LOOP" << std::endl;
             UpdateGame(duration, timer);
-            std::chrono::duration<int, std::milli> timespan(85);
+            std::chrono::duration<int, std::milli> timespan(95);
             std::this_thread::sleep_for(timespan);
         }
 
@@ -169,6 +169,7 @@ void GameControllerServer::MainGameLoop()
             break;
         }
     }
+    ServerSocket.closeAll();
 }
 
 // LeaderBoard Menu

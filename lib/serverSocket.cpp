@@ -13,9 +13,7 @@ serverSocket::serverSocket(int port) {
 }
 
 serverSocket::~serverSocket() {
-    closeClient1();
-    closeClient2();
-    close(listener);
+    closeAll();
 }
 
 void serverSocket::closeClient1() {
@@ -26,6 +24,12 @@ void serverSocket::closeClient1() {
 void serverSocket::closeClient2() {
     close(clients[1]);
     clients[1] = 0;
+}
+
+void serverSocket::closeAll() {
+    closeClient1();
+    closeClient2();
+    close(listener);
 }
 
 void serverSocket::waitForClients() {
