@@ -12,7 +12,7 @@
 
 #ifndef CONTENT_HEIGHT
 #define CONTENT_HEIGHT (GAMEBOARD_WINDOW_HEIGHT - 2 - 1) // Extra -1 to account for Score
-#endif // !CONTENT_HEIGHT
+#endif                                                   // !CONTENT_HEIGHT
 
 #ifndef CONTENT_WIDTH
 #define CONTENT_WIDTH (GAMEBOARD_WINDOW_WIDTH - 2)

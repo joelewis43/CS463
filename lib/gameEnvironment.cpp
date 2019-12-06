@@ -17,7 +17,7 @@ GameEnvironment::GameEnvironment(int rows, int cols, int levelRows)
     AsteroidLevel *asteroidLevel = new AsteroidLevel(levelRows, width, height);
     CaveLevel *caveLevel = new CaveLevel(levelRows, width, height);
     CityLevel *cityLevel = new CityLevel(levelRows, width, height);
-    
+
     levels.push_back(caveLevel);
     levels.push_back(cityLevel);
     levels.push_back(asteroidLevel);
@@ -41,7 +41,13 @@ vector<char> GameEnvironment::nextRow()
     // If there's no more content available, nothing can be seeded
     if (level == nullptr || (!levelAvailable() && !level->rowAvailable()))
     {
-        return emptyRow;
+        levelIndex = 0;
+        transitionRows = matrix.rows();
+
+        for (LevelBuilder *level : levels)
+        {
+            level->reconstruct();
+        }
     }
     // Advance to the next level, if the current level is complete
     if (!level->rowAvailable() && !transitionRows)
