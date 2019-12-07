@@ -7,4 +7,5 @@ Instruction to play this game
 2. Build the game with the command "make"
 3. Run an instance of the server with the command "./server"
 4. In two seperate terminal instances, run the client program with the command "./client"
-5. Enjoy responsibly
+5. Ensure the client program runs in full screen to capture the entire program window.
+6. Enjoy responsibly
